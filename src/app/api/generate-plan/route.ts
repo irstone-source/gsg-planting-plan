@@ -1,38 +1,138 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
+import { analyzeSitePhotos } from '@/lib/vision-analysis';
+import { getLocationData, validatePostcode } from '@/lib/location';
+import { fileToBase64, getMediaType } from '@/lib/storage';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const data = JSON.parse(formData.get('data') as string);
-    const images = formData.getAll('images');
+    const imageFiles = formData.getAll('images') as File[];
 
-    console.log('Received plan generation request:', {
+    console.log('📥 Received plan generation request:', {
       dataFields: Object.keys(data),
-      imageCount: images.length,
+      imageCount: imageFiles.length,
+      postcode: data.postcode,
     });
 
-    // TODO: Implement actual plan generation logic
-    // For now, return a mock plan ID
-    const mockPlanId = `plan_${Date.now()}`;
+    // Validate inputs
+    if (!data.postcode || !validatePostcode(data.postcode)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid UK postcode' },
+        { status: 400 }
+      );
+    }
 
-    // In the future, this will:
-    // 1. Upload images to storage
-    // 2. Call Claude Vision API for site analysis
-    // 3. Process location data (postcode to RHS zone)
-    // 4. Query plant database based on conditions
-    // 5. Generate planting recommendations
-    // 6. Save plan to database
-    // 7. Return plan ID
+    if (imageFiles.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'At least one image is required' },
+        { status: 400 }
+      );
+    }
+
+    // Step 1: Get location data
+    console.log('📍 Processing location data...');
+    const locationData = await getLocationData(data.postcode);
+    console.log(`✓ Location: ${locationData.region}, RHS Zone: ${locationData.rhsZone}`);
+
+    // Step 2: Convert images to base64 for Claude Vision
+    console.log('🖼️  Converting images...');
+    const imagesForVision = await Promise.all(
+      imageFiles.map(async (file) => ({
+        data: await fileToBase64(file),
+        mediaType: getMediaType(file),
+      }))
+    );
+    console.log(`✓ Converted ${imagesForVision.length} images`);
+
+    // Step 3: Analyze images with Claude Vision
+    console.log('👁️  Analyzing site with Claude Vision...');
+    const visionAnalysis = await analyzeSitePhotos(imagesForVision);
+    console.log('✓ Vision analysis complete:', {
+      sunExposure: visionAnalysis.sunExposure.assessment,
+      confidence: visionAnalysis.sunExposure.confidence,
+      existingPlants: visionAnalysis.existingPlants.length,
+    });
+
+    // Step 4: Create site analysis record
+    console.log('💾 Storing site analysis...');
+    const { data: siteAnalysisData, error: siteError } = await supabase
+      .from('site_analyses')
+      .insert({
+        postcode: locationData.postcode,
+        rhs_zone: locationData.rhsZone,
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+        sun_exposure: visionAnalysis.sunExposure.assessment,
+        soil_type: data.soilType || 'unknown',
+        moisture: data.moisture || 'moist',
+        area_sqm: data.areaSqm,
+        vision_analysis: visionAnalysis,
+        image_urls: [], // Would store uploaded image URLs here
+      })
+      .select()
+      .single();
+
+    if (siteError) {
+      console.error('❌ Site analysis error:', siteError);
+      throw new Error(`Failed to create site analysis: ${siteError.message}`);
+    }
+
+    console.log('✓ Site analysis stored:', siteAnalysisData.id);
+
+    // Step 5: Create planting plan record
+    console.log('📋 Creating planting plan...');
+    const { data: planData, error: planError } = await supabase
+      .from('planting_plans')
+      .insert({
+        site_analysis_id: siteAnalysisData.id,
+        style: data.style,
+        maintenance_level: data.maintenanceLevel,
+        budget_min: data.budgetMin,
+        budget_max: data.budgetMax,
+        special_requirements: data.specialRequirements,
+        status: 'draft',
+        design_rationale: visionAnalysis.overallAssessment,
+      })
+      .select()
+      .single();
+
+    if (planError) {
+      console.error('❌ Plan creation error:', planError);
+      throw new Error(`Failed to create planting plan: ${planError.message}`);
+    }
+
+    console.log('✓ Planting plan created:', planData.id);
+
+    // Step 6: Query available plants (we'll add recommendations in Day 3)
+    // For now, just return the plan ID
+    console.log('✅ Plan generation complete!');
 
     return NextResponse.json({
       success: true,
-      planId: mockPlanId,
-      message: 'Plan generation started',
+      planId: planData.id,
+      message: 'Plan generated successfully',
+      analysis: {
+        sunExposure: visionAnalysis.sunExposure.assessment,
+        rhsZone: locationData.rhsZone,
+        region: locationData.region,
+        challenges: visionAnalysis.challenges,
+        opportunities: visionAnalysis.opportunities,
+      },
     });
   } catch (error) {
-    console.error('Error generating plan:', error);
+    console.error('❌ Error generating plan:', error);
+
+    // Return detailed error in development
+    const errorMessage = error instanceof Error ? error.message : 'Failed to generate plan';
+
     return NextResponse.json(
-      { success: false, error: 'Failed to generate plan' },
+      {
+        success: false,
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error : undefined,
+      },
       { status: 500 }
     );
   }
