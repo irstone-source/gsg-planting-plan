@@ -14,12 +14,16 @@ interface PageProps {
 export default async function PlanPage({ params }: PageProps) {
   const { id } = await params;
 
-  // Fetch plan with site analysis
+  // Fetch plan with site analysis and recommendations
   const { data: plan, error } = await supabase
     .from('planting_plans')
     .select(`
       *,
-      site_analyses (*)
+      site_analyses (*),
+      plant_recommendations (
+        *,
+        plants (*)
+      )
     `)
     .eq('id', id)
     .single();
@@ -30,6 +34,7 @@ export default async function PlanPage({ params }: PageProps) {
 
   const siteAnalysis = plan.site_analyses;
   const visionData = siteAnalysis.vision_analysis;
+  const recommendations = plan.plant_recommendations || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
@@ -241,22 +246,115 @@ export default async function PlanPage({ params }: PageProps) {
 
           <Separator />
 
-          {/* Plant Recommendations Placeholder */}
-          <Card className="bg-green-50 border-green-200">
-            <CardHeader>
-              <CardTitle>Plant Recommendations</CardTitle>
-              <CardDescription>Coming in Day 3</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-700 mb-4">
-                Plant recommendations will be generated based on your site conditions, preferences,
-                and available stock from UK nurseries.
-              </p>
-              <p className="text-sm text-gray-600">
-                This will include specific plants, quantities, positioning advice, and cost estimates.
-              </p>
-            </CardContent>
-          </Card>
+          {/* Plant Recommendations */}
+          {recommendations.length > 0 ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Plant Recommendations</CardTitle>
+                  <CardDescription>
+                    {recommendations.length} plants selected for your garden
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Summary */}
+                    <div className="grid md:grid-cols-3 gap-4 p-4 bg-green-50 rounded-lg">
+                      <div>
+                        <p className="text-sm text-gray-600">Total Plants</p>
+                        <p className="text-2xl font-bold text-green-700">
+                          {recommendations.reduce((sum: number, r: any) => sum + r.quantity, 0)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Total Cost</p>
+                        <p className="text-2xl font-bold text-green-700">
+                          £{plan.total_cost?.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Plant Varieties</p>
+                        <p className="text-2xl font-bold text-green-700">
+                          {recommendations.length}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Plant List by Category */}
+                    {['TREE', 'SHRUB', 'HERBACEOUS', 'CLIMBER', 'GRASS', 'BAMBOO'].map(category => {
+                      const categoryPlants = recommendations.filter((r: any) => r.plants?.category === category);
+                      if (categoryPlants.length === 0) return null;
+
+                      return (
+                        <div key={category} className="space-y-3">
+                          <h3 className="font-semibold text-lg text-green-900 capitalize">
+                            {category.toLowerCase()}s
+                          </h3>
+                          <div className="space-y-3">
+                            {categoryPlants.map((rec: any, idx: number) => (
+                              <div key={idx} className="border rounded-lg p-4 bg-white">
+                                <div className="flex justify-between items-start mb-2">
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900">
+                                      {rec.plants?.botanical_name}
+                                    </h4>
+                                    {rec.plants?.common_name && (
+                                      <p className="text-sm text-gray-600">
+                                        {rec.plants.common_name}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="font-semibold text-green-700">
+                                      Qty: {rec.quantity}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                      {rec.plants?.size}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <div>
+                                    <span className="text-xs font-semibold text-gray-700">Position:</span>
+                                    <p className="text-sm text-gray-700">{rec.position}</p>
+                                  </div>
+                                  <div>
+                                    <span className="text-xs font-semibold text-gray-700">Rationale:</span>
+                                    <p className="text-sm text-gray-700">{rec.rationale}</p>
+                                  </div>
+                                  {rec.plants?.is_peat_free && (
+                                    <Badge variant="outline" className="bg-green-50 text-green-700">
+                                      Peat-free
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <Card className="bg-green-50 border-green-200">
+              <CardHeader>
+                <CardTitle>Plant Recommendations</CardTitle>
+                <CardDescription>Generating recommendations...</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700 mb-4">
+                  Plant recommendations are being generated based on your site conditions, preferences,
+                  and available stock from UK nurseries.
+                </p>
+                <p className="text-sm text-gray-600">
+                  This may take a few moments. Please refresh the page to see the results.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Actions */}
           <div className="flex gap-4">

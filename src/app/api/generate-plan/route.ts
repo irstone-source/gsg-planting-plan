@@ -105,8 +105,30 @@ export async function POST(request: NextRequest) {
 
     console.log('✓ Planting plan created:', planData.id);
 
-    // Step 6: Query available plants (we'll add recommendations in Day 3)
-    // For now, just return the plan ID
+    // Step 6: Generate plant recommendations
+    console.log('🌿 Generating plant recommendations...');
+    try {
+      // Call the recommendations API internally
+      const recommendationsResponse = await fetch(
+        `${request.nextUrl.origin}/api/generate-recommendations`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId: planData.id }),
+        }
+      );
+
+      if (recommendationsResponse.ok) {
+        const recData = await recommendationsResponse.json();
+        console.log('✓ Recommendations generated:', recData.totalPlants, 'plants');
+      } else {
+        console.warn('⚠️ Recommendations generation failed, but plan is created');
+      }
+    } catch (recError) {
+      console.warn('⚠️ Recommendations generation error:', recError);
+      // Continue anyway - user can retry recommendations later
+    }
+
     console.log('✅ Plan generation complete!');
 
     return NextResponse.json({
