@@ -358,10 +358,19 @@ export default async function PlanPage({ params }: PageProps) {
 
           {/* Actions */}
           <div className="flex gap-4">
-            <Button disabled variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Download PDF (Coming in Day 4)
-            </Button>
+            {recommendations.length > 0 ? (
+              <a href={`/api/generate-pdf?planId=${id}`} download>
+                <Button variant="default">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download PDF
+                </Button>
+              </a>
+            ) : (
+              <Button disabled variant="outline">
+                <Download className="mr-2 h-4 w-4" />
+                PDF (Generating recommendations...)
+              </Button>
+            )}
             <Link href="/create">
               <Button variant="outline">Create New Plan</Button>
             </Link>
