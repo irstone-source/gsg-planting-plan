@@ -1,51 +1,55 @@
 'use client';
 
 import { Badge } from '@/components/ui/badge';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Camera } from 'lucide-react';
 
 interface PlantImageViewerProps {
   scientificName: string;
   commonName: string;
   badgeColor: string;
   badgeText: string;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
-export function PlantImageViewer({ scientificName, commonName, badgeColor, badgeText, imageUrl }: PlantImageViewerProps) {
+export function PlantImageViewer({ scientificName, commonName, badgeColor, badgeText }: PlantImageViewerProps) {
   const googleSearchQuery = `${scientificName} ${commonName}`.replace(/ /g, '+');
+
+  // Generate a consistent color based on plant name
+  const getGradientColors = (name: string) => {
+    const colors = [
+      ['from-emerald-100', 'to-green-50'],
+      ['from-green-100', 'to-teal-50'],
+      ['from-lime-100', 'to-green-50'],
+      ['from-cyan-100', 'to-emerald-50'],
+      ['from-teal-100', 'to-green-50'],
+      ['from-green-100', 'to-lime-50'],
+      ['from-emerald-100', 'to-cyan-50'],
+    ];
+    const index = name.length % colors.length;
+    return colors[index];
+  };
+
+  const [fromColor, toColor] = getGradientColors(scientificName);
 
   return (
     <div>
-      {/* Image Container with Wikimedia Commons image - Clickable */}
+      {/* Professional gradient placeholder */}
       <a
         href={`https://www.google.com/search?q=${googleSearchQuery}&tbm=isch`}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative h-48 bg-gradient-to-br from-green-100 to-green-50 block group cursor-pointer overflow-hidden"
+        className={`relative h-48 bg-gradient-to-br ${fromColor} ${toColor} block group cursor-pointer overflow-hidden`}
       >
-        <img
-          src={imageUrl}
-          alt={`${scientificName} - ${commonName}`}
-          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-          loading="lazy"
-          onError={(e) => {
-            // Show a visible message when image fails
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            const parent = target.parentElement;
-            if (parent) {
-              const msg = document.createElement('div');
-              msg.className = 'absolute inset-0 flex flex-col items-center justify-center p-4 text-center';
-              msg.innerHTML = `<p class="text-sm font-medium text-green-800 mb-1">${scientificName}</p><p class="text-xs text-green-600">Click to view images on Wikimedia</p>`;
-              parent.appendChild(msg);
-            }
-          }}
-        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+          <Camera className="h-12 w-12 text-green-300 mb-3 opacity-40" />
+          <p className="text-lg font-bold text-green-900 mb-1 italic">{scientificName}</p>
+          <p className="text-sm text-green-700">{commonName}</p>
+        </div>
 
         {/* Overlay hint on hover */}
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center pointer-events-none">
-          <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-50 px-3 py-1 rounded">
-            Click for more images
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all flex items-center justify-center pointer-events-none">
+          <span className="text-green-900 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-white bg-opacity-90 px-4 py-2 rounded-lg shadow-lg">
+            Click to view images →
           </span>
         </div>
 
@@ -57,20 +61,8 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
 
       {/* Controls Below Image */}
       <div className="bg-gray-50 border-t px-3 py-2">
-        <div className="flex items-center justify-center gap-2 text-xs">
-          <span className="text-gray-600">Image source:</span>
-
-          {/* Wikimedia Commons credit */}
-          <a
-            href={imageUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-green-600 hover:text-green-800 font-medium flex items-center gap-1"
-          >
-            Wikimedia Commons
-          </a>
-
-          <span className="text-gray-400">|</span>
+        <div className="flex items-center justify-center gap-3 text-xs">
+          <span className="text-gray-600">View images:</span>
 
           {/* Google Images Link */}
           <a
@@ -80,7 +72,7 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
             className="text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
           >
             <ExternalLink className="h-3 w-3" />
-            More photos
+            Google Images
           </a>
 
           <span className="text-gray-400">|</span>
@@ -92,7 +84,8 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
           >
-            RHS
+            <ExternalLink className="h-3 w-3" />
+            RHS Plant Finder
           </a>
         </div>
       </div>
