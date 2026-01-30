@@ -14,7 +14,8 @@ import {
   Search,
   Layers,
   Calculator,
-  FileOutput
+  FileOutput,
+  Share2
 } from 'lucide-react';
 
 export default function ProfessionalsPage() {
@@ -65,7 +66,7 @@ export default function ProfessionalsPage() {
         'Download images',
         'Preview references'
       ],
-      status: 'Coming Soon'
+      status: 'Live'
     },
     {
       id: 'plan-generator',
@@ -97,7 +98,7 @@ export default function ProfessionalsPage() {
         'Maintenance schedules',
         'Client-ready PDFs'
       ],
-      status: 'Coming Soon'
+      status: 'Live'
     },
     {
       id: 'cost-calculator',
@@ -113,7 +114,23 @@ export default function ProfessionalsPage() {
         'Material quantities',
         'Export quotes'
       ],
-      status: 'Coming Soon'
+      status: 'Live'
+    },
+    {
+      id: 'client-portal',
+      title: 'Client Portal',
+      description: 'Share plans via secure links with password protection and client feedback',
+      icon: Share2,
+      href: '/tools/client-portal',
+      color: 'from-teal-500 to-cyan-500',
+      features: [
+        'Password-protected links',
+        'Expiring access (1-90 days)',
+        'Client comments & feedback',
+        'Plan approval workflow',
+        'View tracking'
+      ],
+      status: 'Beta'
     }
   ];
 
@@ -121,7 +138,7 @@ export default function ProfessionalsPage() {
     { label: 'Plant Images', value: '52+', icon: Image },
     { label: 'API Calls', value: '4', icon: Layers },
     { label: 'Example Plans', value: '4', icon: FileSpreadsheet },
-    { label: 'Active Tools', value: '2', icon: CheckCircle }
+    { label: 'Active Tools', value: '5', icon: CheckCircle }
   ];
 
   return (

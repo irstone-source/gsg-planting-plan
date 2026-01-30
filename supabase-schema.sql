@@ -162,3 +162,239 @@ BEGIN
   END CASE;
 END;
 $$ LANGUAGE plpgsql;
+
+-- ============================================
+-- CLIENT PORTAL TABLES
+-- ============================================
+
+-- Shared plan links for client portal
+CREATE TABLE shared_plan_links (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  share_id TEXT UNIQUE NOT NULL,
+  plan_id TEXT NOT NULL,
+  password_hash TEXT,
+  expires_at TIMESTAMPTZ,
+  view_count INTEGER DEFAULT 0,
+  allow_comments BOOLEAN DEFAULT TRUE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'expired', 'revoked')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  created_by TEXT
+);
+
+-- Comments on shared plans
+CREATE TABLE portal_comments (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  share_id TEXT REFERENCES shared_plan_links(share_id) ON DELETE CASCADE,
+  author TEXT NOT NULL CHECK (author IN ('client', 'professional')),
+  author_name TEXT,
+  message TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Plan approval status
+CREATE TABLE portal_approvals (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  share_id TEXT REFERENCES shared_plan_links(share_id) ON DELETE CASCADE UNIQUE,
+  approved BOOLEAN NOT NULL,
+  approved_at TIMESTAMPTZ DEFAULT NOW(),
+  notes TEXT
+);
+
+-- Indexes for performance
+CREATE INDEX idx_shared_plan_links_share_id ON shared_plan_links(share_id);
+CREATE INDEX idx_shared_plan_links_status ON shared_plan_links(status);
+CREATE INDEX idx_portal_comments_share_id ON portal_comments(share_id);
+CREATE INDEX idx_portal_comments_created_at ON portal_comments(created_at DESC);
+
+-- Row Level Security (RLS) policies
+-- Note: These are basic policies. Adjust based on your auth setup.
+
+-- Public read access to active shared links
+ALTER TABLE shared_plan_links ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view active shared links" ON shared_plan_links
+  FOR SELECT USING (status = 'active');
+
+-- Anyone can add comments if allowed
+ALTER TABLE portal_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can read comments" ON portal_comments
+  FOR SELECT USING (true);
+CREATE POLICY "Anyone can add comments" ON portal_comments
+  FOR INSERT WITH CHECK (true);
+
+-- Anyone can add approvals
+ALTER TABLE portal_approvals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can read approvals" ON portal_approvals
+  FOR SELECT USING (true);
+CREATE POLICY "Anyone can add approvals" ON portal_approvals
+  FOR INSERT WITH CHECK (true);
+
+-- ========================================
+-- PLANTINGPLANS MVP - SAAS TRANSFORMATION
+-- ========================================
+
+-- USERS & AUTH
+CREATE TABLE user_profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  role TEXT DEFAULT 'customer' CHECK (role IN ('customer', 'designer', 'affiliate', 'partner', 'admin')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ACTIVATION PASSES
+CREATE TABLE activation_passes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES user_profiles(id) NOT NULL,
+  tier TEXT NOT NULL CHECK (tier IN ('diy', 'pro')),
+  price_paid INTEGER NOT NULL, -- in pence
+  credits_total INTEGER NOT NULL,
+  credits_remaining INTEGER NOT NULL,
+  vault_slots INTEGER NOT NULL,
+  purchased_at TIMESTAMPTZ DEFAULT NOW(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'expired', 'refunded')),
+  stripe_payment_intent TEXT,
+  stripe_session_id TEXT,
+  affiliate_code TEXT, -- attribution for commission
+  partner_code TEXT, -- attribution for revenue share
+  UNIQUE(user_id, status) -- Only one active pass per user
+);
+
+CREATE INDEX idx_activation_expires ON activation_passes(expires_at);
+CREATE INDEX idx_activation_user ON activation_passes(user_id);
+
+-- PLAN OWNERSHIP (link existing plans to users)
+ALTER TABLE planting_plans ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES user_profiles(id);
+ALTER TABLE planting_plans ADD COLUMN IF NOT EXISTS in_vault BOOLEAN DEFAULT FALSE;
+ALTER TABLE planting_plans ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+
+CREATE INDEX IF NOT EXISTS idx_plans_user ON planting_plans(user_id);
+CREATE INDEX IF NOT EXISTS idx_plans_vault ON planting_plans(in_vault);
+
+-- AFFILIATES
+CREATE TABLE affiliates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES user_profiles(id) NOT NULL,
+  code TEXT UNIQUE NOT NULL, -- e.g., "SARAH30"
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  commission_rate INTEGER NOT NULL, -- 30 or 20 (percentage)
+  is_founding_creator BOOLEAN DEFAULT FALSE,
+  founding_expires_at TIMESTAMPTZ, -- 30 days from approval
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'suspended')),
+  total_clicks INTEGER DEFAULT 0,
+  total_conversions INTEGER DEFAULT 0,
+  total_earnings_pence INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE affiliate_clicks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  affiliate_code TEXT NOT NULL,
+  clicked_at TIMESTAMPTZ DEFAULT NOW(),
+  ip_address TEXT,
+  user_agent TEXT,
+  converted BOOLEAN DEFAULT FALSE,
+  conversion_id UUID, -- links to activation_passes.id
+  FOREIGN KEY (affiliate_code) REFERENCES affiliates(code)
+);
+
+CREATE INDEX idx_affiliate_clicks ON affiliate_clicks(affiliate_code, clicked_at);
+
+-- PARTNERS (garden centres)
+CREATE TABLE partners (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES user_profiles(id),
+  business_name TEXT NOT NULL,
+  contact_email TEXT NOT NULL,
+  redemption_code TEXT UNIQUE NOT NULL, -- e.g., "WYEVALE15"
+  discount_percent INTEGER NOT NULL CHECK (discount_percent BETWEEN 10 AND 30),
+  revenue_share_percent INTEGER NOT NULL CHECK (revenue_share_percent BETWEEN 15 AND 25),
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'paused')),
+  total_redemptions INTEGER DEFAULT 0,
+  total_revenue_pence INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- DESIGNERS
+CREATE TABLE designers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES user_profiles(id) NOT NULL,
+  business_name TEXT NOT NULL,
+  tagline TEXT,
+  bio TEXT,
+  location TEXT,
+  website_url TEXT,
+  instagram_handle TEXT,
+  portfolio_images JSONB, -- array of image URLs
+  specialties TEXT[], -- e.g., ['urban', 'wildlife', 'contemporary']
+  service_areas TEXT[], -- postcodes or regions
+  pricing_from INTEGER, -- starting price in pence
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'paused')),
+  featured BOOLEAN DEFAULT FALSE,
+  total_leads INTEGER DEFAULT 0,
+  total_plans_sold INTEGER DEFAULT 0,
+  total_earnings_pence INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE designer_leads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  designer_id UUID REFERENCES designers(id) NOT NULL,
+  customer_email TEXT NOT NULL,
+  customer_name TEXT,
+  message TEXT,
+  postcode TEXT,
+  budget_range TEXT,
+  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'converted', 'lost')),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE designer_plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  designer_id UUID REFERENCES designers(id) NOT NULL,
+  plan_id UUID REFERENCES planting_plans(id) NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  price_pence INTEGER NOT NULL,
+  preview_images TEXT[], -- array of URLs
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'sold', 'archived')),
+  purchases INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- RLS POLICIES
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE activation_passes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE planting_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE affiliates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE partners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE designers ENABLE ROW LEVEL SECURITY;
+
+-- Users can read/update their own profile
+CREATE POLICY "Users can view own profile" ON user_profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON user_profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Users can view their own activation passes
+CREATE POLICY "Users can view own passes" ON activation_passes FOR SELECT USING (auth.uid() = user_id);
+
+-- Users can view their own plans
+CREATE POLICY "Users can view own plans" ON planting_plans FOR SELECT USING (auth.uid() = user_id);
+
+-- Public read for designers (marketplace)
+CREATE POLICY "Anyone can view active designers" ON designers FOR SELECT USING (status = 'active');
+
+-- LEAD CAPTURE
+CREATE TABLE inbound_leads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type TEXT NOT NULL CHECK (type IN ('pricing', 'partner', 'designer', 'affiliate', 'supplier')),
+  name TEXT,
+  email TEXT,
+  message TEXT,
+  metadata JSONB, -- store all other fields as JSON
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_inbound_leads_type ON inbound_leads(type);
+CREATE INDEX idx_inbound_leads_created_at ON inbound_leads(created_at DESC);

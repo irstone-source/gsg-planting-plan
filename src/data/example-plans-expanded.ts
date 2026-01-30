@@ -77,7 +77,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Low-maintenance grasses for movement',
       'Peat-free sustainable planting'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1200&q=80',
+    heroImage: '/covers/london-contemporary-urban-oasis.jpg',
     galleryImages: [
       'https://images.unsplash.com/photo-1585818000991-3a0c628f4f04?w=800&q=80',
       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
@@ -130,7 +130,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Shade-tolerant jungle layers',
       'Year-round evergreen backdrop'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1200&q=80',
+    heroImage: '/covers/liverpool-courtyard-jungle.jpg',
     galleryImages: [],
     tags: {
       place: ['Urban'],
@@ -180,7 +180,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Evergreen framework year-round',
       'Low water once established'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1585818000991-3a0c628f4f04?w=1200&q=80',
+    heroImage: '/covers/birmingham-small-space-big-impact.jpg',
     galleryImages: [],
     tags: {
       place: ['Urban'],
@@ -231,7 +231,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Evergreen privacy screening',
       'Coastal blues and silvers palette'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1623301443511-e6f27eb2f0f8?w=1200&q=80',
+    heroImage: '/covers/brighton-coastal-calm-courtyard.jpg',
     galleryImages: [],
     tags: {
       place: ['Coastal'],
@@ -281,7 +281,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Protected pockets for variety',
       'Mediterranean feel with resilience'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=1200&q=80',
+    heroImage: '/covers/bournemouth-seaside-shelter-planting.jpg',
     galleryImages: [],
     tags: {
       place: ['Coastal'],
@@ -331,7 +331,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Scented Mediterranean plants',
       'Blue-green coastal colors'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&q=80',
+    heroImage: '/covers/plymouth-sheltered-coastal-oasis.jpg',
     galleryImages: [],
     tags: {
       place: ['Coastal'],
@@ -382,7 +382,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Hedgerow plants for shelter',
       'Year-round berry production'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=1200&q=80',
+    heroImage: '/covers/edinburgh-scottish-wildlife-haven.jpg',
     galleryImages: [],
     tags: {
       place: ['Scotland'],
@@ -432,7 +432,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Evergreen year-round structure',
       'Hardy to H3 (-15°C)'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
+    heroImage: '/covers/glasgow-wet-winter-proof-framework.jpg',
     galleryImages: [],
     tags: {
       place: ['Scotland'],
@@ -482,7 +482,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Evergreen framework',
       'Native and near-native palette'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=1200&q=80',
+    heroImage: '/covers/aberdeen-very-hardy-coastal-structure.jpg',
     galleryImages: [],
     tags: {
       place: ['Scotland'],
@@ -532,7 +532,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Wildlife corridor',
       'Low intervention once established'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200&q=80',
+    heroImage: '/covers/inverness-highland-hardy-woodland.jpg',
     galleryImages: [],
     tags: {
       place: ['Scotland', 'Upland'],
@@ -586,7 +586,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Native Welsh hedgerow plants',
       'Minimal intervention needed'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1585818000991-3a0c628f4f04?w=1200&q=80',
+    heroImage: '/covers/cardiff-rain-friendly-wildlife-garden.jpg',
     galleryImages: [],
     tags: {
       place: ['Wales'],
@@ -636,7 +636,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Open play space maintained',
       'Structural year-round framework'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80',
+    heroImage: '/covers/swansea-family-coastal-garden.jpg',
     galleryImages: [],
     tags: {
       place: ['Wales', 'Coastal'],
@@ -687,7 +687,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Silver-gray foliage theme',
       'Scented and pollinator-friendly'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&q=80',
+    heroImage: '/covers/exeter-dry-summer-mediterranean-border.jpg',
     galleryImages: [],
     tags: {
       place: ['Rural', 'Suburbs'],
@@ -737,7 +737,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Aromatic herbs throughout',
       'Soft romantic color palette'
     ],
-    heroImage: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&q=80',
+    heroImage: '/covers/bath-cotswold-stone-and-scent.jpg',
     galleryImages: [],
     tags: {
       place: ['Suburbs', 'Rural'],

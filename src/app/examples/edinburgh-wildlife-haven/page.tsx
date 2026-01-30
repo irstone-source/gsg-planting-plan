@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { PlantImageViewer } from '@/components/PlantImageViewer';
+import { CarePreview } from '@/components/CarePreview';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -39,10 +40,21 @@ export default function EdinburghWildlifeHavenPage() {
         </div>
       </div>
 
-      {/* Rest of content - same structure as other examples */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      {/* Content */}
+      <div className="max-w-6xl mx-auto px-4 py-12 space-y-12">
+        {/* Care Preview */}
+        <CarePreview
+          gardenSize="12m × 9m"
+          region="Edinburgh, Scotland"
+          plantCount={7}
+          maintenanceLevel="medium"
+        />
+
         {/* Plant cards grid - will add later */}
-        <p className="text-gray-600">Full planting plan coming soon...</p>
+        <div className="text-center py-8 bg-white rounded-lg border-2 border-dashed">
+          <p className="text-gray-600">Full planting specifications coming soon...</p>
+          <p className="text-sm text-gray-500 mt-2">7 plants: Rowan, Hazel, Foxglove, Fern, Bistort, Grass, Primrose</p>
+        </div>
       </div>
     </div>
   );

@@ -80,33 +80,22 @@ export function ExamplesHub() {
 
   const activeFilterCount = Object.values(activeFilters).filter(Boolean).length;
 
-  // Sample example plans (would be loaded from data)
+  // All 13 example plans from data with filter mappings
   const examples = [
     {
-      slug: 'edinburgh-wildlife-haven',
-      title: 'Edinburgh Wildlife Haven',
-      location: 'Edinburgh, Scotland',
-      size: 'family',
-      constraint: 'general',
-      feeling: 'wildlife',
-      maintenance: 'medium',
-      trend: 'naturalistic',
-      coverImage: '/covers/edinburgh-wildlife-haven.jpg'
-    },
-    {
       slug: 'london-contemporary-urban-oasis',
-      title: 'London Contemporary Urban Oasis',
-      location: 'London',
+      title: 'Contemporary Urban Oasis',
+      location: 'South London',
       size: 'medium',
       constraint: 'general',
       feeling: 'calm',
-      maintenance: 'medium',
+      maintenance: 'low',
       trend: 'warm-minimalism',
       coverImage: '/covers/london-contemporary-urban-oasis.jpg'
     },
     {
       slug: 'liverpool-courtyard-jungle',
-      title: 'Liverpool Courtyard Jungle',
+      title: 'Courtyard Jungle',
       location: 'Liverpool',
       size: 'small',
       constraint: 'shade',
@@ -117,14 +106,135 @@ export function ExamplesHub() {
     },
     {
       slug: 'birmingham-small-space-big-impact',
-      title: 'Birmingham Small Space Big Impact',
+      title: 'Small Space, Big Impact',
       location: 'Birmingham',
       size: 'small',
       constraint: 'general',
-      feeling: 'colour',
+      feeling: 'tidy',
       maintenance: 'low',
-      trend: 'compact-edibles',
+      trend: 'warm-minimalism',
       coverImage: '/covers/birmingham-small-space-big-impact.jpg'
+    },
+    {
+      slug: 'brighton-coastal-calm-courtyard',
+      title: 'Coastal Calm Courtyard',
+      location: 'Brighton',
+      size: 'medium',
+      constraint: 'windy',
+      feeling: 'calm',
+      maintenance: 'low',
+      trend: 'climate-resilient',
+      coverImage: '/covers/brighton-coastal-calm-courtyard.jpg'
+    },
+    {
+      slug: 'bournemouth-seaside-shelter-planting',
+      title: 'Seaside Shelter Planting',
+      location: 'Bournemouth',
+      size: 'family',
+      constraint: 'windy',
+      feeling: 'wildlife',
+      maintenance: 'medium',
+      trend: 'naturalistic',
+      coverImage: '/covers/bournemouth-seaside-shelter-planting.jpg'
+    },
+    {
+      slug: 'plymouth-sheltered-coastal-oasis',
+      title: 'Sheltered Coastal Oasis',
+      location: 'Plymouth',
+      size: 'medium',
+      constraint: 'general',
+      feeling: 'lush',
+      maintenance: 'medium',
+      trend: 'naturalistic',
+      coverImage: '/covers/plymouth-sheltered-coastal-oasis.jpg'
+    },
+    {
+      slug: 'edinburgh-scottish-wildlife-haven',
+      title: 'Scottish Wildlife Haven',
+      location: 'Edinburgh',
+      size: 'family',
+      constraint: 'wet',
+      feeling: 'wildlife',
+      maintenance: 'medium',
+      trend: 'naturalistic',
+      coverImage: '/covers/edinburgh-scottish-wildlife-haven.jpg'
+    },
+    {
+      slug: 'glasgow-wet-winter-proof-framework',
+      title: 'Wet Winter-Proof Framework',
+      location: 'Glasgow',
+      size: 'large',
+      constraint: 'wet',
+      feeling: 'tidy',
+      maintenance: 'low',
+      trend: 'climate-resilient',
+      coverImage: '/covers/glasgow-wet-winter-proof-framework.jpg'
+    },
+    {
+      slug: 'aberdeen-very-hardy-coastal-structure',
+      title: 'Very Hardy Coastal Structure',
+      location: 'Aberdeen',
+      size: 'family',
+      constraint: 'windy',
+      feeling: 'tidy',
+      maintenance: 'low',
+      trend: 'climate-resilient',
+      coverImage: '/covers/aberdeen-very-hardy-coastal-structure.jpg'
+    },
+    {
+      slug: 'inverness-highland-hardy-woodland',
+      title: 'Highland Hardy Woodland',
+      location: 'Inverness',
+      size: 'large',
+      constraint: 'wet',
+      feeling: 'wildlife',
+      maintenance: 'low',
+      trend: 'naturalistic',
+      coverImage: '/covers/inverness-highland-hardy-woodland.jpg'
+    },
+    {
+      slug: 'cardiff-rain-friendly-wildlife-garden',
+      title: 'Rain-Friendly Wildlife Garden',
+      location: 'Cardiff',
+      size: 'family',
+      constraint: 'wet',
+      feeling: 'wildlife',
+      maintenance: 'medium',
+      trend: 'naturalistic',
+      coverImage: '/covers/cardiff-rain-friendly-wildlife-garden.jpg'
+    },
+    {
+      slug: 'swansea-family-coastal-garden',
+      title: 'Family Coastal Garden',
+      location: 'Swansea',
+      size: 'large',
+      constraint: 'windy',
+      feeling: 'tidy',
+      maintenance: 'medium',
+      trend: 'climate-resilient',
+      coverImage: '/covers/swansea-family-coastal-garden.jpg'
+    },
+    {
+      slug: 'exeter-dry-summer-mediterranean-border',
+      title: 'Dry-Summer Mediterranean Border',
+      location: 'Exeter',
+      size: 'family',
+      constraint: 'dry',
+      feeling: 'tidy',
+      maintenance: 'low',
+      trend: 'climate-resilient',
+      coverImage: '/covers/exeter-dry-summer-mediterranean-border.jpg'
+    },
+    {
+      slug: 'bath-cotswold-stone-and-scent',
+      title: 'Cotswold Stone & Scent',
+      location: 'Bath',
+      size: 'family',
+      constraint: 'general',
+      feeling: 'calm',
+      maintenance: 'medium',
+      trend: 'warm-minimalism',
+      coverImage: '/covers/bath-cotswold-stone-and-scent.jpg'
     }
   ];
 
@@ -148,7 +258,7 @@ export function ExamplesHub() {
           </Link>
           <h1 className="text-5xl font-bold mb-4">Example Planting Plans</h1>
           <p className="text-xl text-green-50 max-w-3xl">
-            Browse 84 professional plans tailored to UK gardens. Synthetic population study shows these combinations serve 95% of garden owners.
+            Browse professional plans tailored to UK gardens. Filter by size, conditions, style, and maintenance level. More plans added regularly.
           </p>
           <div className="flex gap-4 mt-6">
             <Badge className="bg-white/20 text-white text-sm px-3 py-1">
@@ -224,7 +334,7 @@ export function ExamplesHub() {
         {/* Results */}
         <div className="mb-6">
           <p className="text-gray-600">
-            Showing <span className="font-bold text-green-700">{filteredExamples.length}</span> of 84 plans
+            Showing <span className="font-bold text-green-700">{filteredExamples.length}</span> of {examples.length} plans
           </p>
         </div>
 
