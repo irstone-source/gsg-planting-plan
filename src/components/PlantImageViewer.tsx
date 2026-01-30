@@ -8,21 +8,17 @@ interface PlantImageViewerProps {
   commonName: string;
   badgeColor: string;
   badgeText: string;
-  wikiImage: string;
+  imageUrl: string;
 }
 
-export function PlantImageViewer({ scientificName, commonName, badgeColor, badgeText, wikiImage }: PlantImageViewerProps) {
+export function PlantImageViewer({ scientificName, commonName, badgeColor, badgeText, imageUrl }: PlantImageViewerProps) {
   const googleSearchQuery = `${scientificName} ${commonName}`.replace(/ /g, '+');
-
-  // Construct proper Wikimedia Commons thumbnail URL
-  // Using the thumbnail endpoint with proper encoding
-  const imageUrl = `https://commons.wikimedia.org/w/thumb.php?f=${encodeURIComponent(wikiImage)}&width=800`;
 
   return (
     <div>
       {/* Image Container with Wikimedia Commons image - Clickable */}
       <a
-        href={`https://commons.wikimedia.org/wiki/File:${wikiImage}`}
+        href={`https://www.google.com/search?q=${googleSearchQuery}&tbm=isch`}
         target="_blank"
         rel="noopener noreferrer"
         className="relative h-48 bg-gradient-to-br from-green-100 to-green-50 block group cursor-pointer overflow-hidden"

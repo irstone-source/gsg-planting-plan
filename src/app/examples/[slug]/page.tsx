@@ -311,7 +311,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                       commonName="Silver Birch"
                       badgeColor="bg-green-600 text-white"
                       badgeText="Structure"
-                      wikiImage="Betula_pendula_m1.JPG"
+                      imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Betula_pendula_m1.JPG/800px-Betula_pendula_m1.JPG"
                     />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Betula pendula</h4>
@@ -337,7 +337,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                       commonName="Laurustinus"
                       badgeColor="bg-green-600 text-white"
                       badgeText="Evergreen"
-                      wikiImage="Viburnum_tinus.JPG"
+                      imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Viburnum_tinus.JPG/800px-Viburnum_tinus.JPG"
                     />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Viburnum tinus</h4>
@@ -363,7 +363,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                       commonName="Umbrella Bamboo"
                       badgeColor="bg-green-600 text-white"
                       badgeText="Evergreen"
-                      wikiImage="Fargesia-murielae.JPG"
+                      imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Fargesia-murielae.JPG/800px-Fargesia-murielae.JPG"
                     />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Fargesia murielae</h4>
@@ -401,7 +401,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                       commonName="Rozanne Cranesbill"
                       badgeColor="bg-blue-600 text-white"
                       badgeText="Long-flowering"
-                      wikiImage="Geranium_'Rozanne'.JPG"
+                      imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Geranium_%27Rozanne%27.JPG/800px-Geranium_%27Rozanne%27.JPG"
                     />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Geranium 'Rozanne'</h4>
@@ -427,7 +427,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                       commonName="Lady's Mantle"
                       badgeColor="bg-blue-600 text-white"
                       badgeText="Foliage"
-                      wikiImage="Alchemilla_mollis_Lady's_Mantle_MN_2007.JPG"
+                      imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Alchemilla_mollis_Lady%27s_Mantle_MN_2007.JPG/800px-Alchemilla_mollis_Lady%27s_Mantle_MN_2007.JPG"
                     />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Alchemilla mollis</h4>
@@ -465,7 +465,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                       commonName="Male Fern"
                       badgeColor="bg-emerald-600 text-white"
                       badgeText="Shade-tolerant"
-                      wikiImage="Dryopteris_filix-mas_001.jpg"
+                      imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Dryopteris_filix-mas_001.jpg/800px-Dryopteris_filix-mas_001.jpg"
                     />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Dryopteris filix-mas</h4>
@@ -491,7 +491,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                       commonName="Bugle"
                       badgeColor="bg-emerald-600 text-white"
                       badgeText="Ground cover"
-                      wikiImage="Ajuga_reptans_-_Bugle_rampante.JPG"
+                      imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Ajuga_reptans_-_Bugle_rampante.JPG/800px-Ajuga_reptans_-_Bugle_rampante.JPG"
                     />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Ajuga reptans</h4>
