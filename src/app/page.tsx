@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sprout, Camera, MapPin, Sparkles } from 'lucide-react';
+import { ExamplesPortfolio } from '@/components/ExamplesPortfolio';
 
 export default function Home() {
   return (
@@ -116,6 +117,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Examples Portfolio */}
+      <ExamplesPortfolio />
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-16">
