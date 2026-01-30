@@ -62,7 +62,7 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
 
           {/* Wikimedia Commons credit */}
           <a
-            href={`https://commons.wikimedia.org/wiki/File:${wikiImage}`}
+            href={imageUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-green-600 hover:text-green-800 font-medium flex items-center gap-1"
