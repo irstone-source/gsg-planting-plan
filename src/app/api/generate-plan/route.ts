@@ -1,11 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@/lib/supabase-auth';
+import { checkEntitlements, consumeCredit } from '@/lib/entitlements';
 import { analyzeSitePhotos } from '@/lib/vision-analysis';
 import { getLocationData, validatePostcode } from '@/lib/location';
 import { fileToBase64, getMediaType } from '@/lib/storage';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const authSupabase = createServerClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    // Check entitlements and consume credit
+    const entitlements = await checkEntitlements(user.id);
+
+    if (!entitlements.hasAccess) {
+      return NextResponse.json(
+        { success: false, error: 'Active Activation Pass required' },
+        { status: 403 }
+      );
+    }
+
+    if (entitlements.creditsRemaining <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'No credits remaining. Please upgrade your pass.' },
+        { status: 403 }
+      );
+    }
+
     const formData = await request.formData();
     const data = JSON.parse(formData.get('data') as string);
     const imageFiles = formData.getAll('images') as File[];
@@ -86,6 +118,7 @@ export async function POST(request: NextRequest) {
     const { data: planData, error: planError } = await supabase
       .from('planting_plans')
       .insert({
+        user_id: user.id,
         site_analysis_id: siteAnalysisData.id,
         style: data.style,
         maintenance_level: data.maintenanceLevel,
@@ -104,6 +137,15 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('✓ Planting plan created:', planData.id);
+
+    // Consume credit after successful plan creation
+    console.log('💳 Consuming credit...');
+    const creditConsumed = await consumeCredit(user.id);
+    if (!creditConsumed) {
+      console.warn('⚠️ Failed to consume credit, but plan was created');
+    } else {
+      console.log('✓ Credit consumed successfully');
+    }
 
     // Step 6: Generate plant recommendations
     console.log('🌿 Generating plant recommendations...');
