@@ -8,12 +8,25 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
       {/* Header */}
-      <header className="border-b bg-white/50 backdrop-blur-sm">
+      <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sprout className="h-8 w-8 text-green-600" />
             <span className="text-xl font-bold text-green-900">GSG Planting Plan Generator</span>
           </div>
+          <nav className="flex items-center gap-4">
+            <Link href="/professionals">
+              <Button variant="outline" className="border-purple-600 text-purple-600 hover:bg-purple-50">
+                Professional Tools
+              </Button>
+            </Link>
+            <Link href="/create">
+              <Button className="bg-green-600 hover:bg-green-700">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Create Plan
+              </Button>
+            </Link>
+          </nav>
         </div>
       </header>
 
