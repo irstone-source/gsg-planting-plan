@@ -227,6 +227,14 @@ export default async function DashboardPage() {
                           </Button>
                         </form>
                       )}
+                      {plan.in_vault && (
+                        <form action={`/api/vault/remove`} method="post">
+                          <input type="hidden" name="planId" value={plan.id} />
+                          <Button variant="outline" size="sm">
+                            Remove from Vault
+                          </Button>
+                        </form>
+                      )}
                     </div>
                   </div>
                 ))}
