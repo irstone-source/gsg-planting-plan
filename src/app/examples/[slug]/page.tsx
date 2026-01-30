@@ -5,10 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { examplePlansExpanded } from '@/data/example-plans-expanded';
+import { PlantImageViewer } from '@/components/PlantImageViewer';
 import {
   ArrowLeft, MapPin, Sun, Droplets, TreePine, Calendar,
   PoundSterling, Leaf, Sprout, AlertCircle, Lightbulb,
-  CheckCircle2, Download, Share2
+  CheckCircle2, Download, Share2, RefreshCw, Lock, ExternalLink, Image as ImageIcon
 } from 'lucide-react';
 
 interface PageProps {
@@ -254,46 +255,44 @@ export default async function ExamplePlanPage({ params }: PageProps) {
 
           <Separator />
 
-          {/* Design Visualization Mockup */}
-          <section>
-            <h2 className="text-3xl font-bold text-green-900 mb-6">Design Visualization</h2>
-            <Card className="bg-amber-50 border-amber-200">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-amber-900 italic">
-                    <strong>Mockup for illustration purposes.</strong> These images show representative examples
-                    of the planting style and plant types. Your actual plan will be tailored to your specific
-                    site conditions and preferences.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="mt-6 grid md:grid-cols-2 gap-6">
-              {plan.galleryImages.map((img, idx) => (
-                <div key={idx} className="relative rounded-lg overflow-hidden shadow-lg">
-                  <img
-                    src={img}
-                    alt={`Planting design inspiration ${idx + 1}`}
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                    <p className="text-white text-sm font-medium">Design Inspiration {idx + 1}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <Separator />
-
           {/* Planting Palette with Plant Images */}
           <section>
             <h2 className="text-3xl font-bold text-green-900 mb-6">Planting Palette</h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4">
               Layered planting creates year-round structure and seasonal interest
             </p>
+
+            {/* Plant Swap Feature Notice */}
+            <Card className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <RefreshCw className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-purple-900 mb-2">Plant Customization Available</p>
+                    <p className="text-sm text-purple-800 mb-3">
+                      Don't like a plant recommendation? Swap it for an alternative that suits your site conditions and style preferences.
+                    </p>
+                    <div className="flex flex-wrap gap-3 items-center">
+                      <Badge variant="secondary" className="bg-white text-purple-900">
+                        <Lock className="h-3 w-3 mr-1" />
+                        Basic Plan: 3 swaps included
+                      </Badge>
+                      <Badge variant="secondary" className="bg-white text-purple-900">
+                        Premium Plan: Unlimited swaps
+                      </Badge>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-purple-300 text-purple-900 hover:bg-purple-100"
+                        disabled
+                      >
+                        Upgrade Plan (Coming Soon)
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="space-y-8">
               {/* Structure Layer */}
@@ -307,62 +306,80 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                 </p>
                 <div className="grid md:grid-cols-3 gap-4">
                   <Card className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      <img
-                        src="https://images.unsplash.com/photo-1571105277852-5adf08b57a41?w=400&q=80"
-                        alt="Betula pendula (Silver Birch)"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-green-600 text-white">Structure</Badge>
-                      </div>
-                    </div>
+                    <PlantImageViewer
+                      scientificName="Betula pendula"
+                      commonName="Silver Birch"
+                      badgeColor="bg-green-600 text-white"
+                      badgeText="Structure"
+                      wikiImage="Betula_pendula_m1.JPG"
+                    />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Betula pendula</h4>
                       <p className="text-sm text-gray-600 mb-2">Silver Birch</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 mb-3">
                         Elegant native tree with white bark and delicate foliage. Provides height and structure.
                       </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7 px-2 w-full"
+                        disabled
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Swap Plant (Coming Soon)
+                      </Button>
                     </CardContent>
                   </Card>
 
                   <Card className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      <img
-                        src="https://images.unsplash.com/photo-1615671524827-c1fe3973b648?w=400&q=80"
-                        alt="Viburnum tinus"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-green-600 text-white">Evergreen</Badge>
-                      </div>
-                    </div>
+                    <PlantImageViewer
+                      scientificName="Viburnum tinus"
+                      commonName="Laurustinus"
+                      badgeColor="bg-green-600 text-white"
+                      badgeText="Evergreen"
+                      wikiImage="Viburnum_tinus.JPG"
+                    />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Viburnum tinus</h4>
                       <p className="text-sm text-gray-600 mb-2">Laurustinus</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 mb-3">
                         Evergreen shrub with white winter flowers. Provides year-round screening and structure.
                       </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7 px-2 w-full"
+                        disabled
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Swap Plant (Coming Soon)
+                      </Button>
                     </CardContent>
                   </Card>
 
                   <Card className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      <img
-                        src="https://images.unsplash.com/photo-1629059823091-265524e352c0?w=400&q=80"
-                        alt="Fargesia bamboo"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-green-600 text-white">Evergreen</Badge>
-                      </div>
-                    </div>
+                    <PlantImageViewer
+                      scientificName="Fargesia murielae"
+                      commonName="Umbrella Bamboo"
+                      badgeColor="bg-green-600 text-white"
+                      badgeText="Evergreen"
+                      wikiImage="Fargesia-murielae.JPG"
+                    />
                     <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Fargesia bamboo</h4>
-                      <p className="text-sm text-gray-600 mb-2">Clumping Bamboo</p>
-                      <p className="text-xs text-gray-500">
+                      <h4 className="font-bold text-gray-900 mb-1">Fargesia murielae</h4>
+                      <p className="text-sm text-gray-600 mb-2">Umbrella Bamboo</p>
+                      <p className="text-xs text-gray-500 mb-3">
                         Non-invasive clumping bamboo. Provides instant height and gentle movement.
                       </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7 px-2 w-full"
+                        disabled
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Swap Plant (Coming Soon)
+                      </Button>
                     </CardContent>
                   </Card>
                 </div>
@@ -379,42 +396,54 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
                   <Card className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      <img
-                        src="https://images.unsplash.com/photo-1597848212624-e530cb6e4051?w=400&q=80"
-                        alt="Geranium Rozanne"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-blue-600 text-white">Long-flowering</Badge>
-                      </div>
-                    </div>
+                    <PlantImageViewer
+                      scientificName="Geranium 'Rozanne'"
+                      commonName="Rozanne Cranesbill"
+                      badgeColor="bg-blue-600 text-white"
+                      badgeText="Long-flowering"
+                      wikiImage="Geranium_'Rozanne'.JPG"
+                    />
                     <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Geranium Rozanne</h4>
+                      <h4 className="font-bold text-gray-900 mb-1">Geranium 'Rozanne'</h4>
                       <p className="text-sm text-gray-600 mb-2">Rozanne Cranesbill</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 mb-3">
                         Award-winning perennial with blue flowers from June-November. Low maintenance and reliable.
                       </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7 px-2 w-full"
+                        disabled
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Swap Plant (Coming Soon)
+                      </Button>
                     </CardContent>
                   </Card>
 
                   <Card className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      <img
-                        src="https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=400&q=80"
-                        alt="Alchemilla mollis"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-blue-600 text-white">Foliage</Badge>
-                      </div>
-                    </div>
+                    <PlantImageViewer
+                      scientificName="Alchemilla mollis"
+                      commonName="Lady's Mantle"
+                      badgeColor="bg-blue-600 text-white"
+                      badgeText="Foliage"
+                      wikiImage="Alchemilla_mollis_Lady's_Mantle_MN_2007.JPG"
+                    />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Alchemilla mollis</h4>
                       <p className="text-sm text-gray-600 mb-2">Lady's Mantle</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 mb-3">
                         Soft chartreuse flowers and beautiful foliage. Perfect edge softener and incredibly tough.
                       </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7 px-2 w-full"
+                        disabled
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Swap Plant (Coming Soon)
+                      </Button>
                     </CardContent>
                   </Card>
                 </div>
@@ -431,42 +460,54 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
                   <Card className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      <img
-                        src="https://images.unsplash.com/photo-1551016307-0e481f0a94f6?w=400&q=80"
-                        alt="Ferns"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-emerald-600 text-white">Shade-tolerant</Badge>
-                      </div>
-                    </div>
+                    <PlantImageViewer
+                      scientificName="Dryopteris filix-mas"
+                      commonName="Male Fern"
+                      badgeColor="bg-emerald-600 text-white"
+                      badgeText="Shade-tolerant"
+                      wikiImage="Dryopteris_filix-mas_001.jpg"
+                    />
                     <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Ferns</h4>
-                      <p className="text-sm text-gray-600 mb-2">Mixed shade ferns</p>
-                      <p className="text-xs text-gray-500">
-                        Lush foliage for shaded areas. Adds texture and jungle feel with minimal care.
+                      <h4 className="font-bold text-gray-900 mb-1">Dryopteris filix-mas</h4>
+                      <p className="text-sm text-gray-600 mb-2">Male Fern</p>
+                      <p className="text-xs text-gray-500 mb-3">
+                        Lush deciduous fern for shaded areas. Adds texture and architectural interest with minimal care.
                       </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7 px-2 w-full"
+                        disabled
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Swap Plant (Coming Soon)
+                      </Button>
                     </CardContent>
                   </Card>
 
                   <Card className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      <img
-                        src="https://images.unsplash.com/photo-1530027644375-9c83053d392e?w=400&q=80"
-                        alt="Ajuga reptans"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-emerald-600 text-white">Ground cover</Badge>
-                      </div>
-                    </div>
+                    <PlantImageViewer
+                      scientificName="Ajuga reptans"
+                      commonName="Bugle"
+                      badgeColor="bg-emerald-600 text-white"
+                      badgeText="Ground cover"
+                      wikiImage="Ajuga_reptans_-_Bugle_rampante.JPG"
+                    />
                     <CardContent className="pt-4">
                       <h4 className="font-bold text-gray-900 mb-1">Ajuga reptans</h4>
                       <p className="text-sm text-gray-600 mb-2">Bugle</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 mb-3">
                         Mat-forming ground cover with blue spring flowers. Suppresses weeds effectively.
                       </p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-7 px-2 w-full"
+                        disabled
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Swap Plant (Coming Soon)
+                      </Button>
                     </CardContent>
                   </Card>
                 </div>
@@ -475,13 +516,656 @@ export default async function ExamplePlanPage({ params }: PageProps) {
 
             <Card className="mt-6 bg-blue-50 border-blue-200">
               <CardContent className="pt-6">
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3 mb-4">
                   <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-blue-900">
-                    <strong>Plant images are representative.</strong> Actual plants vary by season, maturity,
-                    and growing conditions. Your custom plan will include specific varieties, sizes, and
-                    supplier codes for availability.
+                  <div className="flex-1">
+                    <p className="text-sm text-blue-900 mb-3">
+                      <strong>These are indicative images.</strong> Actual plant appearance varies by season,
+                      maturity, and growing conditions. Always confirm size, condition, and specific variety
+                      upon ordering from your chosen supplier.
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-white hover:bg-blue-50 border-blue-300 text-blue-900"
+                      disabled
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      View Full Purchasing Guide & Checklist
+                    </Button>
+                    <p className="text-xs text-blue-800 mt-2">
+                      Professional horticultural guidance on sourcing, sizing, and quality checks customized to your plan
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          <Separator />
+
+          {/* Care Plan Preview */}
+          <section>
+            <h2 className="text-3xl font-bold text-green-900 mb-6">Care Plan Preview</h2>
+            <p className="text-gray-600 mb-6">
+              Understanding the time commitment and techniques required to keep your planting looking its best
+            </p>
+
+            {/* Annual Care Summary */}
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <Card className="bg-green-50 border-green-200">
+                <CardHeader>
+                  <Calendar className="h-8 w-8 text-green-600 mb-2" />
+                  <CardTitle className="text-lg">Annual Care Time</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-green-700 mb-2">12-18 hours</p>
+                  <p className="text-sm text-gray-600">
+                    Spread across the year in simple seasonal tasks
                   </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-blue-50 border-blue-200">
+                <CardHeader>
+                  <CheckCircle2 className="h-8 w-8 text-blue-600 mb-2" />
+                  <CardTitle className="text-lg">Homeowner Friendly</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-lg font-semibold text-blue-900 mb-2">Yes, achievable</p>
+                  <p className="text-sm text-gray-600">
+                    Suitable for someone with good health and mobility. No specialized equipment required.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-amber-50 border-amber-200">
+                <CardHeader>
+                  <PoundSterling className="h-8 w-8 text-amber-600 mb-2" />
+                  <CardTitle className="text-lg">Professional Care Cost</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold text-amber-700 mb-2">£350-550</p>
+                  <p className="text-sm text-gray-600">
+                    Per year for professional gardener maintenance
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Care by Species */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-green-900 mb-4">Care Requirements by Species</h3>
+
+              {/* Structure Layer Care */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-green-900">Structure Layer (Trees & Shrubs)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Betula pendula */}
+                    <div className="pb-6 border-b last:border-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-gray-900">Betula pendula (Silver Birch)</h4>
+                          <p className="text-sm text-gray-600">Annual care time: 1-2 hours</p>
+                        </div>
+                        <a
+                          href="https://www.rhs.org.uk/plants/betula/pendula/details"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          RHS Guide →
+                        </a>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Techniques Required:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Light formative pruning in late summer (once established)</li>
+                            <li>• Remove dead or damaged branches</li>
+                            <li>• No regular pruning needed</li>
+                            <li>• Minimal watering after establishment (1-2 years)</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Homeowner Notes:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Very low maintenance once established</li>
+                            <li>• May need stepladder for pruning mature trees</li>
+                            <li>• No specialist skills required</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Viburnum tinus */}
+                    <div className="pb-6 border-b last:border-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-gray-900">Viburnum tinus (Laurustinus)</h4>
+                          <p className="text-sm text-gray-600">Annual care time: 2-3 hours</p>
+                        </div>
+                        <a
+                          href="https://www.rhs.org.uk/plants/viburnum/tinus/details"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          RHS Guide →
+                        </a>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Techniques Required:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Light trim after flowering (spring)</li>
+                            <li>• Remove any frost-damaged shoots</li>
+                            <li>• Shape maintenance if used for screening</li>
+                            <li>• Water during dry spells in first 2 years</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Homeowner Notes:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Simple hand pruning with secateurs</li>
+                            <li>• Very forgiving and tough</li>
+                            <li>• Suitable for beginners</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fargesia murielae */}
+                    <div className="pb-6 border-b last:border-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-gray-900">Fargesia murielae (Umbrella Bamboo)</h4>
+                          <p className="text-sm text-gray-600">Annual care time: 1-2 hours</p>
+                        </div>
+                        <a
+                          href="https://www.rhs.org.uk/plants/7049/fargesia-murielae/details"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          RHS Guide →
+                        </a>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Techniques Required:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Remove dead canes at base in spring</li>
+                            <li>• Thin out oldest canes every 2-3 years</li>
+                            <li>• Water well during dry periods</li>
+                            <li>• Mulch annually to retain moisture</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Homeowner Notes:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Non-invasive clumping type (no spreading)</li>
+                            <li>• Minimal intervention needed</li>
+                            <li>• Simple cutting with loppers</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Seasonal Layer Care */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-green-900">Seasonal Layer (Perennials)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Geranium Rozanne */}
+                    <div className="pb-6 border-b last:border-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-gray-900">Geranium 'Rozanne'</h4>
+                          <p className="text-sm text-gray-600">Annual care time: 1 hour</p>
+                        </div>
+                        <a
+                          href="https://www.rhs.org.uk/plants/geranium/rozanne/details"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          RHS Guide →
+                        </a>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Techniques Required:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Cut back to ground level in late autumn</li>
+                            <li>• Optional: deadhead to prolong flowering</li>
+                            <li>• Water during establishment only</li>
+                            <li>• No feeding required once established</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Homeowner Notes:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Exceptionally low maintenance</li>
+                            <li>• RHS Award of Garden Merit winner</li>
+                            <li>• Perfect for beginners</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Alchemilla mollis */}
+                    <div className="pb-6 border-b last:border-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-gray-900">Alchemilla mollis (Lady's Mantle)</h4>
+                          <p className="text-sm text-gray-600">Annual care time: 1 hour</p>
+                        </div>
+                        <a
+                          href="https://www.rhs.org.uk/plants/alchemilla/mollis/details"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          RHS Guide →
+                        </a>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Techniques Required:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Cut back foliage after flowering (July)</li>
+                            <li>• Remove spent flowers to prevent self-seeding</li>
+                            <li>• No watering needed once established</li>
+                            <li>• Incredibly drought-tolerant</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Homeowner Notes:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• One of the easiest perennials to grow</li>
+                            <li>• Tolerates virtually any conditions</li>
+                            <li>• No specialist knowledge needed</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Ground Cover Layer Care */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-green-900">Ground Cover Layer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Dryopteris filix-mas */}
+                    <div className="pb-6 border-b last:border-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-gray-900">Dryopteris filix-mas (Male Fern)</h4>
+                          <p className="text-sm text-gray-600">Annual care time: 30 minutes</p>
+                        </div>
+                        <a
+                          href="https://www.rhs.org.uk/plants/6061/dryopteris-filix-mas/details"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          RHS Guide →
+                        </a>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Techniques Required:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Remove dead fronds in early spring</li>
+                            <li>• Apply mulch annually to retain moisture</li>
+                            <li>• Water during very dry spells</li>
+                            <li>• No pruning or feeding required</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Homeowner Notes:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Minimal care required</li>
+                            <li>• Perfect for neglected shady areas</li>
+                            <li>• Extremely low maintenance</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Ajuga reptans */}
+                    <div className="pb-6 border-b last:border-0">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-bold text-gray-900">Ajuga reptans (Bugle)</h4>
+                          <p className="text-sm text-gray-600">Annual care time: 30 minutes</p>
+                        </div>
+                        <a
+                          href="https://www.rhs.org.uk/plants/ajuga/reptans/details"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          RHS Guide →
+                        </a>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Techniques Required:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Trim back after flowering if needed</li>
+                            <li>• Remove any spreading growth from paths</li>
+                            <li>• No regular maintenance required</li>
+                            <li>• Self-sufficient once established</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-700 mb-2">Homeowner Notes:</p>
+                          <ul className="space-y-1 text-gray-600">
+                            <li>• Almost zero maintenance</li>
+                            <li>• Excellent weed suppressor</li>
+                            <li>• Thrives on neglect</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Professional Care Option */}
+            <Card className="mt-6 bg-gray-50 border-gray-200">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <Lightbulb className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-700 mb-3">
+                      <strong>Professional Gardener Cost Breakdown:</strong> The estimated annual cost of
+                      £350-550 assumes 3-4 seasonal visits (spring tidy, summer maintenance, autumn cutback,
+                      winter check) at £100-150 per visit for a garden of this size. Costs vary by region
+                      and specific contractor rates.
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      Your custom plan includes a detailed care calendar with month-by-month tasks and estimated
+                      time requirements to help you plan whether to maintain the garden yourself or budget for
+                      professional help.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          <Separator />
+
+          {/* Seasonal Color Palette */}
+          <section>
+            <h2 className="text-3xl font-bold text-green-900 mb-6">Seasonal Color Palette</h2>
+            <p className="text-gray-600 mb-6">
+              Understanding the colors and visual interest your garden will display throughout the year
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Spring */}
+              <Card className="bg-gradient-to-br from-pink-50 to-green-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-900">
+                    <Sprout className="h-6 w-6 text-pink-500" />
+                    Spring (March-May)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4 mb-4">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#F8BBD0'}} title="Viburnum pink-white" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus_04.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus_DT1.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#5C6BC0'}} title="Ajuga blue" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_-_Bugle_rampante.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_003.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_flowers.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#AED581'}} title="Fresh lime green" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dryopteris_filix-mas_001.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dryopteris_filix-mas_Fiddleheads_3648px.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Betula_pendula_m1.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-pink-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Viburnum tinus:</strong> White-pink flowers in clusters</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Ajuga reptans:</strong> Blue flower spikes emerge</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-lime-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Ferns unfurling:</strong> Fresh lime-green fronds</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Betula pendula:</strong> Delicate bright green catkins and leaves</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Summer */}
+              <Card className="bg-gradient-to-br from-blue-50 to-yellow-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-900">
+                    <Sun className="h-6 w-6 text-yellow-500" />
+                    Summer (June-August)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4 mb-4">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#4A90E2'}} title="Geranium blue" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Geranium_'Rozanne'.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Geranium_Rozanne_6zz.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Geranium_hybride_'Rozanne'_bloemen.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#C5E1A5'}} title="Alchemilla chartreuse" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Alchemilla_mollis_Lady's_Mantle_MN_2007.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Alchemilla_mollis_inflorescence_001.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Alchemilla_mollis_flowers.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#2E7D32'}} title="Deep green foliage" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fargesia-murielae.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dryopteris_filix-mas_001.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Geranium 'Rozanne':</strong> Continuous blue flowers (peak season)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Alchemilla mollis:</strong> Frothy lime-yellow flowers</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span><strong>Fargesia bamboo:</strong> Lush green architectural foliage</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Ferns:</strong> Peak lushness with deep green fronds</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Autumn */}
+              <Card className="bg-gradient-to-br from-amber-50 to-red-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-900">
+                    <Leaf className="h-6 w-6 text-amber-600" />
+                    Autumn (September-November)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4 mb-4">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#FFD54F'}} title="Golden birch leaves" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Betula_pendula_m1.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Betula_pendula_autumn.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Betula_pendula_003.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#A67C52'}} title="Bronze ferns" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dryopteris_filix-mas_001.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dryopteris_filix-mas_autumn.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Dryopteris_filix-mas_LC0226.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#6A1B9A'}} title="Purple-bronze Ajuga" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_-_Bugle_rampante.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_'Atropurpurea'.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_leaves.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Betula pendula:</strong> Golden yellow autumn foliage</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Geranium 'Rozanne':</strong> Still flowering until first frost</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <span><strong>Ferns:</strong> Bronze and copper tones before dormancy</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                      <span><strong>Ajuga reptans:</strong> Purple-bronze foliage intensifies</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              {/* Winter */}
+              <Card className="bg-gradient-to-br from-slate-50 to-blue-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-900">
+                    <TreePine className="h-6 w-6 text-slate-600" />
+                    Winter (December-February)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4 mb-4">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md border border-gray-200" style={{backgroundColor: '#F5F5F5'}} title="White birch bark" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Betula_pendula_bark.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Betula_pendula_m1.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Betula_pendula_003.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#2D5016'}} title="Deep evergreen" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Fargesia-murielae.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_leaves.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#F8BBD0'}} title="Pink winter blooms" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus_04.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus_DT1.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Viburnum_tinus_flowers.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div className="w-20 h-20 rounded-lg shadow-md" style={{backgroundColor: '#6A1B9A'}} title="Purple foliage" />
+                      <div className="flex gap-0.5">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_'Atropurpurea'.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_-_Bugle_rampante.JPG?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ajuga_reptans_leaves.jpg?width=80" className="w-6 h-6 rounded object-cover" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-slate-500 mt-0.5 flex-shrink-0" />
+                      <span><strong>Betula pendula:</strong> Stunning white bark stands out against winter sky</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-700 mt-0.5 flex-shrink-0" />
+                      <span><strong>Viburnum tinus:</strong> Evergreen structure with winter blooms</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span><strong>Fargesia bamboo:</strong> Year-round green foliage and elegant stems</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-purple-700 mt-0.5 flex-shrink-0" />
+                      <span><strong>Ajuga reptans:</strong> Purple-tinged foliage adds winter color</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="mt-6 bg-green-50 border-green-200">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <Lightbulb className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-green-900 mb-2">
+                      <strong>Year-Round Interest:</strong> This planting scheme ensures something of interest in every season.
+                    </p>
+                    <p className="text-xs text-green-800">
+                      The evergreen structure plants (Viburnum, Bamboo, Ajuga) provide consistent presence, while deciduous plants
+                      (Birch, Ferns) offer dramatic seasonal change. Long-flowering perennials bridge the gap between spring and autumn.
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
