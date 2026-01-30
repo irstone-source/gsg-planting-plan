@@ -1,0 +1,183 @@
+[dotenv@17.2.3] injecting env (8) from .env.local -- tip: ⚙️  override existing env vars with { override: true }
+🌿 Starting plant image generation...
+
+Using OpenAI API key: ✓ Found
+
+
+📸 Generating images for: Betula pendula
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top.jpg
+Prompt: Overhead plan view: Betula pendula (Silver Birch) canopy only, centered composition, established, mid-maturity.
+Single circular or organic canopy shape viewed from directly above showing foliage pattern.
+Pure white background (255,255,255), no trunk visible, no ground, zero shadows, no depth, completely flat 2D illustration.
+Centered in frame. Clean cutout for landscape plans. Photorealistic foliage for tree at 3 years, like a satellite view of tree crown.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/front.jpg
+Prompt: Photorealistic front view of Betula pendula (Silver Birch), established, mid-maturity.
+Highly detailed, photographic quality tree showing complete plant form and structure.
+Absolutely no ground plane, no shadows, completely isolated on pure white background.
+Professional horticultural reference showing accurate representation at 3 years of growth, suitable for landscape visualization.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/front.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/foliage.jpg
+Prompt: Detailed closeup of Betula pendula (Silver Birch) foliage and leaves.
+Macro photography style showing leaf texture, pattern, color, and botanical details.
+Isolated on pure white background, professional botanical reference image.
+Photorealistic detail showing characteristic features of this tree, suitable for plant identification and horticultural reference.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/foliage.jpg
+
+
+📸 Generating images for: Viburnum tinus
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top.jpg
+Prompt: Overhead plan view: Viburnum tinus (Laurustinus) canopy only, centered composition, established, mid-maturity.
+Single circular or organic canopy shape viewed from directly above showing foliage pattern.
+Pure white background (255,255,255), no trunk visible, no ground, zero shadows, no depth, completely flat 2D illustration.
+Centered in frame. Clean cutout for landscape plans. Photorealistic foliage for shrub at 3 years, like a satellite view of tree crown.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/front.jpg
+Prompt: Photorealistic front view of Viburnum tinus (Laurustinus), established, mid-maturity.
+Highly detailed, photographic quality shrub showing complete plant form and structure.
+Absolutely no ground plane, no shadows, completely isolated on pure white background.
+Professional horticultural reference showing accurate representation at 3 years of growth, suitable for landscape visualization.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/front.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/foliage.jpg
+Prompt: Detailed closeup of Viburnum tinus (Laurustinus) foliage and leaves.
+Macro photography style showing leaf texture, pattern, color, and botanical details.
+Isolated on pure white background, professional botanical reference image.
+Photorealistic detail showing characteristic features of this shrub, suitable for plant identification and horticultural reference.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/foliage.jpg
+
+
+📸 Generating images for: Fargesia murielae
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/fargesia-murielae
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/fargesia-murielae/top.jpg
+Prompt: Overhead plan view: Fargesia murielae (Umbrella Bamboo) canopy only, centered composition, established, mid-maturity.
+Single circular or organic canopy shape viewed from directly above showing foliage pattern.
+Pure white background (255,255,255), no trunk visible, no ground, zero shadows, no depth, completely flat 2D illustration.
+Centered in frame. Clean cutout for landscape plans. Photorealistic foliage for bamboo at 3 years, like a satellite view of tree crown.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/fargesia-murielae/top.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/fargesia-murielae/front.jpg
+Prompt: Photorealistic front view of Fargesia murielae (Umbrella Bamboo), established, mid-maturity.
+Highly detailed, photographic quality bamboo showing complete plant form and structure.
+Absolutely no ground plane, no shadows, completely isolated on pure white background.
+Professional horticultural reference showing accurate representation at 3 years of growth, suitable for landscape visualization.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/fargesia-murielae/front.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/fargesia-murielae/foliage.jpg
+Prompt: Detailed closeup of Fargesia murielae (Umbrella Bamboo) foliage and leaves.
+Macro photography style showing leaf texture, pattern, color, and botanical details.
+Isolated on pure white background, professional botanical reference image.
+Photorealistic detail showing characteristic features of this bamboo, suitable for plant identification and horticultural reference.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/fargesia-murielae/foliage.jpg
+
+
+📸 Generating images for: Geranium 'Rozanne'
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/geranium-rozanne-
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/geranium-rozanne-/top.jpg
+Prompt: Overhead plan view: Geranium 'Rozanne' (Rozanne Cranesbill) canopy only, centered composition, established, mid-maturity.
+Single circular or organic canopy shape viewed from directly above showing foliage pattern.
+Pure white background (255,255,255), no trunk visible, no ground, zero shadows, no depth, completely flat 2D illustration.
+Centered in frame. Clean cutout for landscape plans. Photorealistic foliage for perennial at 3 years, like a satellite view of tree crown.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/geranium-rozanne-/top.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/geranium-rozanne-/front.jpg
+Prompt: Photorealistic front view of Geranium 'Rozanne' (Rozanne Cranesbill), established, mid-maturity.
+Highly detailed, photographic quality perennial showing complete plant form and structure.
+Absolutely no ground plane, no shadows, completely isolated on pure white background.
+Professional horticultural reference showing accurate representation at 3 years of growth, suitable for landscape visualization.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/geranium-rozanne-/front.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/geranium-rozanne-/foliage.jpg
+Prompt: Detailed closeup of Geranium 'Rozanne' (Rozanne Cranesbill) foliage and leaves.
+Macro photography style showing leaf texture, pattern, color, and botanical details.
+Isolated on pure white background, professional botanical reference image.
+Photorealistic detail showing characteristic features of this perennial, suitable for plant identification and horticultural reference.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/geranium-rozanne-/foliage.jpg
+
+
+📸 Generating images for: Alchemilla mollis
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/alchemilla-mollis
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/alchemilla-mollis/top.jpg
+Prompt: Overhead plan view: Alchemilla mollis (Lady's Mantle) canopy only, centered composition, established, mid-maturity.
+Single circular or organic canopy shape viewed from directly above showing foliage pattern.
+Pure white background (255,255,255), no trunk visible, no ground, zero shadows, no depth, completely flat 2D illustration.
+Centered in frame. Clean cutout for landscape plans. Photorealistic foliage for perennial at 3 years, like a satellite view of tree crown.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/alchemilla-mollis/top.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/alchemilla-mollis/front.jpg
+Prompt: Photorealistic front view of Alchemilla mollis (Lady's Mantle), established, mid-maturity.
+Highly detailed, photographic quality perennial showing complete plant form and structure.
+Absolutely no ground plane, no shadows, completely isolated on pure white background.
+Professional horticultural reference showing accurate representation at 3 years of growth, suitable for landscape visualization.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/alchemilla-mollis/front.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/alchemilla-mollis/foliage.jpg
+Prompt: Detailed closeup of Alchemilla mollis (Lady's Mantle) foliage and leaves.
+Macro photography style showing leaf texture, pattern, color, and botanical details.
+Isolated on pure white background, professional botanical reference image.
+Photorealistic detail showing characteristic features of this perennial, suitable for plant identification and horticultural reference.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/alchemilla-mollis/foliage.jpg
+
+
+📸 Generating images for: Dryopteris filix-mas
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/dryopteris-filix-mas
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/dryopteris-filix-mas/top.jpg
+Prompt: Overhead plan view: Dryopteris filix-mas (Male Fern) canopy only, centered composition, established, mid-maturity.
+Single circular or organic canopy shape viewed from directly above showing foliage pattern.
+Pure white background (255,255,255), no trunk visible, no ground, zero shadows, no depth, completely flat 2D illustration.
+Centered in frame. Clean cutout for landscape plans. Photorealistic foliage for fern at 3 years, like a satellite view of tree crown.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/dryopteris-filix-mas/top.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/dryopteris-filix-mas/front.jpg
+Prompt: Photorealistic front view of Dryopteris filix-mas (Male Fern), established, mid-maturity.
+Highly detailed, photographic quality fern showing complete plant form and structure.
+Absolutely no ground plane, no shadows, completely isolated on pure white background.
+Professional horticultural reference showing accurate representation at 3 years of growth, suitable for landscape visualization.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/dryopteris-filix-mas/front.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/dryopteris-filix-mas/foliage.jpg
+Prompt: Detailed closeup of Dryopteris filix-mas (Male Fern) foliage and leaves.
+Macro photography style showing leaf texture, pattern, color, and botanical details.
+Isolated on pure white background, professional botanical reference image.
+Photorealistic detail showing characteristic features of this fern, suitable for plant identification and horticultural reference.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/dryopteris-filix-mas/foliage.jpg
+
+
+📸 Generating images for: Ajuga reptans
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/ajuga-reptans
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/ajuga-reptans/top.jpg
+Prompt: Overhead plan view: Ajuga reptans (Bugle) canopy only, centered composition, established, mid-maturity.
+Single circular or organic canopy shape viewed from directly above showing foliage pattern.
+Pure white background (255,255,255), no trunk visible, no ground, zero shadows, no depth, completely flat 2D illustration.
+Centered in frame. Clean cutout for landscape plans. Photorealistic foliage for ground-cover at 3 years, like a satellite view of tree crown.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/ajuga-reptans/top.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/ajuga-reptans/front.jpg
+Prompt: Photorealistic front view of Ajuga reptans (Bugle), established, mid-maturity.
+Highly detailed, photographic quality ground-cover showing complete plant form and structure.
+Absolutely no ground plane, no shadows, completely isolated on pure white background.
+Professional horticultural reference showing accurate representation at 3 years of growth, suitable for landscape visualization.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/ajuga-reptans/front.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/ajuga-reptans/foliage.jpg
+Prompt: Detailed closeup of Ajuga reptans (Bugle) foliage and leaves.
+Macro photography style showing leaf texture, pattern, color, and botanical details.
+Isolated on pure white background, professional botanical reference image.
+Photorealistic detail showing characteristic features of this ground-cover, suitable for plant identification and horticultural reference.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/ajuga-reptans/foliage.jpg
+
+
+✅ Image generation complete!
+   Images saved to: /Users/ianstone/gsg-planting-plan/public/plants

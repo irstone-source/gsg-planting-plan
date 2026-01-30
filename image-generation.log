@@ -1,0 +1,121 @@
+[dotenv@17.2.3] injecting env (7) from .env.local -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+🌿 Starting plant image generation...
+
+Using OpenAI API key: ✓ Found
+
+
+📸 Generating images for: Betula pendula
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/main.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), established, mid-maturity, front elevation view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 3 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/main.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top-1yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), young, recently planted, overhead view, looking down from above.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 1 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top-1yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top-3yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), established, mid-maturity, overhead view, looking down from above.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 3 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top-3yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top-5yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), fully mature, overhead view, looking down from above.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 5 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/top-5yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/front-1yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), young, recently planted, front elevation view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 1 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/front-1yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/front-5yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), fully mature, front elevation view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 5 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/front-5yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/side-1yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), young, recently planted, side profile view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 1 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/side-1yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/side-3yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), established, mid-maturity, side profile view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 3 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/side-3yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/side-5yr.jpg
+Prompt: Botanical illustration of Betula pendula (Silver Birch), fully mature, side profile view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate tree representation showing typical form and structure at 5 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/betula-pendula/side-5yr.jpg
+
+
+📸 Generating images for: Viburnum tinus
+   Directory: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/main.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), established, mid-maturity, front elevation view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 3 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/main.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top-1yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), young, recently planted, overhead view, looking down from above.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 1 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top-1yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top-3yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), established, mid-maturity, overhead view, looking down from above.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 3 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top-3yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top-5yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), fully mature, overhead view, looking down from above.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 5 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/top-5yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/front-1yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), young, recently planted, front elevation view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 1 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/front-1yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/front-5yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), fully mature, front elevation view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 5 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/front-5yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/side-1yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), young, recently planted, side profile view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 1 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/side-1yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/side-3yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), established, mid-maturity, side profile view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 3 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/side-3yr.jpg
+
+Generating: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/side-5yr.jpg
+Prompt: Botanical illustration of Viburnum tinus (Laurustinus), fully mature, side profile view.
+Scientific botanical drawing style, isolated on pure white background, no shadows, clean cutout, professional horticultural reference image.
+Detailed and accurate shrub representation showing typical form and structure at 5 years of growth.
+✓ Saved: /Users/ianstone/gsg-planting-plan/public/plants/viburnum-tinus/side-5yr.jpg
+
