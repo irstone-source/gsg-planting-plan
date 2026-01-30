@@ -1,0 +1,17 @@
+Vercel CLI 48.9.2
+Retrieving project…
+Deploying ians-projects-4358fa58/gsg-planting-plan
+Uploading [--------------------] (0.0B/63.2MB)
+Uploading [=====---------------] (15.8MB/63.2MB)
+Uploading [==========----------] (31.6MB/63.2MB)
+Uploading [===============-----] (47.4MB/63.2MB)
+Uploading [====================] (63.2MB/63.2MB)
+Inspect: https://vercel.com/ians-projects-4358fa58/gsg-planting-plan/B4kdZ6YD3AMcf1c3jbgDSqufKnLS [7s]
+Production: https://gsg-planting-plan-bej37t89k-ians-projects-4358fa58.vercel.app [7s]
+https://gsg-planting-plan-bej37t89k-ians-projects-4358fa58.vercel.appBuilding
+Building
+Completing
+
+Common next commands:
+- `vercel inspect gsg-planting-plan-bej37t89k-ians-projects-4358fa58.vercel.app --logs`
+- `vercel redeploy gsg-planting-plan-bej37t89k-ians-projects-4358fa58.vercel.app`
