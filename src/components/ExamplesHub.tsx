@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Filter, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { MapPin, X, Check } from 'lucide-react';
+import { Header, Footer, RevealSection } from '@/components/architectural';
 
 export function ExamplesHub() {
   const [activeFilters, setActiveFilters] = useState<{
@@ -249,144 +248,192 @@ export function ExamplesHub() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-16">
-        <div className="container mx-auto px-4">
-          <Link href="/" className="text-white/80 hover:text-white mb-4 inline-block">
-            ← Back to Home
-          </Link>
-          <h1 className="text-5xl font-bold mb-4">Example Planting Plans</h1>
-          <p className="text-xl text-green-50 max-w-3xl">
-            Browse professional plans tailored to UK gardens. Filter by size, conditions, style, and maintenance level. More plans added regularly.
-          </p>
-          <div className="flex gap-4 mt-6">
-            <Badge className="bg-white/20 text-white text-sm px-3 py-1">
-              26m UK plant growers
-            </Badge>
-            <Badge className="bg-white/20 text-white text-sm px-3 py-1">
-              Coverage: All regions
-            </Badge>
-            <Badge className="bg-white/20 text-white text-sm px-3 py-1">
-              RHS 2026 trends included
-            </Badge>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-dark text-mist">
+      <Header />
 
-      <div className="container mx-auto px-4 py-12">
-        {/* Filters */}
-        <div className="mb-8 space-y-6">
-          {Object.entries(filterCategories).map(([category, config]) => (
-            <div key={category} className="space-y-3">
-              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                {config.label}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {config.options.map((option: any) => (
-                  <button
-                    key={option.value}
-                    onClick={() => toggleFilter(category, option.value)}
-                    className={`px-4 py-2 rounded-lg border-2 transition-all ${
-                      activeFilters[category as keyof typeof activeFilters] === option.value
-                        ? 'border-green-600 bg-green-50 text-green-900'
-                        : 'border-gray-200 bg-white hover:border-green-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      {option.icon && <span>{option.icon}</span>}
-                      <span className="font-medium">{option.label}</span>
-                      {option.share && (
-                        <Badge variant="outline" className="text-xs">
-                          {option.share}
-                        </Badge>
-                      )}
-                    </div>
-                    {option.desc && (
-                      <div className="text-xs text-gray-600 mt-1">{option.desc}</div>
-                    )}
-                  </button>
-                ))}
+      {/* Hero Section */}
+      <RevealSection className="pt-32 pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl uppercase tracking-wider font-bold text-mist mb-6">
+              EXAMPLE PLANTING PLANS
+            </h1>
+            <p className="text-lg md:text-xl text-stone leading-relaxed max-w-3xl mb-8">
+              Browse 14 professional plans tailored to UK gardens. Filter by size, conditions, style, and maintenance level. All plans designed for UK hardiness zones 7-9.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <div className="bg-copper/10 border border-copper/30 px-4 py-2">
+                <span className="text-sm uppercase tracking-wider text-copper">26M UK Growers</span>
+              </div>
+              <div className="bg-moss/10 border border-moss/30 px-4 py-2">
+                <span className="text-sm uppercase tracking-wider text-mist">All UK Regions</span>
+              </div>
+              <div className="bg-copper/10 border border-copper/30 px-4 py-2">
+                <span className="text-sm uppercase tracking-wider text-copper">RHS 2026 Trends</span>
               </div>
             </div>
-          ))}
-
-          {/* Clear Filters */}
-          {activeFilterCount > 0 && (
-            <div className="flex items-center gap-3">
-              <Badge className="bg-green-600 text-white px-3 py-1">
-                {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active
-              </Badge>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <X className="h-4 w-4 mr-1" />
-                Clear all
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Results */}
-        <div className="mb-6">
-          <p className="text-gray-600">
-            Showing <span className="font-bold text-green-700">{filteredExamples.length}</span> of {examples.length} plans
-          </p>
-        </div>
-
-        {/* Examples Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredExamples.map((example) => (
-            <Link key={example.slug} href={`/examples/${example.slug}`}>
-              <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group h-full">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={example.coverImage}
-                    alt={example.title}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                    <h3 className="text-xl font-bold mb-1">{example.title}</h3>
-                    <div className="flex items-center gap-1 text-sm">
-                      <MapPin className="h-3 w-3" />
-                      {example.location}
-                    </div>
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex flex-wrap gap-1.5">
-                    <Badge variant="outline" className="text-xs">
-                      {example.size}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {example.feeling}
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {example.maintenance} maintenance
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-
-        {/* No Results */}
-        {filteredExamples.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-lg border-2 border-dashed border-gray-300">
-            <p className="text-gray-600 mb-4">No plans match your selected filters.</p>
-            <Button onClick={clearFilters} variant="outline">
-              Clear Filters
-            </Button>
           </div>
-        )}
+        </div>
+      </RevealSection>
+
+      {/* Filters Section */}
+      <div className="bg-concrete/40 py-12">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-5xl mx-auto space-y-8">
+            {Object.entries(filterCategories).map(([category, config]) => (
+              <fieldset key={category} className="space-y-4">
+                <legend className="font-heading text-sm uppercase tracking-widest text-copper mb-4">
+                  {config.label}
+                </legend>
+                <div className="flex flex-wrap gap-3" role="group" aria-label={config.label}>
+                  {config.options.map((option: any) => {
+                    const isActive = activeFilters[category as keyof typeof activeFilters] === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => toggleFilter(category, option.value)}
+                        aria-pressed={isActive}
+                        aria-label={`Filter by ${option.label}${option.share ? `, ${option.share} of plans` : ''}`}
+                        className={`
+                          px-4 py-3 border transition-all duration-300
+                          focus:outline-none focus:ring-2 focus:ring-copper focus:ring-offset-2 focus:ring-offset-dark
+                          ${isActive
+                            ? 'border-copper bg-copper/10 text-mist'
+                            : 'border-white/10 bg-dark/50 text-stone hover:border-copper/50 hover:text-mist'
+                          }
+                        `}
+                      >
+                        <div className="flex items-center gap-2">
+                          {isActive && <Check className="h-4 w-4 text-copper" aria-hidden="true" />}
+                          {option.icon && <span aria-hidden="true">{option.icon}</span>}
+                          <span className="font-heading text-xs uppercase tracking-wider">
+                            {option.label}
+                          </span>
+                          {option.share && (
+                            <span className="text-[10px] text-stone/60" aria-label={`${option.share} of plans`}>
+                              {option.share}
+                            </span>
+                          )}
+                        </div>
+                        {option.desc && (
+                          <div className="text-xs text-stone/80 mt-1 text-left">{option.desc}</div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            ))}
+
+            {/* Active Filters & Clear */}
+            <div className="flex items-center justify-between pt-4 border-t border-white/10">
+              <div className="text-sm text-stone">
+                Showing <span className="font-bold text-copper">{filteredExamples.length}</span> of {examples.length} plans
+                {activeFilterCount > 0 && (
+                  <span className="ml-2">
+                    ({activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active)
+                  </span>
+                )}
+              </div>
+              {activeFilterCount > 0 && (
+                <button
+                  onClick={clearFilters}
+                  className="flex items-center gap-2 text-sm uppercase tracking-wider text-stone hover:text-mist transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-copper"
+                  aria-label="Clear all filters"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                  Clear All
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Examples Grid */}
+      <RevealSection className="py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            {filteredExamples.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredExamples.map((example, index) => (
+                  <motion.div
+                    key={example.slug}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Link
+                      href={`/examples/${example.slug}`}
+                      className="group block h-full focus:outline-none focus:ring-2 focus:ring-copper focus:ring-offset-2 focus:ring-offset-dark"
+                    >
+                      <div className="bg-concrete/60 backdrop-blur-md border border-white/5 overflow-hidden h-full transition-all duration-500 hover:border-copper/30">
+                        {/* Image */}
+                        <div className="relative h-64 overflow-hidden">
+                          <Image
+                            src={example.coverImage}
+                            alt={`${example.title} planting plan for ${example.location}`}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                          {/* Strong gradient for text visibility */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/40 to-transparent" />
+
+                          {/* Title overlay - high contrast */}
+                          <div className="absolute bottom-0 left-0 right-0 p-6">
+                            <h2 className="font-heading text-xl uppercase tracking-wider font-bold text-mist mb-2 drop-shadow-lg">
+                              {example.title}
+                            </h2>
+                            <div className="flex items-center gap-2 text-stone">
+                              <MapPin className="h-4 w-4 text-copper" aria-hidden="true" />
+                              <span className="text-sm uppercase tracking-wider">{example.location}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Metadata */}
+                        <div className="p-6 space-y-3">
+                          <div className="flex flex-wrap gap-2">
+                            <span className="bg-dark/50 border border-white/10 px-3 py-1 text-xs uppercase tracking-wider text-stone">
+                              {example.size}
+                            </span>
+                            <span className="bg-dark/50 border border-white/10 px-3 py-1 text-xs uppercase tracking-wider text-stone">
+                              {example.feeling}
+                            </span>
+                            <span className="bg-dark/50 border border-white/10 px-3 py-1 text-xs uppercase tracking-wider text-stone">
+                              {example.maintenance}
+                            </span>
+                          </div>
+
+                          {/* View link */}
+                          <div className="flex items-center gap-2 text-copper text-sm uppercase tracking-wider font-bold">
+                            View Plan
+                            <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-concrete/60 backdrop-blur-md border-2 border-dashed border-white/10">
+                <p className="text-stone text-lg mb-6">No plans match your selected filters.</p>
+                <button
+                  onClick={clearFilters}
+                  className="px-6 py-3 bg-copper text-dark text-sm uppercase tracking-wider font-bold hover:bg-[#D4A373] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-copper"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </RevealSection>
+
+      <Footer />
     </div>
   );
 }
