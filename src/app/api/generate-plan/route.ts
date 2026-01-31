@@ -10,33 +10,29 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
+    // Check authentication (optional for immediate mode)
     const authSupabase = createServerClient();
     const { data: { user } } = await authSupabase.auth.getUser();
 
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
+    // If user is authenticated, check entitlements and consume credit
+    if (user) {
+      const entitlements = await checkEntitlements(user.id);
 
-    // Check entitlements and consume credit
-    const entitlements = await checkEntitlements(user.id);
+      if (!entitlements.hasAccess) {
+        return NextResponse.json(
+          { success: false, error: 'Active Activation Pass required' },
+          { status: 403 }
+        );
+      }
 
-    if (!entitlements.hasAccess) {
-      return NextResponse.json(
-        { success: false, error: 'Active Activation Pass required' },
-        { status: 403 }
-      );
+      if (entitlements.creditsRemaining <= 0) {
+        return NextResponse.json(
+          { success: false, error: 'No credits remaining. Please upgrade your pass.' },
+          { status: 403 }
+        );
+      }
     }
-
-    if (entitlements.creditsRemaining <= 0) {
-      return NextResponse.json(
-        { success: false, error: 'No credits remaining. Please upgrade your pass.' },
-        { status: 403 }
-      );
-    }
+    // If no user, allow immediate free generation (no credit consumption)
 
     const formData = await request.formData();
     const data = JSON.parse(formData.get('data') as string);
@@ -46,6 +42,7 @@ export async function POST(request: NextRequest) {
       dataFields: Object.keys(data),
       imageCount: imageFiles.length,
       postcode: data.postcode,
+      authenticated: !!user,
     });
 
     // Validate inputs
@@ -118,13 +115,13 @@ export async function POST(request: NextRequest) {
     const { data: planData, error: planError } = await supabase
       .from('planting_plans')
       .insert({
-        user_id: user.id,
+        user_id: user?.id || null,
         site_analysis_id: siteAnalysisData.id,
         style: data.style,
         maintenance_level: data.maintenanceLevel,
         budget_min: data.budgetMin,
         budget_max: data.budgetMax,
-        special_requirements: data.specialRequirements,
+        special_requirements: data.description || data.specialRequirements, // Use description field
         status: 'draft',
         design_rationale: visionAnalysis.overallAssessment,
       })
@@ -138,13 +135,17 @@ export async function POST(request: NextRequest) {
 
     console.log('✓ Planting plan created:', planData.id);
 
-    // Consume credit after successful plan creation
-    console.log('💳 Consuming credit...');
-    const creditConsumed = await consumeCredit(user.id);
-    if (!creditConsumed) {
-      console.warn('⚠️ Failed to consume credit, but plan was created');
+    // Consume credit after successful plan creation (only if authenticated)
+    if (user) {
+      console.log('💳 Consuming credit...');
+      const creditConsumed = await consumeCredit(user.id);
+      if (!creditConsumed) {
+        console.warn('⚠️ Failed to consume credit, but plan was created');
+      } else {
+        console.log('✓ Credit consumed successfully');
+      }
     } else {
-      console.log('✓ Credit consumed successfully');
+      console.log('ℹ️ No authentication - free plan generation (no credit consumed)');
     }
 
     // Step 6: Generate plant recommendations
