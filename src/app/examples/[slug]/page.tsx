@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { examplePlansExpanded } from '@/data/example-plans-expanded';
 import { PlantImageViewer } from '@/components/PlantImageViewer';
+import { getPlantDetail } from '@/data/plant-database';
 import {
   ArrowLeft, MapPin, Sun, Droplets, TreePine, Calendar,
   PoundSterling, Leaf, Sprout, AlertCircle, Lightbulb,
@@ -305,83 +306,36 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                   Provides framework and year-round presence
                 </p>
                 <div className="grid md:grid-cols-3 gap-4">
-                  <Card className="overflow-hidden">
-                    <PlantImageViewer
-                      scientificName="Betula pendula"
-                      commonName="Silver Birch"
-                      badgeColor="bg-green-600 text-white"
-                      badgeText="Structure"
-                      
-                    />
-                    <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Betula pendula</h4>
-                      <p className="text-sm text-gray-600 mb-2">Silver Birch</p>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Elegant native tree with white bark and delicate foliage. Provides height and structure.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs h-7 px-2 w-full"
-                        disabled
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Swap Plant (Coming Soon)
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="overflow-hidden">
-                    <PlantImageViewer
-                      scientificName="Viburnum tinus"
-                      commonName="Laurustinus"
-                      badgeColor="bg-green-600 text-white"
-                      badgeText="Evergreen"
-                      
-                    />
-                    <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Viburnum tinus</h4>
-                      <p className="text-sm text-gray-600 mb-2">Laurustinus</p>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Evergreen shrub with white winter flowers. Provides year-round screening and structure.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs h-7 px-2 w-full"
-                        disabled
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Swap Plant (Coming Soon)
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="overflow-hidden">
-                    <PlantImageViewer
-                      scientificName="Fargesia murielae"
-                      commonName="Umbrella Bamboo"
-                      badgeColor="bg-green-600 text-white"
-                      badgeText="Evergreen"
-                      
-                    />
-                    <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Fargesia murielae</h4>
-                      <p className="text-sm text-gray-600 mb-2">Umbrella Bamboo</p>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Non-invasive clumping bamboo. Provides instant height and gentle movement.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs h-7 px-2 w-full"
-                        disabled
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Swap Plant (Coming Soon)
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  {plan.plantingPalette.structure.map((plantName) => {
+                    const plantDetail = getPlantDetail(plantName);
+                    if (!plantDetail) return null;
+                    return (
+                      <Card key={plantName} className="overflow-hidden">
+                        <PlantImageViewer
+                          scientificName={plantDetail.scientificName}
+                          commonName={plantDetail.commonName}
+                          badgeColor={plantDetail.badge.color}
+                          badgeText={plantDetail.badge.text}
+                        />
+                        <CardContent className="pt-4">
+                          <h4 className="font-bold text-gray-900 mb-1">{plantDetail.scientificName}</h4>
+                          <p className="text-sm text-gray-600 mb-2">{plantDetail.commonName}</p>
+                          <p className="text-xs text-gray-500 mb-3">
+                            {plantDetail.description}
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-7 px-2 w-full"
+                            disabled
+                          >
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                            Swap Plant (Coming Soon)
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -395,57 +349,36 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                   Flowers and foliage through the seasons
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <Card className="overflow-hidden">
-                    <PlantImageViewer
-                      scientificName="Geranium 'Rozanne'"
-                      commonName="Rozanne Cranesbill"
-                      badgeColor="bg-blue-600 text-white"
-                      badgeText="Long-flowering"
-                      
-                    />
-                    <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Geranium 'Rozanne'</h4>
-                      <p className="text-sm text-gray-600 mb-2">Rozanne Cranesbill</p>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Award-winning perennial with blue flowers from June-November. Low maintenance and reliable.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs h-7 px-2 w-full"
-                        disabled
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Swap Plant (Coming Soon)
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="overflow-hidden">
-                    <PlantImageViewer
-                      scientificName="Alchemilla mollis"
-                      commonName="Lady's Mantle"
-                      badgeColor="bg-blue-600 text-white"
-                      badgeText="Foliage"
-                      
-                    />
-                    <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Alchemilla mollis</h4>
-                      <p className="text-sm text-gray-600 mb-2">Lady's Mantle</p>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Soft chartreuse flowers and beautiful foliage. Perfect edge softener and incredibly tough.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs h-7 px-2 w-full"
-                        disabled
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Swap Plant (Coming Soon)
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  {plan.plantingPalette.seasonal.map((plantName) => {
+                    const plantDetail = getPlantDetail(plantName);
+                    if (!plantDetail) return null;
+                    return (
+                      <Card key={plantName} className="overflow-hidden">
+                        <PlantImageViewer
+                          scientificName={plantDetail.scientificName}
+                          commonName={plantDetail.commonName}
+                          badgeColor={plantDetail.badge.color}
+                          badgeText={plantDetail.badge.text}
+                        />
+                        <CardContent className="pt-4">
+                          <h4 className="font-bold text-gray-900 mb-1">{plantDetail.scientificName}</h4>
+                          <p className="text-sm text-gray-600 mb-2">{plantDetail.commonName}</p>
+                          <p className="text-xs text-gray-500 mb-3">
+                            {plantDetail.description}
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-7 px-2 w-full"
+                            disabled
+                          >
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                            Swap Plant (Coming Soon)
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -459,57 +392,36 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                   Suppresses weeds and completes the layers
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <Card className="overflow-hidden">
-                    <PlantImageViewer
-                      scientificName="Dryopteris filix-mas"
-                      commonName="Male Fern"
-                      badgeColor="bg-emerald-600 text-white"
-                      badgeText="Shade-tolerant"
-                      
-                    />
-                    <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Dryopteris filix-mas</h4>
-                      <p className="text-sm text-gray-600 mb-2">Male Fern</p>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Lush deciduous fern for shaded areas. Adds texture and architectural interest with minimal care.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs h-7 px-2 w-full"
-                        disabled
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Swap Plant (Coming Soon)
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="overflow-hidden">
-                    <PlantImageViewer
-                      scientificName="Ajuga reptans"
-                      commonName="Bugle"
-                      badgeColor="bg-emerald-600 text-white"
-                      badgeText="Ground cover"
-                      
-                    />
-                    <CardContent className="pt-4">
-                      <h4 className="font-bold text-gray-900 mb-1">Ajuga reptans</h4>
-                      <p className="text-sm text-gray-600 mb-2">Bugle</p>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Mat-forming ground cover with blue spring flowers. Suppresses weeds effectively.
-                      </p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-xs h-7 px-2 w-full"
-                        disabled
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Swap Plant (Coming Soon)
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  {plan.plantingPalette.groundCover.map((plantName) => {
+                    const plantDetail = getPlantDetail(plantName);
+                    if (!plantDetail) return null;
+                    return (
+                      <Card key={plantName} className="overflow-hidden">
+                        <PlantImageViewer
+                          scientificName={plantDetail.scientificName}
+                          commonName={plantDetail.commonName}
+                          badgeColor={plantDetail.badge.color}
+                          badgeText={plantDetail.badge.text}
+                        />
+                        <CardContent className="pt-4">
+                          <h4 className="font-bold text-gray-900 mb-1">{plantDetail.scientificName}</h4>
+                          <p className="text-sm text-gray-600 mb-2">{plantDetail.commonName}</p>
+                          <p className="text-xs text-gray-500 mb-3">
+                            {plantDetail.description}
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-7 px-2 w-full"
+                            disabled
+                          >
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                            Swap Plant (Coming Soon)
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               </div>
             </div>
