@@ -1,245 +1,229 @@
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Check, Sparkles } from 'lucide-react';
-import { LeadForm } from '@/components/LeadForm';
+import { Header, Footer, ArchitecturalCard, RevealSection } from '@/components/architectural';
+import { LeadCaptureForm } from '@/components/LeadCaptureForm';
 
 export const metadata = {
-  title: 'Pricing | PlantingPlans',
-  description: 'Simple, transparent pricing for professional planting plans. Get early access to PlantingPlans.'
+  title: 'Access Pricing | PlantingPlans',
+  description: 'PlantingPlans activation pass pricing. Designer results. DIY planting.'
 };
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-      {/* Header */}
-      <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-xl font-bold text-green-900">
-            <Sparkles className="h-6 w-6 text-green-600" />
-            PlantingPlans
-          </Link>
-          <Link href="/">
-            <Button variant="ghost">← Back to Home</Button>
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-dark text-mist">
+      <Header />
 
       {/* Hero */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <Badge className="bg-green-600 text-white">Simple Pricing</Badge>
-          <h1 className="text-5xl font-bold tracking-tight text-green-900">
-            Professional Plans. Clear Pricing.
-          </h1>
-          <p className="text-xl text-gray-600">
-            No hidden fees. No monthly subscriptions. Get early access to PlantingPlans Pro.
-          </p>
-        </div>
-      </section>
-
-      {/* Pricing Cards */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {/* Free (Current) */}
-          <Card className="relative">
-            <Badge className="absolute top-4 right-4 bg-blue-600 text-white">
-              Available Now
-            </Badge>
-            <CardHeader>
-              <CardTitle className="text-2xl">Free Access</CardTitle>
-              <div className="text-4xl font-bold mt-4">£0</div>
-              <CardDescription>Try it today, no payment required</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-3">
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Create unlimited planting plans</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>AI-powered plant selection</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>UK climate recommendations</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Access to 2,000+ plants</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>View example plans</span>
-                </li>
-              </ul>
-              <Link href="/create" className="block">
-                <Button className="w-full bg-green-600 hover:bg-green-700">
-                  Start Creating
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* DIY Pass (Coming Soon) */}
-          <Card className="relative border-2 border-gray-300">
-            <Badge className="absolute top-4 right-4 bg-yellow-600 text-white">
-              Coming in v2
-            </Badge>
-            <CardHeader>
-              <CardTitle className="text-2xl">DIY Pass</CardTitle>
-              <div className="text-4xl font-bold mt-4">
-                £79
-                <span className="text-base font-normal text-gray-600"> / 3 months</span>
-              </div>
-              <CardDescription>For keen gardeners</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-3">
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Everything in Free, plus:</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>5 plan generation credits</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>1 saved plan (permanent access)</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Monthly care reminders</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Designer marketplace access</span>
-                </li>
-              </ul>
-              <Button className="w-full" variant="outline" disabled>
-                Coming Soon
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Pro Pass (Coming Soon) */}
-          <Card className="relative border-2 border-green-600 shadow-xl">
-            <Badge className="absolute top-4 right-4 bg-green-600 text-white">
-              Most Popular
-            </Badge>
-            <CardHeader>
-              <CardTitle className="text-2xl">Pro Pass</CardTitle>
-              <div className="text-4xl font-bold mt-4">
-                £249
-                <span className="text-base font-normal text-gray-600"> / 3 months</span>
-              </div>
-              <CardDescription>For professionals & enthusiasts</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-3">
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Everything in DIY, plus:</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>20 plan generation credits</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>5 saved plans (permanent access)</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Priority support (24h response)</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Branded report generator</span>
-                </li>
-                <li className="flex gap-2">
-                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span>Cost calculator</span>
-                </li>
-              </ul>
-              <Button className="w-full bg-green-600 hover:bg-green-700" variant="outline" disabled>
-                Coming Soon
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Early Access Form */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Get Early Access</h2>
-            <p className="text-gray-600">
-              Be the first to know when PlantingPlans Pro launches. We'll send you exclusive early bird pricing.
+      <RevealSection className="pt-32 pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl uppercase tracking-wider font-bold text-mist">
+              ACCESS PRICING
+            </h1>
+            <p className="text-lg md:text-xl text-stone leading-relaxed max-w-2xl mx-auto">
+              We're launching PlantingPlans as an access product — because gardens change, seasons shift, and plans need continuity.
             </p>
           </div>
-
-          <LeadForm
-            type="pricing"
-            title="Join the Waitlist"
-            description="Get notified when we launch and receive exclusive early bird pricing."
-            fields={[
-              { name: 'name', label: 'Name', type: 'text', placeholder: 'John Smith', required: true },
-              { name: 'email', label: 'Email', type: 'email', placeholder: 'john@example.com', required: true },
-              { name: 'interest', label: 'Which plan interests you?', type: 'select', placeholder: '', required: true, options: ['DIY Pass (£79)', 'Pro Pass (£249)', 'Not sure yet'] },
-              { name: 'message', label: 'Anything you would like to tell us? (optional)', type: 'textarea', placeholder: 'I am planning a front garden redesign...' }
-            ]}
-          />
         </div>
-      </section>
+      </RevealSection>
+
+      {/* Access Tiers */}
+      <RevealSection className="py-20 bg-moss/20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {/* DIY ACCESS */}
+            <ArchitecturalCard
+              title="DIY ACCESS"
+              description="Plans, palettes, care rhythm, reminders, and a place to store your garden's 'brain'."
+              delay={0}
+            >
+              <div className="mt-6 space-y-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs uppercase tracking-widest text-copper font-bold">
+                    Launching
+                  </span>
+                </div>
+                <ul className="space-y-3 text-sm text-stone">
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>5 plan generation credits</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>1 saved plan (permanent access)</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Monthly care reminders</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Designer marketplace access</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>3 months access</span>
+                  </li>
+                </ul>
+              </div>
+            </ArchitecturalCard>
+
+            {/* PRO ACCESS */}
+            <ArchitecturalCard
+              title="PRO ACCESS"
+              description="Client-ready share links, revision workflows, critique tools, and a structured plan format you can sell."
+              delay={0.1}
+            >
+              <div className="mt-6 space-y-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs uppercase tracking-widest text-copper font-bold">
+                    Launching
+                  </span>
+                </div>
+                <ul className="space-y-3 text-sm text-stone">
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Everything in DIY, plus:</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>20 plan generation credits</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>5 saved plans (permanent access)</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Priority support (24h response)</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Branded report generator</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Cost calculator</span>
+                  </li>
+                </ul>
+              </div>
+            </ArchitecturalCard>
+
+            {/* ACTIVATION PASS */}
+            <ArchitecturalCard
+              title="ACTIVATION PASS"
+              description="One-time payment. No recurring fees. Plans in your vault stay forever."
+              delay={0.2}
+            >
+              <div className="mt-6 space-y-4">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs uppercase tracking-widest text-copper font-bold">
+                    Launching
+                  </span>
+                </div>
+                <ul className="space-y-3 text-sm text-stone">
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Pay once, use for 3 months</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Saved plans accessible forever</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>No subscription lock-in</span>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="text-copper font-mono">—</span>
+                    <span>Reactivate anytime</span>
+                  </li>
+                </ul>
+              </div>
+            </ArchitecturalCard>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* Early Access Form */}
+      <RevealSection className="py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-2xl mx-auto">
+            <LeadCaptureForm
+              type="pricing"
+              title="JOIN THE EARLY ACCESS LIST"
+              description="Be the first to know when we launch. Exclusive early bird pricing for founding members."
+            />
+          </div>
+        </div>
+      </RevealSection>
 
       {/* FAQ */}
-      <section className="container mx-auto px-4 pb-20 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+      <RevealSection className="py-20 bg-concrete/40">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="font-heading text-3xl md:text-4xl uppercase tracking-wider font-bold text-center mb-16">
+              FREQUENTLY ASKED QUESTIONS
+            </h2>
 
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-bold mb-2">What happens to my saved plans after 3 months?</h3>
-              <p className="text-gray-600">
-                Plans you've marked as "saved" remain accessible forever, even after your pass expires. Other plans show a summary view but full details require an active pass.
-              </p>
-            </div>
+            <div className="space-y-8">
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  What happens to my saved plans after 3 months?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Plans you've marked as "saved" remain accessible forever, even after your pass expires. Other plans show a summary view but full details require an active pass.
+                </p>
+              </div>
 
-            <div>
-              <h3 className="text-lg font-bold mb-2">Can I upgrade from DIY to Pro?</h3>
-              <p className="text-gray-600">
-                Yes! You can upgrade anytime and pay only the difference. Your expiry date stays the same.
-              </p>
-            </div>
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  Can I upgrade from DIY to Pro?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Yes! You can upgrade anytime and pay only the difference. Your expiry date stays the same.
+                </p>
+              </div>
 
-            <div>
-              <h3 className="text-lg font-bold mb-2">What's a plan generation credit?</h3>
-              <p className="text-gray-600">
-                Each credit generates one complete planting plan using AI. Plans include plant selection, care instructions, seasonal interest analysis, and supplier recommendations.
-              </p>
-            </div>
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  What's a plan generation credit?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Each credit generates one complete planting plan using AI. Plans include plant selection, care instructions, seasonal interest analysis, and supplier recommendations.
+                </p>
+              </div>
 
-            <div>
-              <h3 className="text-lg font-bold mb-2">Do you work with garden designers?</h3>
-              <p className="text-gray-600">
-                Yes! We partner with professional designers and offer tools that complement their services. Visit our <Link href="/designers" className="text-green-600 hover:underline">Designers page</Link> to learn more.
-              </p>
-            </div>
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  Do you work with garden designers?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Yes! We partner with professional designers and offer tools that complement their services. Visit our <a href="/designers" className="text-copper hover:text-[#D4A373] transition-colors underline">Designers page</a> to learn more.
+                </p>
+              </div>
 
-            <div>
-              <h3 className="text-lg font-bold mb-2">What are care reminders?</h3>
-              <p className="text-gray-600">
-                We send monthly emails with seasonal care tasks for your saved plans—pruning schedules, feeding reminders, and pest watch alerts specific to UK gardens.
-              </p>
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  What are care reminders?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  We send monthly emails with seasonal care tasks for your saved plans—pruning schedules, feeding reminders, and pest watch alerts specific to UK gardens.
+                </p>
+              </div>
+
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  Why not a subscription?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Gardens aren't monthly. An activation pass gives you focused time to plan, plant, and learn—without the pressure of recurring fees. Your saved plans stay with you permanently.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </RevealSection>
+
+      <Footer />
     </div>
   );
 }

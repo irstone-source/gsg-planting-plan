@@ -8,9 +8,10 @@ interface ArchitecturalCardProps {
   title: string;
   description: string;
   delay?: number;
+  children?: ReactNode;
 }
 
-export function ArchitecturalCard({ icon, title, description, delay = 0 }: ArchitecturalCardProps) {
+export function ArchitecturalCard({ icon, title, description, delay = 0, children }: ArchitecturalCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -34,6 +35,7 @@ export function ArchitecturalCard({ icon, title, description, delay = 0 }: Archi
       <p className="text-sm leading-relaxed text-stone">
         {description}
       </p>
+      {children}
     </motion.div>
   );
 }
