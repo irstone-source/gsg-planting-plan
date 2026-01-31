@@ -14,7 +14,7 @@ export const config = {
   ],
 };
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { searchParams, pathname } = new URL(request.url);
   const refCode = searchParams.get('ref');
 
