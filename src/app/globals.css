@@ -6,8 +6,18 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --font-mono: var(--font-mono);
+
+  /* Architectural Palette */
+  --color-dark: #0F1110;
+  --color-concrete: #1C1F1E;
+  --color-copper: #C08B5C;
+  --color-moss: #2E3B33;
+  --color-mist: #E4E4E7;
+  --color-stone: #71717A;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -37,48 +47,49 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 2px;
+  --radius-xl: 4px;
+  --radius-2xl: 6px;
+  --radius-3xl: 8px;
+  --radius-4xl: 12px;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --radius: 2px;
+  /* Architectural Dark Theme */
+  --background: oklch(0.09 0 0); /* Rich Dark */
+  --foreground: oklch(0.91 0 0); /* Mist */
+  --card: oklch(0.13 0 0 / 0.6); /* Concrete with transparency */
+  --card-foreground: oklch(0.91 0 0); /* Mist */
+  --popover: oklch(0.13 0 0); /* Concrete */
+  --popover-foreground: oklch(0.91 0 0); /* Mist */
+  --primary: oklch(0.67 0.08 60); /* Copper */
+  --primary-foreground: oklch(0.09 0 0); /* Rich Dark */
+  --secondary: oklch(0.24 0.03 150); /* Moss */
+  --secondary-foreground: oklch(0.91 0 0); /* Mist */
+  --muted: oklch(0.24 0.03 150); /* Moss */
+  --muted-foreground: oklch(0.50 0 0); /* Stone */
+  --accent: oklch(0.67 0.08 60); /* Copper */
+  --accent-foreground: oklch(0.09 0 0); /* Rich Dark */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(1 0 0 / 0.05); /* White with low opacity */
+  --input: oklch(1 0 0 / 0.1); /* White with low opacity */
+  --ring: oklch(0.67 0.08 60); /* Copper */
+  --chart-1: oklch(0.67 0.08 60);
+  --chart-2: oklch(0.24 0.03 150);
+  --chart-3: oklch(0.50 0 0);
+  --chart-4: oklch(0.91 0 0);
+  --chart-5: oklch(0.13 0 0);
+  --sidebar: oklch(0.09 0 0);
+  --sidebar-foreground: oklch(0.91 0 0);
+  --sidebar-primary: oklch(0.67 0.08 60);
+  --sidebar-primary-foreground: oklch(0.09 0 0);
+  --sidebar-accent: oklch(0.24 0.03 150);
+  --sidebar-accent-foreground: oklch(0.91 0 0);
+  --sidebar-border: oklch(1 0 0 / 0.05);
+  --sidebar-ring: oklch(0.67 0.08 60);
 }
 
 .dark {
@@ -120,6 +131,20 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Global Noise Texture Overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.05;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }

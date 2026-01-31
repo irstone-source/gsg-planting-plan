@@ -1,55 +1,46 @@
-# GSG Planting Plan Generator
+# PlantingPlans - Architectural Vision for UK Gardens
 
-AI-powered planting plan generator for UK gardens. Upload site photos, share preferences, and receive professional planting recommendations with real supplier availability.
+**Designer results. DIY planting.**
 
-## 🚀 5-Day Sprint Plan
+AI-powered planting plan generator for UK gardens. Precision planting plans built around your light, soil, and lifestyle - so what you plant thrives and the design looks intentional from day one.
 
-### ✅ Day 1: Project Setup & Foundation (CURRENT)
-- [x] Next.js 14 project with TypeScript
-- [x] Tailwind CSS + shadcn/ui components
-- [x] Supabase configuration
-- [x] Landing page with hero and features
-- [x] Multi-step form (images, site details, preferences)
-- [x] Database schema design
-- [ ] Test local development setup
-- [ ] Deploy to Vercel (optional)
+## ✨ Current Status
 
-### 📋 Day 2: Vision + Analysis Agents
-- [ ] Claude Vision API integration
-- [ ] Image upload to storage
-- [ ] Site analysis from photos (light, space, features)
-- [ ] Postcode to RHS zone conversion
-- [ ] Store analysis results in database
+### ✅ Core Features (Live)
+- [x] Architectural design system (Aman-inspired aesthetic)
+- [x] Homepage with examples and CTAs
+- [x] Multi-step plan generator with AI
+- [x] Claude Vision API for site analysis
+- [x] Plant database with AI matching
+- [x] Lead capture forms
+- [x] Example plans gallery
+- [x] Professional tools hub
+- [x] Marketing pages (pricing, designers, partners, affiliate)
+- [x] Error handling (custom 404, error boundaries)
 
-### 📋 Day 3: Plant Database + Matching
-- [ ] Import Wyevale Nurseries plant data
-- [ ] Plant matching algorithm (conditions, style, budget)
-- [ ] Database queries with filters
-- [ ] Recommendation generation logic
-- [ ] Cost calculation
+### 🚧 In Progress
+- [ ] Stripe payment integration (prepared but not live)
+- [ ] User dashboard with vault feature
+- [ ] Designer marketplace
+- [ ] Partner redemption system
+- [ ] Affiliate program tracking
 
-### 📋 Day 4: PDF Generation + Output
-- [ ] Planting plan layout design
-- [ ] @react-pdf/renderer implementation
-- [ ] Include plant details, positioning, rationale
-- [ ] Download/email functionality
-- [ ] Results page UI
-
-### 📋 Day 5: Integration + Polish
-- [ ] End-to-end testing
-- [ ] Error handling and validation
-- [ ] Loading states and UX polish
-- [ ] Mobile responsiveness
-- [ ] Production deployment
+### 🎯 Next Priorities
+- [ ] Complete architectural rebrand of all pages
+- [ ] QA testing and deployment to Vercel
+- [ ] Launch MVP with lead capture
+- [ ] Activate affiliate program
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 14 (App Router)
-- **UI**: Tailwind CSS + shadcn/ui
+- **Framework**: Next.js 16.1.6 (App Router, Turbopack)
+- **UI**: Tailwind CSS 4 + Framer Motion
+- **Design System**: Architectural (Space Grotesk, Manrope, JetBrains Mono)
 - **Database**: Supabase (PostgreSQL)
-- **AI**: Claude 3.5 Sonnet (Anthropic)
-- **PDF**: @react-pdf/renderer
-- **Forms**: react-hook-form + zod
+- **Auth**: Supabase Auth (Magic Links)
+- **AI**: Claude Sonnet 4.5 (Anthropic)
+- **Payments**: Stripe (prepared)
+- **Email**: Resend (prepared)
 - **Deployment**: Vercel
 
 ## 📁 Project Structure
@@ -80,24 +71,46 @@ gsg-planting-plan/
 └── .env.local                   # Environment variables
 ```
 
-## 🚦 Getting Started
+## 🚦 Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
 - npm or yarn
-- Supabase account
-- Anthropic API key
+- Supabase account (free tier works)
+- Anthropic API key (Claude Sonnet 4.5)
 
 ### Installation
 
-1. **Clone and install dependencies**:
+1. **Install dependencies**:
    ```bash
-   cd gsg-planting-plan
    npm install
    ```
 
-2. **Set up environment variables**:
+2. **Set up environment variables** (create `.env.local`):
+   ```bash
+   # Required for plan generation
+   ANTHROPIC_API_KEY=sk-ant-...
+
+   # Required for database and auth
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
+
+   # Required for app URLs
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+   # Optional: Email notifications (Resend)
+   RESEND_API_KEY=re_...
+   ADMIN_EMAIL=admin@plantingplans.co.uk
+
+   # Optional: Payments (Stripe - not required for MVP)
+   STRIPE_SECRET_KEY=sk_test_...
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+   STRIPE_WEBHOOK_SECRET=whsec_...
+
+   # Optional: Cron jobs
+   CRON_SECRET=your-random-secret
+   ```
    ```bash
    cp .env.local.example .env.local
    ```
@@ -108,16 +121,22 @@ gsg-planting-plan/
    - `ANTHROPIC_API_KEY`: Your Claude API key
 
 3. **Set up Supabase database**:
-   - Create a new Supabase project
-   - Run the SQL from `supabase-schema.sql` in the SQL Editor
-   - Import plant data (coming in Day 3)
+   - Create a new Supabase project at [supabase.com](https://supabase.com)
+   - Go to SQL Editor and run the SQL from `supabase-schema.sql`
+   - Minimum required tables: `inbound_leads`, `user_profiles`, `planting_plans`
 
 4. **Run development server**:
    ```bash
    npm run dev
    ```
-
    Open [http://localhost:3000](http://localhost:3000)
+
+5. **Build and test** (before deploying):
+   ```bash
+   npm run build           # Verify build passes
+   npm run check-links     # Check for broken internal links
+   npm run deploy-check    # Run all pre-deployment checks
+   ```
 
 ## 🗄️ Database Schema
 
@@ -147,15 +166,77 @@ gsg-planting-plan/
   - Rationale
   - Cost snapshot
 
-## 🎨 Features
+## 🚀 Deployment
 
-### MVP (5-Day Sprint)
-- ✅ Photo upload interface
-- ✅ Multi-step form (location, conditions, preferences)
-- ⏳ Claude Vision site analysis
-- ⏳ Plant matching based on conditions
-- ⏳ PDF planting plan generation
-- ⏳ Real supplier availability
+This app is designed to deploy to Vercel. See **[docs/DEPLOY.md](docs/DEPLOY.md)** for:
+
+- Complete environment variable checklist
+- Supabase setup instructions
+- Pre-deployment verification steps
+- Post-deployment smoke tests
+- Common issues and solutions
+
+### Quick Deploy
+
+1. **Push to GitHub** (if not already done)
+2. **Import to Vercel**:
+   - Go to [vercel.com](https://vercel.com)
+   - Click "Add New" → "Project"
+   - Import your repository
+3. **Add environment variables** in Vercel Project Settings
+4. **Deploy** and verify critical routes work
+
+See [docs/DEPLOY.md](docs/DEPLOY.md) for detailed instructions.
+
+## 🧪 Testing & QA
+
+### Pre-Deployment Checks
+
+Run these commands before deploying:
+
+```bash
+# 1. Verify build passes
+npm run build
+
+# 2. Check for broken internal links
+npm run check-links
+
+# 3. Run all checks together
+npm run deploy-check
+```
+
+### Manual Smoke Tests
+
+After deployment, verify these routes:
+
+- [ ] Homepage loads with hero and CTAs
+- [ ] `/examples/hub` shows example plans
+- [ ] `/pricing` shows pricing and lead form
+- [ ] `/create` plan generator loads
+- [ ] Lead form submission works
+- [ ] Custom 404 page shows on invalid routes
+- [ ] No console errors (except optional warnings)
+
+## 🎨 Key Features
+
+### For DIY Gardeners
+- ✅ AI-powered plan generation (Claude Sonnet 4.5)
+- ✅ Photo analysis with Vision API
+- ✅ UK-specific climate and plant recommendations
+- ✅ Example plans gallery with 14+ curated plans
+- ✅ Progressive preference refinement
+- 🚧 Care reminders and seasonal prompts (planned)
+- 🚧 Plant substitution suggestions (planned)
+
+### For Professionals
+- ✅ Professional tools hub
+- ✅ Bulk plant image generation
+- ✅ AI plan critique
+- ✅ Plant image library (52+ plants)
+- ✅ Cost calculator
+- ✅ Client portal with password protection
+- 🚧 Branded report generator (planned)
+- 🚧 Designer marketplace (planned)
 
 ### Future Enhancements
 - Moodboard generation
