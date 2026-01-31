@@ -1,214 +1,255 @@
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Sparkles, Users, FileText, Share2, Eye, Zap } from 'lucide-react';
-import { LeadForm } from '@/components/LeadForm';
+import { Header, Footer, ArchitecturalCard, RevealSection } from '@/components/architectural';
+import { LeadCaptureForm } from '@/components/LeadCaptureForm';
 
 export const metadata = {
   title: 'For Designers | PlantingPlans',
-  description: 'Join PlantingPlans as a garden designer. Get client-ready plan formats, share links, and visibility to UK homeowners.'
+  description: 'Join PlantingPlans as a garden designer. 80% commission on all plans sold. Infrastructure that amplifies professional horticulture.'
 };
 
 export default function DesignersPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-      {/* Header */}
-      <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-xl font-bold text-green-900">
-            <Sparkles className="h-6 w-6 text-green-600" />
-            PlantingPlans
-          </Link>
-          <Link href="/">
-            <Button variant="ghost">← Back to Home</Button>
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-dark text-mist">
+      <Header />
 
       {/* Hero */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <Badge className="bg-purple-600 text-white">For Garden Designers</Badge>
-          <h1 className="text-5xl font-bold tracking-tight text-gray-900">
-            We Amplify Designers. We Don't Replace Them.
-          </h1>
-          <p className="text-xl text-gray-600">
-            Join our network and get client-ready plan formats, shareable links, revision tools, and visibility to UK homeowners.
-          </p>
-        </div>
-      </section>
-
-      {/* Trust Message */}
-      <section className="container mx-auto px-4 pb-12">
-        <Card className="max-w-3xl mx-auto bg-purple-50 border-purple-200">
-          <CardContent className="pt-6">
-            <p className="text-lg text-center text-purple-900">
-              PlantingPlans supports professional designers by providing tools that complement—not replace—your expertise.
-              We believe great gardens need a designer's vision, and we're here to make your workflow smoother.
+      <RevealSection className="pt-32 pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl uppercase tracking-wider font-bold text-mist">
+              WE AMPLIFY DESIGNERS
+            </h1>
+            <p className="text-lg md:text-xl text-stone leading-relaxed max-w-2xl mx-auto">
+              PlantingPlans is infrastructure: faster planning, clearer client delivery, and a structured format designers can sell and reuse.
             </p>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* Benefits */}
-      <section className="container mx-auto px-4 pb-16">
-        <h2 className="text-3xl font-bold text-center mb-12">Why Designers Join PlantingPlans</h2>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <Card>
-            <CardHeader>
-              <FileText className="h-12 w-12 text-purple-600 mb-3" />
-              <CardTitle>Client-Ready Formats</CardTitle>
-              <CardDescription>
-                Transform your designs into polished, shareable plans with plant specifications, care guides, and seasonal interest analysis.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Share2 className="h-12 w-12 text-blue-600 mb-3" />
-              <CardTitle>Shareable Links</CardTitle>
-              <CardDescription>
-                Send secure links to clients for feedback and approval. Track revisions and keep everyone aligned throughout the project.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <Eye className="h-12 w-12 text-green-600 mb-3" />
-              <CardTitle>Visibility</CardTitle>
-              <CardDescription>
-                Get featured in our designer directory. Reach UK homeowners actively looking for professional garden design services.
-              </CardDescription>
-            </CardHeader>
-          </Card>
+            <p className="text-sm uppercase tracking-widest text-copper">
+              Built with—not against—professionals
+            </p>
+          </div>
         </div>
-      </section>
+      </RevealSection>
+
+      {/* Value Proposition */}
+      <RevealSection className="py-20 bg-moss/20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto bg-concrete/60 backdrop-blur-md border border-white/5 p-12">
+            <h2 className="font-heading text-2xl md:text-3xl uppercase tracking-wider font-bold text-center mb-8">
+              WHAT YOU GET
+            </h2>
+            <div className="space-y-6 text-stone">
+              <div className="flex gap-4 items-start">
+                <span className="text-copper font-mono text-2xl">80%</span>
+                <p className="leading-relaxed">
+                  You keep 80% of every plan you sell through the platform. We handle payments, hosting, and delivery. You focus on design.
+                </p>
+              </div>
+              <div className="flex gap-4 items-start">
+                <span className="text-copper font-mono">—</span>
+                <p className="leading-relaxed">
+                  Structured plan format: planting palettes, spacing logic, care rhythm, seasonal prompts—ready for client handoff.
+                </p>
+              </div>
+              <div className="flex gap-4 items-start">
+                <span className="text-copper font-mono">—</span>
+                <p className="leading-relaxed">
+                  Client portal: shareable links, revision tracking, password protection, expiring access—professional delivery without custom dev.
+                </p>
+              </div>
+              <div className="flex gap-4 items-start">
+                <span className="text-copper font-mono">—</span>
+                <p className="leading-relaxed">
+                  Visibility: featured in designer directory, seen by UK homeowners actively looking for professional guidance.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </RevealSection>
 
       {/* How It Works */}
-      <section className="container mx-auto px-4 py-16 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+      <RevealSection className="py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="font-heading text-3xl md:text-4xl uppercase tracking-wider font-bold text-center mb-16">
+              YOUR WORKFLOW
+            </h2>
 
-          <div className="space-y-8">
-            <div className="flex gap-6">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xl">
-                1
+            <div className="space-y-12">
+              <div className="flex gap-6 items-start">
+                <div className="w-20 h-20 border-2 border-copper/30 flex items-center justify-center relative flex-shrink-0">
+                  <span className="font-mono text-2xl font-bold text-copper">01</span>
+                  <div className="absolute -top-1 -left-1 w-3 h-3 border-l-2 border-t-2 border-copper"></div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 border-r-2 border-t-2 border-copper"></div>
+                  <div className="absolute -bottom-1 -left-1 w-3 h-3 border-l-2 border-b-2 border-copper"></div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 border-r-2 border-b-2 border-copper"></div>
+                </div>
+                <div>
+                  <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-mist mb-3">
+                    Apply & Get Approved
+                  </h3>
+                  <p className="text-stone leading-relaxed">
+                    Submit your portfolio, credentials, and service areas. Most applications approved within 48 hours. We verify professional credentials and design quality.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2">Apply to Join</h3>
-                <p className="text-gray-600">
-                  Fill out the application form below. We review your portfolio and verify your credentials. Most applications are approved within 48 hours.
-                </p>
-              </div>
-            </div>
 
-            <div className="flex gap-6">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xl">
-                2
+              <div className="flex gap-6 items-start">
+                <div className="w-20 h-20 border-2 border-copper/30 flex items-center justify-center relative flex-shrink-0">
+                  <span className="font-mono text-2xl font-bold text-copper">02</span>
+                  <div className="absolute -top-1 -left-1 w-3 h-3 border-l-2 border-t-2 border-copper"></div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 border-r-2 border-t-2 border-copper"></div>
+                  <div className="absolute -bottom-1 -left-1 w-3 h-3 border-l-2 border-b-2 border-copper"></div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 border-r-2 border-b-2 border-copper"></div>
+                </div>
+                <div>
+                  <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-mist mb-3">
+                    Create & List Plans
+                  </h3>
+                  <p className="text-stone leading-relaxed">
+                    Upload your planting plans in our structured format. Set your pricing. Control visibility and featured images. Plans appear in designer marketplace and search results.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2">Create Your Profile</h3>
-                <p className="text-gray-600">
-                  Set up your designer profile with portfolio images, service areas, specialties, and pricing. You control what clients see.
-                </p>
-              </div>
-            </div>
 
-            <div className="flex gap-6">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xl">
-                3
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2">Get Leads & Collaborate</h3>
-                <p className="text-gray-600">
-                  Receive qualified leads from homeowners in your service area. Use our tools to share plans, gather feedback, and manage revisions.
-                </p>
+              <div className="flex gap-6 items-start">
+                <div className="w-20 h-20 border-2 border-copper/30 flex items-center justify-center relative flex-shrink-0">
+                  <span className="font-mono text-2xl font-bold text-copper">03</span>
+                  <div className="absolute -top-1 -left-1 w-3 h-3 border-l-2 border-t-2 border-copper"></div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 border-r-2 border-t-2 border-copper"></div>
+                  <div className="absolute -bottom-1 -left-1 w-3 h-3 border-l-2 border-b-2 border-copper"></div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 border-r-2 border-b-2 border-copper"></div>
+                </div>
+                <div>
+                  <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-mist mb-3">
+                    Receive Leads & Payments
+                  </h3>
+                  <p className="text-stone leading-relaxed">
+                    Get qualified leads from homeowners in your service areas. When clients purchase your plans, payments processed automatically. 80% paid out monthly. No invoicing, no chasing.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </RevealSection>
 
-      {/* Features */}
-      <section className="container mx-auto px-4 pb-16">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-4">Designer Tools</h2>
-          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-            Everything you need to streamline your workflow and deliver exceptional client experiences.
-          </p>
+      {/* Benefits Grid */}
+      <RevealSection className="py-20 bg-moss/20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto mb-12 text-center">
+            <h2 className="font-heading text-3xl md:text-4xl uppercase tracking-wider font-bold mb-6">
+              DESIGNED FOR PROFESSIONALS
+            </h2>
+            <p className="text-stone text-lg">
+              Tools that complement—not replace—your expertise and workflow.
+            </p>
+          </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-2 border-purple-100">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-purple-600" />
-                  Quick Concept Generation
-                </CardTitle>
-                <CardDescription>
-                  Use AI to rapidly explore planting concepts. Test ideas in minutes, not hours. You stay in creative control.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-2 border-blue-100">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-blue-600" />
-                  Professional Reports
-                </CardTitle>
-                <CardDescription>
-                  Generate branded PDFs with your logo, custom colors, and professional layouts. Impress clients from first contact.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-2 border-green-100">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Share2 className="h-5 w-5 text-green-600" />
-                  Client Collaboration
-                </CardTitle>
-                <CardDescription>
-                  Share live links with clients. They can comment, request changes, and approve designs—all in one place.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="border-2 border-orange-100">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-orange-600" />
-                  Lead Generation
-                </CardTitle>
-                <CardDescription>
-                  Get featured in our designer directory. Connect with homeowners actively seeking professional design services.
-                </CardDescription>
-              </CardHeader>
-            </Card>
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <ArchitecturalCard
+              title="CLIENT PORTALS"
+              description="Share plans via secure links. Password protection, expiring access (1-90 days), client comments, and approval workflow built in."
+              delay={0}
+            />
+            <ArchitecturalCard
+              title="REVISION TRACKING"
+              description="Version control for planting plans. Track changes, revert if needed, and keep clients aligned throughout the project."
+              delay={0.1}
+            />
+            <ArchitecturalCard
+              title="CRITIQUE TOOLS"
+              description="AI-powered plan review: compatibility analysis, seasonal interest assessment, maintenance estimates. Use before client handoff."
+              delay={0.2}
+            />
+            <ArchitecturalCard
+              title="MARKETPLACE VISIBILITY"
+              description="Featured in designer directory with portfolio, service areas, specialties, and pricing. Reach homeowners actively seeking professional design."
+              delay={0.3}
+            />
           </div>
         </div>
-      </section>
+      </RevealSection>
 
       {/* Application Form */}
-      <section className="container mx-auto px-4 pb-20">
-        <LeadForm
-          type="designer"
-          title="Apply to Join"
-          description="Tell us about your design practice. We'll review your application and get back to you within 48 hours."
-          fields={[
-            { name: 'name', label: 'Your Name', type: 'text', placeholder: 'Sarah Johnson', required: true },
-            { name: 'email', label: 'Email', type: 'email', placeholder: 'sarah@gardendesigns.co.uk', required: true },
-            { name: 'region', label: 'Service Region', type: 'text', placeholder: 'Greater London', required: true },
-            { name: 'website', label: 'Website or Instagram', type: 'text', placeholder: '@yourhandle or yoursite.com' },
-            { name: 'services', label: 'Services You Offer', type: 'textarea', placeholder: 'Full garden design, planting plans, consultation...', required: true },
-            { name: 'message', label: 'Tell us about your design approach (optional)', type: 'textarea', placeholder: 'I specialize in naturalistic planting with a focus on wildlife...' }
-          ]}
-        />
-      </section>
+      <RevealSection className="py-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="font-heading text-3xl md:text-4xl uppercase tracking-wider font-bold mb-6">
+                REQUEST DESIGNER ACCESS
+              </h2>
+              <p className="text-stone text-lg">
+                Join our network of professional garden designers. 80% commission. Full infrastructure support.
+              </p>
+            </div>
+
+            <LeadCaptureForm
+              type="designer"
+              title="APPLY TO JOIN"
+              description="We'll review your application and respond within 48 hours. Please include your portfolio or website."
+            />
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* FAQ */}
+      <RevealSection className="py-20 bg-concrete/40">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="font-heading text-3xl md:text-4xl uppercase tracking-wider font-bold text-center mb-16">
+              FREQUENTLY ASKED QUESTIONS
+            </h2>
+
+            <div className="space-y-8">
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  Do I need to be RHS qualified?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Not required, but we do verify professional credentials. We look for design portfolio, client testimonials, and demonstrated horticultural knowledge.
+                </p>
+              </div>
+
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  How much can I charge for plans?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  You set your own pricing. Typical range: £150-£500 per plan depending on complexity, size, and your experience level. Platform suggests pricing based on market rates.
+                </p>
+              </div>
+
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  What if I already have my own clients?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Perfect. Use PlantingPlans tools for your existing clients (client portals, structured formats, critique tools) and optionally list plans for new leads through the marketplace.
+                </p>
+              </div>
+
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  Can I sell the same plan multiple times?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  Yes. Create template plans for common scenarios (e.g., "Cottage Garden Border", "Urban Balcony Collection") and sell to multiple clients. Reusable formats = better margins.
+                </p>
+              </div>
+
+              <div className="bg-concrete/60 backdrop-blur-md border border-white/5 p-8">
+                <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
+                  Is this a full-time business opportunity?
+                </h3>
+                <p className="text-stone leading-relaxed">
+                  It can be. Some designers earn £2-5K/month from platform sales alone. Others use it as supplementary income alongside site visits and full-garden designs.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </RevealSection>
+
+      <Footer />
     </div>
   );
 }
