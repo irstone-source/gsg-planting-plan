@@ -65,7 +65,7 @@ export function LeadCaptureForm({ type, title, description }: LeadCaptureFormPro
           REQUEST RECEIVED
         </h3>
         <p className="text-stone">
-          We'll be in touch within 24 hours.
+          We&apos;ll be in touch within 24 hours.
         </p>
       </motion.div>
     );
