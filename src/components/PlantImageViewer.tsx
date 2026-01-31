@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from 'react';
 import { ExternalLink, Camera } from 'lucide-react';
 import Image from 'next/image';
 
@@ -15,15 +14,21 @@ interface PlantImageViewerProps {
 
 export function PlantImageViewer({ scientificName, commonName, badgeColor, badgeText }: PlantImageViewerProps) {
   const googleSearchQuery = `${scientificName} ${commonName}`.replace(/ /g, '+');
-
-  // Convert scientific name to slug for image paths
   const plantSlug = scientificName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-  // State for view and maturity selection
   const [view, setView] = useState<'top' | 'front' | 'side'>('front');
   const [maturity, setMaturity] = useState<1 | 3 | 5>(3);
+  const [imageError, setImageError] = useState(false);
+  const [selectedThumbnail, setSelectedThumbnail] = useState(0);
 
-  // Determine image path
+  // Generate Wikimedia Commons image URLs for plant thumbnails
+  const thumbnailImages = [
+    `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(scientificName)}_001.jpg?width=300`,
+    `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(scientificName)}_flowers.jpg?width=300`,
+    `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(scientificName)}_leaves.jpg?width=300`,
+    `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(scientificName)}_habit.jpg?width=300`,
+  ];
+
   const getImagePath = () => {
     if (view === 'front' && maturity === 3) {
       return `/plants/${plantSlug}/main.jpg`;
@@ -31,163 +36,138 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
     return `/plants/${plantSlug}/${view}-${maturity}yr.jpg`;
   };
 
-  // Generate a consistent color based on plant name for fallback
-  const getGradientColors = (name: string) => {
-    const colors = [
-      ['from-emerald-100', 'to-green-50'],
-      ['from-green-100', 'to-teal-50'],
-      ['from-lime-100', 'to-green-50'],
-      ['from-cyan-100', 'to-emerald-50'],
-      ['from-teal-100', 'to-green-50'],
-      ['from-green-100', 'to-lime-50'],
-      ['from-emerald-100', 'to-cyan-50'],
-    ];
-    const index = name.length % colors.length;
-    return colors[index];
-  };
-
-  const [fromColor, toColor] = getGradientColors(scientificName);
-  const [imageError, setImageError] = useState(false);
-
   return (
-    <div>
-      {/* Image Display */}
-      <div className="relative h-48 bg-gray-50 overflow-hidden">
+    <div className="bg-dark/30 border border-white/5">
+      {/* Main Image Display */}
+      <div className="relative h-64 bg-dark overflow-hidden">
         {!imageError ? (
           <Image
             src={getImagePath()}
             alt={`${scientificName} (${commonName}) - ${view} view, ${maturity} years`}
             fill
-            className="object-contain"
+            className="object-cover"
             onError={() => setImageError(true)}
           />
         ) : (
-          // Gradient fallback if image not yet generated
           <a
             href={`https://www.google.com/search?q=${googleSearchQuery}&tbm=isch`}
             target="_blank"
             rel="noopener noreferrer"
-            className={`relative h-full bg-gradient-to-br ${fromColor} ${toColor} block group cursor-pointer`}
+            className="relative h-full bg-gradient-to-br from-moss/20 to-dark block group cursor-pointer"
           >
             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-              <Camera className="h-12 w-12 text-green-300 mb-3 opacity-40" />
-              <p className="text-lg font-bold text-green-900 mb-1 italic">{scientificName}</p>
-              <p className="text-sm text-green-700">{commonName}</p>
-              <p className="text-xs text-green-600 mt-2">Image generating...</p>
+              <Camera className="h-12 w-12 text-copper/40 mb-3" aria-hidden="true" />
+              <p className="text-lg font-heading font-bold text-mist mb-1 italic">{scientificName}</p>
+              <p className="text-sm text-copper uppercase tracking-wider">{commonName}</p>
+              <p className="text-xs text-stone mt-2">Click to view images</p>
             </div>
 
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all flex items-center justify-center pointer-events-none">
-              <span className="text-green-900 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-white bg-opacity-90 px-4 py-2 rounded-lg shadow-lg">
-                Click to view images →
-              </span>
-            </div>
+            <div className="absolute inset-0 bg-copper bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300" />
           </a>
         )}
 
-        {/* Badge */}
-        <div className="absolute top-2 right-2 z-10">
-          <Badge className={badgeColor}>{badgeText}</Badge>
+        {/* Badge - Architectural Styling */}
+        <div className="absolute top-3 right-3 z-10">
+          <span className={`${badgeColor} px-3 py-1 text-xs font-heading uppercase tracking-wider`}>
+            {badgeText}
+          </span>
         </div>
       </div>
 
-      {/* View and Maturity Controls */}
-      <div className="bg-white border-t px-3 py-3 space-y-2">
+      {/* Thumbnail Strip */}
+      <div className="bg-concrete/40 border-t border-white/5 p-3">
+        <div className="grid grid-cols-4 gap-2">
+          {thumbnailImages.map((thumbUrl, idx) => (
+            <button
+              key={idx}
+              onClick={() => setSelectedThumbnail(idx)}
+              className={`relative h-16 overflow-hidden transition-all duration-300 ${
+                selectedThumbnail === idx
+                  ? 'ring-2 ring-copper'
+                  : 'ring-1 ring-white/10 hover:ring-copper/50'
+              }`}
+            >
+              <Image
+                src={thumbUrl}
+                alt={`${scientificName} view ${idx + 1}`}
+                fill
+                className="object-cover"
+                onError={(e) => {
+                  // Fallback to gradient placeholder
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-moss/20 to-dark/60" />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* View and Maturity Controls - Architectural Styling */}
+      <div className="bg-dark/50 border-t border-white/5 px-4 py-4 space-y-3">
         {/* View Selection */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-600 w-16">View:</span>
-          <div className="flex gap-1 flex-1">
-            <button
-              onClick={() => setView('top')}
-              className={`px-2 py-1 text-xs rounded ${
-                view === 'top'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Top
-            </button>
-            <button
-              onClick={() => setView('front')}
-              className={`px-2 py-1 text-xs rounded ${
-                view === 'front'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Front
-            </button>
-            <button
-              onClick={() => setView('side')}
-              className={`px-2 py-1 text-xs rounded ${
-                view === 'side'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Side
-            </button>
+        <div className="flex items-center gap-3">
+          <span className="text-xs uppercase tracking-wider text-stone font-heading w-16">View:</span>
+          <div className="flex gap-2 flex-1">
+            {(['top', 'front', 'side'] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`px-3 py-1.5 text-xs uppercase tracking-wider font-heading transition-all duration-300 ${
+                  view === v
+                    ? 'bg-copper text-dark'
+                    : 'bg-dark/50 border border-white/10 text-stone hover:border-copper hover:text-copper'
+                }`}
+              >
+                {v}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Maturity Selection */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-600 w-16">Growth:</span>
-          <div className="flex gap-1 flex-1">
-            <button
-              onClick={() => setMaturity(1)}
-              className={`px-2 py-1 text-xs rounded ${
-                maturity === 1
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              1 Year
-            </button>
-            <button
-              onClick={() => setMaturity(3)}
-              className={`px-2 py-1 text-xs rounded ${
-                maturity === 3
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              3 Years
-            </button>
-            <button
-              onClick={() => setMaturity(5)}
-              className={`px-2 py-1 text-xs rounded ${
-                maturity === 5
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              5 Years
-            </button>
+        <div className="flex items-center gap-3">
+          <span className="text-xs uppercase tracking-wider text-stone font-heading w-16">Growth:</span>
+          <div className="flex gap-2 flex-1">
+            {([1, 3, 5] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMaturity(m)}
+                className={`px-3 py-1.5 text-xs uppercase tracking-wider font-heading transition-all duration-300 ${
+                  maturity === m
+                    ? 'bg-copper text-dark'
+                    : 'bg-dark/50 border border-white/10 text-stone hover:border-copper hover:text-copper'
+                }`}
+              >
+                {m} Year{m > 1 ? 's' : ''}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* External Links */}
-      <div className="bg-gray-50 border-t px-3 py-2">
-        <div className="flex items-center justify-center gap-3 text-xs">
-          <span className="text-gray-600">More info:</span>
+      {/* External Links - Architectural Styling */}
+      <div className="bg-dark/30 border-t border-white/5 px-4 py-3">
+        <div className="flex items-center justify-center gap-4 text-xs">
+          <span className="text-stone uppercase tracking-wider font-heading">More info:</span>
           <a
             href={`https://www.google.com/search?q=${googleSearchQuery}&tbm=isch`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1"
+            className="text-copper hover:text-mist font-heading uppercase tracking-wider flex items-center gap-1.5 transition-colors duration-300"
           >
-            <ExternalLink className="h-3 w-3" />
+            <ExternalLink className="h-3 w-3" aria-hidden="true" />
             Google Images
           </a>
-          <span className="text-gray-400">|</span>
+          <span className="text-white/10">|</span>
           <a
             href={`https://www.rhs.org.uk/plants/search-results?query=${scientificName.replace(/ /g, '+')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+            className="text-copper hover:text-mist font-heading uppercase tracking-wider flex items-center gap-1.5 transition-colors duration-300"
           >
-            <ExternalLink className="h-3 w-3" />
+            <ExternalLink className="h-3 w-3" aria-hidden="true" />
             RHS Plant Finder
           </a>
         </div>
