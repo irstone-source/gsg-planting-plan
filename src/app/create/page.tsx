@@ -7,18 +7,35 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CreatePage() {
-  const supabase = createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+export default async function CreatePage({
+  searchParams,
+}: {
+  searchParams: { style?: string };
+}) {
+  const authSupabase = createServerClient();
+  const { data: { user } } = await authSupabase.auth.getUser();
 
   if (!user) {
     redirect('/auth/login?redirect=/create');
   }
 
   const entitlements = await checkEntitlements(user.id);
+
+  // Fetch designer style if provided
+  let designerStyle = null;
+  if (searchParams.style) {
+    const { data } = await supabase
+      .from('designer_styles')
+      .select('id, slug, name, designer_name, style_category, design_principles')
+      .eq('slug', searchParams.style)
+      .single();
+
+    designerStyle = data;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
@@ -96,7 +113,28 @@ export default async function CreatePage() {
                 Generate a professional planting plan using AI. This will consume 1 credit.
               </p>
             </div>
-            <PlantingPlanForm />
+
+            {/* Designer Style Badge */}
+            {designerStyle && (
+              <Card className="mb-6 border-2 border-green-200 bg-green-50">
+                <CardContent className="pt-6 flex items-start gap-4">
+                  <Sparkles className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg mb-1">Style Selected: {designerStyle.name}</h3>
+                    {designerStyle.designer_name && (
+                      <p className="text-sm text-gray-700 mb-2">
+                        Inspired by {designerStyle.designer_name}
+                      </p>
+                    )}
+                    <p className="text-sm text-gray-600">
+                      Your plan will be adapted to this style using the design principles and plant palette that define this approach.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <PlantingPlanForm preselectedStyle={designerStyle?.slug} />
           </>
         ) : (
           <div className="text-center py-12">

@@ -1,11 +1,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Sprout, MapPin, Sun, Droplets, TreePine, AlertCircle, Lightbulb, Download, ArrowLeft } from 'lucide-react';
+import { Header, Footer } from '@/components/architectural';
+import { MapPin, Sun, Droplets, Leaf, AlertCircle, Lightbulb, Download, ArrowLeft, Calendar } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -22,7 +19,10 @@ export default async function PlanPage({ params }: PageProps) {
       site_analyses (*),
       plant_recommendations (
         *,
-        plants (*)
+        plants (
+          *,
+          generated_image_url
+        )
       )
     `)
     .eq('id', id)
@@ -37,346 +37,360 @@ export default async function PlanPage({ params }: PageProps) {
   const recommendations = plan.plant_recommendations || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-      {/* Header */}
-      <header className="border-b bg-white/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Sprout className="h-8 w-8 text-green-600" />
-            <span className="text-xl font-bold text-green-900">GSG Planting Plan Generator</span>
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-dark text-mist">
+      <Header />
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto space-y-8">
-          {/* Back Button */}
-          <Link href="/create">
-            <Button variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+      {/* Hero Section */}
+      <div className="bg-moss/10 border-b border-white/5">
+        <div className="container mx-auto px-4 lg:px-8 py-16">
+          <div className="max-w-5xl mx-auto">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-sm uppercase tracking-wider text-stone hover:text-copper transition-colors duration-300 mb-8"
+            >
+              <ArrowLeft className="h-4 w-4" />
               Create Another Plan
-            </Button>
-          </Link>
+            </Link>
 
-          {/* Header */}
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold text-green-900">Your Planting Plan</h1>
-            <div className="flex items-center gap-4">
-              <Badge variant={plan.status === 'completed' ? 'default' : 'secondary'}>
+            <h1 className="font-heading text-4xl md:text-6xl uppercase tracking-wider font-bold text-mist mb-4">
+              Your Planting Plan
+            </h1>
+
+            <div className="flex items-center gap-6 text-sm uppercase tracking-wider">
+              <span className={`px-3 py-1 ${
+                plan.status === 'completed'
+                  ? 'bg-copper text-dark'
+                  : 'bg-concrete border border-white/10 text-stone'
+              }`}>
                 {plan.status}
-              </Badge>
-              <span className="text-gray-600">
-                Created {new Date(plan.created_at).toLocaleDateString()}
               </span>
+              <div className="flex items-center gap-2 text-stone">
+                <Calendar className="h-4 w-4" />
+                {new Date(plan.created_at).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric'
+                })}
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Location Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-green-600" />
-                Location & Climate
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-4">
+      {/* Main Content */}
+      <main className="container mx-auto px-4 lg:px-8 py-16">
+        <div className="max-w-5xl mx-auto space-y-12">
+
+          {/* Location & Climate */}
+          <section className="bg-concrete/40 border border-white/5 p-8">
+            <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-6 flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Location & Climate
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-gray-600">Postcode</p>
-                <p className="font-semibold text-lg">{siteAnalysis.postcode}</p>
+                <p className="text-xs uppercase tracking-wider text-stone mb-2">Postcode</p>
+                <p className="font-heading text-2xl text-mist uppercase">{siteAnalysis.postcode}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">RHS Hardiness Zone</p>
-                <p className="font-semibold text-lg">{siteAnalysis.rhs_zone}</p>
+                <p className="text-xs uppercase tracking-wider text-stone mb-2">RHS Hardiness Zone</p>
+                <p className="font-heading text-2xl text-mist">{siteAnalysis.rhs_zone}</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
           {/* Site Conditions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Site Conditions</CardTitle>
-              <CardDescription>Based on your input and photo analysis</CardDescription>
-            </CardHeader>
-            <CardContent className="grid md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Sun className="h-5 w-5 text-yellow-500" />
-                  <span className="font-semibold">Sun Exposure</span>
+          <section className="bg-concrete/40 border border-white/5 p-8">
+            <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-2">
+              Site Conditions
+            </h2>
+            <p className="text-xs uppercase tracking-wider text-stone mb-6">
+              Based on your input and photo analysis
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-copper">
+                  <Sun className="h-5 w-5" />
+                  <span className="font-heading text-xs uppercase tracking-wider">Sun Exposure</span>
                 </div>
-                <p className="text-gray-700 capitalize">
+                <p className="text-mist capitalize leading-relaxed">
                   {visionData?.sunExposure?.assessment?.replace('_', ' ') || siteAnalysis.sun_exposure}
                 </p>
                 {visionData?.sunExposure?.confidence && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs text-stone">
                     Confidence: {visionData.sunExposure.confidence}%
                   </p>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Droplets className="h-5 w-5 text-blue-500" />
-                  <span className="font-semibold">Moisture</span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-copper">
+                  <Droplets className="h-5 w-5" />
+                  <span className="font-heading text-xs uppercase tracking-wider">Moisture</span>
                 </div>
-                <p className="text-gray-700 capitalize">{siteAnalysis.moisture}</p>
+                <p className="text-mist capitalize leading-relaxed">{siteAnalysis.moisture}</p>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <TreePine className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold">Soil Type</span>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-copper">
+                  <Leaf className="h-5 w-5" />
+                  <span className="font-heading text-xs uppercase tracking-wider">Soil Type</span>
                 </div>
-                <p className="text-gray-700 capitalize">{siteAnalysis.soil_type}</p>
+                <p className="text-mist capitalize leading-relaxed">{siteAnalysis.soil_type}</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          {/* Vision Analysis Details */}
-          {visionData && (
-            <>
-              {/* Challenges */}
-              {visionData.challenges && visionData.challenges.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <AlertCircle className="h-5 w-5 text-orange-600" />
-                      Site Challenges
-                    </CardTitle>
-                    <CardDescription>
-                      Considerations identified from your site photos
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {visionData.challenges.map((challenge: string, idx: number) => (
-                        <li key={idx} className="flex gap-3">
-                          <span className="text-orange-600 mt-1">•</span>
-                          <span className="text-gray-700">{challenge}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              )}
+          {/* Vision Analysis - Challenges */}
+          {visionData?.challenges && visionData.challenges.length > 0 && (
+            <section className="bg-moss/10 border border-moss/30 p-8">
+              <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-2 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                Site Challenges
+              </h2>
+              <p className="text-xs uppercase tracking-wider text-stone mb-6">
+                Considerations identified from your site photos
+              </p>
+              <ul className="space-y-3">
+                {visionData.challenges.map((challenge: string, idx: number) => (
+                  <li key={idx} className="flex gap-3 text-stone leading-relaxed">
+                    <span className="text-copper mt-1">—</span>
+                    <span>{challenge}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-              {/* Opportunities */}
-              {visionData.opportunities && visionData.opportunities.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Lightbulb className="h-5 w-5 text-green-600" />
-                      Design Opportunities
-                    </CardTitle>
-                    <CardDescription>
-                      Positive features to leverage in your planting design
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {visionData.opportunities.map((opportunity: string, idx: number) => (
-                        <li key={idx} className="flex gap-3">
-                          <span className="text-green-600 mt-1">•</span>
-                          <span className="text-gray-700">{opportunity}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              )}
+          {/* Vision Analysis - Opportunities */}
+          {visionData?.opportunities && visionData.opportunities.length > 0 && (
+            <section className="bg-concrete/40 border border-white/5 p-8">
+              <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-2 flex items-center gap-2">
+                <Lightbulb className="h-4 w-4" />
+                Design Opportunities
+              </h2>
+              <p className="text-xs uppercase tracking-wider text-stone mb-6">
+                Positive features to leverage in your planting design
+              </p>
+              <ul className="space-y-3">
+                {visionData.opportunities.map((opportunity: string, idx: number) => (
+                  <li key={idx} className="flex gap-3 text-stone leading-relaxed">
+                    <span className="text-copper mt-1">—</span>
+                    <span>{opportunity}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
-              {/* Overall Assessment */}
-              {visionData.overallAssessment && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Site Assessment</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 leading-relaxed">
-                      {visionData.overallAssessment}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </>
+          {/* Overall Assessment */}
+          {visionData?.overallAssessment && (
+            <section className="bg-concrete/40 border border-white/5 p-8">
+              <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-6">
+                Site Assessment
+              </h2>
+              <p className="text-stone leading-relaxed">
+                {visionData.overallAssessment}
+              </p>
+            </section>
           )}
 
           {/* Design Rationale */}
           {plan.design_rationale && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Design Rationale</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 leading-relaxed">{plan.design_rationale}</p>
-              </CardContent>
-            </Card>
+            <section className="bg-concrete/40 border border-white/5 p-8">
+              <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-6">
+                Design Rationale
+              </h2>
+              <p className="text-stone leading-relaxed">{plan.design_rationale}</p>
+            </section>
           )}
 
-          {/* Preferences */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Preferences</CardTitle>
-            </CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-4">
+          {/* Your Preferences */}
+          <section className="bg-concrete/40 border border-white/5 p-8">
+            <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-6">
+              Your Preferences
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-gray-600">Garden Style</p>
-                <p className="font-semibold capitalize">{plan.style.replace('_', ' ')}</p>
+                <p className="text-xs uppercase tracking-wider text-stone mb-2">Garden Style</p>
+                <p className="text-mist capitalize">{plan.style.replace('_', ' ')}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Maintenance Level</p>
-                <p className="font-semibold capitalize">{plan.maintenance_level}</p>
+                <p className="text-xs uppercase tracking-wider text-stone mb-2">Maintenance Level</p>
+                <p className="text-mist capitalize">{plan.maintenance_level}</p>
               </div>
               {plan.budget_min && (
                 <div>
-                  <p className="text-sm text-gray-600">Budget Range</p>
-                  <p className="font-semibold">
+                  <p className="text-xs uppercase tracking-wider text-stone mb-2">Budget Range</p>
+                  <p className="text-mist">
                     £{plan.budget_min} - £{plan.budget_max || 'flexible'}
                   </p>
                 </div>
               )}
               {plan.special_requirements && (
                 <div className="md:col-span-2">
-                  <p className="text-sm text-gray-600">Special Requirements</p>
-                  <p className="font-semibold">{plan.special_requirements}</p>
+                  <p className="text-xs uppercase tracking-wider text-stone mb-2">Special Requirements</p>
+                  <p className="text-mist leading-relaxed">{plan.special_requirements}</p>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Separator />
+          <div className="h-px bg-white/10" />
 
           {/* Plant Recommendations */}
           {recommendations.length > 0 ? (
             <>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Plant Recommendations</CardTitle>
-                  <CardDescription>
-                    {recommendations.length} plants selected for your garden
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {/* Summary */}
-                    <div className="grid md:grid-cols-3 gap-4 p-4 bg-green-50 rounded-lg">
-                      <div>
-                        <p className="text-sm text-gray-600">Total Plants</p>
-                        <p className="text-2xl font-bold text-green-700">
-                          {recommendations.reduce((sum: number, r: any) => sum + r.quantity, 0)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Total Cost</p>
-                        <p className="text-2xl font-bold text-green-700">
-                          £{plan.total_cost?.toFixed(2) || '0.00'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Plant Varieties</p>
-                        <p className="text-2xl font-bold text-green-700">
-                          {recommendations.length}
-                        </p>
-                      </div>
-                    </div>
+              {/* Summary Stats */}
+              <section className="bg-moss/10 border border-moss/30 p-8">
+                <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-6">
+                  Plant Recommendations Summary
+                </h2>
+                <div className="grid md:grid-cols-3 gap-8">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-stone mb-2">Total Plants</p>
+                    <p className="font-heading text-4xl text-mist">
+                      {recommendations.reduce((sum: number, r: any) => sum + r.quantity, 0)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-stone mb-2">Total Cost</p>
+                    <p className="font-heading text-4xl text-mist">
+                      £{plan.total_cost?.toFixed(2) || '0.00'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-stone mb-2">Plant Varieties</p>
+                    <p className="font-heading text-4xl text-mist">
+                      {recommendations.length}
+                    </p>
+                  </div>
+                </div>
+              </section>
 
-                    {/* Plant List by Category */}
-                    {['TREE', 'SHRUB', 'HERBACEOUS', 'CLIMBER', 'GRASS', 'BAMBOO'].map(category => {
-                      const categoryPlants = recommendations.filter((r: any) => r.plants?.category === category);
-                      if (categoryPlants.length === 0) return null;
+              {/* Plant List by Category */}
+              {['TREE', 'SHRUB', 'HERBACEOUS', 'CLIMBER', 'GRASS', 'BAMBOO', 'FERN', 'CONIFER'].map(category => {
+                const categoryPlants = recommendations.filter((r: any) => r.plants?.category === category);
+                if (categoryPlants.length === 0) return null;
 
-                      return (
-                        <div key={category} className="space-y-3">
-                          <h3 className="font-semibold text-lg text-green-900 capitalize">
-                            {category.toLowerCase()}s
-                          </h3>
-                          <div className="space-y-3">
-                            {categoryPlants.map((rec: any, idx: number) => (
-                              <div key={idx} className="border rounded-lg p-4 bg-white">
-                                <div className="flex justify-between items-start mb-2">
-                                  <div>
-                                    <h4 className="font-semibold text-gray-900">
-                                      {rec.plants?.botanical_name}
-                                    </h4>
-                                    {rec.plants?.common_name && (
-                                      <p className="text-sm text-gray-600">
-                                        {rec.plants.common_name}
-                                      </p>
-                                    )}
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="font-semibold text-green-700">
-                                      Qty: {rec.quantity}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                      {rec.plants?.size}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <div>
-                                    <span className="text-xs font-semibold text-gray-700">Position:</span>
-                                    <p className="text-sm text-gray-700">{rec.position}</p>
-                                  </div>
-                                  <div>
-                                    <span className="text-xs font-semibold text-gray-700">Rationale:</span>
-                                    <p className="text-sm text-gray-700">{rec.rationale}</p>
-                                  </div>
-                                  {rec.plants?.is_peat_free && (
-                                    <Badge variant="outline" className="bg-green-50 text-green-700">
-                                      Peat-free
-                                    </Badge>
-                                  )}
-                                </div>
+                return (
+                  <section key={category} className="bg-concrete/40 border border-white/5 p-8">
+                    <h2 className="font-heading text-lg uppercase tracking-wider text-copper mb-6">
+                      {category.toLowerCase()}s
+                    </h2>
+                    <div className="space-y-6">
+                      {categoryPlants.map((rec: any, idx: number) => (
+                        <div key={idx} className="flex gap-6 border-l-2 border-copper/30 pl-6 pb-6">
+                          {/* Plant Image */}
+                          {rec.plants?.generated_image_url && (
+                            <div className="flex-shrink-0">
+                              <div className="w-32 h-32 rounded-sm overflow-hidden border border-white/10 bg-mist/5">
+                                <img
+                                  src={rec.plants.generated_image_url}
+                                  alt={`${rec.plants.botanical_name} botanical illustration`}
+                                  className="w-full h-full object-cover"
+                                />
                               </div>
-                            ))}
+                            </div>
+                          )}
+
+                          {/* Plant Details */}
+                          <div className="flex-1 space-y-3">
+                            <div className="flex justify-between items-start gap-4">
+                              <div className="flex-1">
+                                <h3 className="font-heading text-lg text-mist italic mb-1">
+                                  {rec.plants?.botanical_name}
+                                </h3>
+                                {rec.plants?.common_name && (
+                                  <p className="text-sm text-copper uppercase tracking-wider">
+                                    {rec.plants.common_name}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <p className="font-heading text-copper text-xl">
+                                  × {rec.quantity}
+                                </p>
+                                <p className="text-xs uppercase tracking-wider text-stone">
+                                  {rec.plants?.size}
+                                </p>
+                              </div>
+                            </div>
+
+                            {rec.position && (
+                              <div>
+                                <span className="text-xs uppercase tracking-wider text-copper">Position: </span>
+                                <span className="text-stone text-sm">{rec.position}</span>
+                              </div>
+                            )}
+
+                            {rec.rationale && (
+                              <p className="text-stone text-sm leading-relaxed">
+                                {rec.rationale}
+                              </p>
+                            )}
+
+                            {rec.plants?.is_peat_free && (
+                              <span className="inline-block px-2 py-1 bg-moss/20 border border-moss/40 text-xs uppercase tracking-wider text-stone">
+                                Peat-free
+                              </span>
+                            )}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
             </>
           ) : (
-            <Card className="bg-green-50 border-green-200">
-              <CardHeader>
-                <CardTitle>Plant Recommendations</CardTitle>
-                <CardDescription>Generating recommendations...</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 mb-4">
-                  Plant recommendations are being generated based on your site conditions, preferences,
-                  and available stock from UK nurseries.
-                </p>
-                <p className="text-sm text-gray-600">
-                  This may take a few moments. Please refresh the page to see the results.
-                </p>
-              </CardContent>
-            </Card>
+            <section className="bg-moss/10 border border-moss/30 p-8">
+              <h2 className="font-heading text-sm uppercase tracking-wider text-copper mb-4">
+                Plant Recommendations
+              </h2>
+              <p className="text-stone leading-relaxed mb-4">
+                Plant recommendations are being generated based on your site conditions, preferences,
+                and available stock from UK nurseries.
+              </p>
+              <p className="text-xs uppercase tracking-wider text-stone">
+                This may take a few moments. Please refresh the page to see the results.
+              </p>
+            </section>
           )}
 
           {/* Actions */}
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {recommendations.length > 0 ? (
-              <a href={`/api/generate-pdf?planId=${id}`} download>
-                <Button variant="default">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download PDF
-                </Button>
+              <a
+                href={`/api/generate-pdf?planId=${id}`}
+                download
+                className="px-8 py-3 bg-copper text-dark font-heading text-sm uppercase tracking-widest hover:bg-[#D4A373] transition-colors duration-300 flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Download PDF
               </a>
             ) : (
-              <Button disabled variant="outline">
-                <Download className="mr-2 h-4 w-4" />
-                PDF (Generating recommendations...)
-              </Button>
+              <button
+                disabled
+                className="px-8 py-3 bg-concrete border border-white/10 text-stone/50 font-heading text-sm uppercase tracking-widest cursor-not-allowed flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                PDF (Generating...)
+              </button>
             )}
-            <Link href="/create">
-              <Button variant="outline">Create New Plan</Button>
+
+            <Link
+              href="/"
+              className="px-8 py-3 bg-dark/50 border border-white/10 text-stone font-heading text-sm uppercase tracking-widest hover:border-copper hover:text-copper transition-all duration-300"
+            >
+              Create New Plan
             </Link>
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -57,6 +57,8 @@ export function LeadCaptureForm({ type, title, description }: LeadCaptureFormPro
   if (status === 'success') {
     return (
       <motion.div
+        role="status"
+        aria-live="polite"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-copper/10 border border-copper/30 p-8 text-center"
@@ -98,9 +100,10 @@ export function LeadCaptureForm({ type, title, description }: LeadCaptureFormPro
             id="name"
             type="text"
             required
+            aria-required="true"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full bg-dark/50 border border-white/10 px-4 py-3 text-mist focus:border-copper focus:outline-none transition-colors"
+            className="w-full bg-dark/50 border border-white/10 px-4 py-3 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none transition-colors"
             disabled={status === 'submitting'}
           />
         </div>
@@ -113,9 +116,10 @@ export function LeadCaptureForm({ type, title, description }: LeadCaptureFormPro
             id="email"
             type="email"
             required
+            aria-required="true"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full bg-dark/50 border border-white/10 px-4 py-3 text-mist focus:border-copper focus:outline-none transition-colors"
+            className="w-full bg-dark/50 border border-white/10 px-4 py-3 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none transition-colors"
             disabled={status === 'submitting'}
           />
         </div>
@@ -129,7 +133,7 @@ export function LeadCaptureForm({ type, title, description }: LeadCaptureFormPro
             rows={4}
             value={formData.message}
             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-            className="w-full bg-dark/50 border border-white/10 px-4 py-3 text-mist focus:border-copper focus:outline-none transition-colors resize-none"
+            className="w-full bg-dark/50 border border-white/10 px-4 py-3 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none transition-colors resize-none"
             disabled={status === 'submitting'}
           />
         </div>
@@ -146,13 +150,14 @@ export function LeadCaptureForm({ type, title, description }: LeadCaptureFormPro
         />
 
         {status === 'error' && (
-          <p className="text-sm text-red-400">{errorMessage}</p>
+          <p role="alert" className="text-sm text-red-400">{errorMessage}</p>
         )}
 
         <button
           type="submit"
           disabled={status === 'submitting'}
-          className="w-full bg-copper text-dark py-4 text-sm uppercase tracking-wider font-bold hover:bg-[#D4A373] transition-colors disabled:opacity-50"
+          aria-busy={status === 'submitting'}
+          className="w-full bg-copper text-dark py-4 text-sm uppercase tracking-wider font-bold hover:bg-[#D4A373] focus:ring-2 focus:ring-copper/50 focus:outline-none transition-colors disabled:opacity-50"
         >
           {status === 'submitting' ? 'SUBMITTING...' : 'SUBMIT REQUEST'}
         </button>

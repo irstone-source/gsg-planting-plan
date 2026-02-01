@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
       dataFields: Object.keys(data),
       imageCount: imageFiles.length,
       postcode: data.postcode,
+      designerStyle: data.designerStyle,
       authenticated: !!user,
     });
 
@@ -53,9 +54,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (imageFiles.length === 0) {
+    // Images are optional if designer style is provided
+    const hasImages = imageFiles.length > 0;
+    const hasDesignerStyle = !!data.designerStyle;
+
+    if (!hasImages && !hasDesignerStyle) {
       return NextResponse.json(
-        { success: false, error: 'At least one image is required' },
+        { success: false, error: 'Either site photos or a designer style selection is required' },
         { status: 400 }
       );
     }
@@ -65,26 +70,52 @@ export async function POST(request: NextRequest) {
     const locationData = await getLocationData(data.postcode);
     console.log(`✓ Location: ${locationData.region}, RHS Zone: ${locationData.rhsZone}`);
 
-    // Step 2: Convert images to base64 for Claude Vision
-    console.log('🖼️  Converting images...');
-    const imagesForVision = await Promise.all(
-      imageFiles.map(async (file) => ({
-        data: await fileToBase64(file),
-        mediaType: getMediaType(file),
-      }))
-    );
-    console.log(`✓ Converted ${imagesForVision.length} images`);
+    // Step 2: Handle site analysis based on input type
+    let visionAnalysis = null;
 
-    // Step 3: Analyze images with Claude Vision
-    console.log('👁️  Analyzing site with Claude Vision...');
-    const visionAnalysis = await analyzeSitePhotos(imagesForVision);
-    console.log('✓ Vision analysis complete:', {
-      sunExposure: visionAnalysis.sunExposure.assessment,
-      confidence: visionAnalysis.sunExposure.confidence,
-      existingPlants: visionAnalysis.existingPlants.length,
-    });
+    if (hasImages) {
+      // Convert images to base64 for Claude Vision
+      console.log('🖼️  Converting images...');
+      const imagesForVision = await Promise.all(
+        imageFiles.map(async (file) => ({
+          data: await fileToBase64(file),
+          mediaType: getMediaType(file),
+        }))
+      );
+      console.log(`✓ Converted ${imagesForVision.length} images`);
 
-    // Step 4: Create site analysis record
+      // Analyze images with Claude Vision
+      console.log('👁️  Analyzing site with Claude Vision...');
+      visionAnalysis = await analyzeSitePhotos(imagesForVision);
+      console.log('✓ Vision analysis complete:', {
+        sunExposure: visionAnalysis.sunExposure.assessment,
+        confidence: visionAnalysis.sunExposure.confidence,
+        existingPlants: visionAnalysis.existingPlants.length,
+      });
+    } else {
+      // Generate default analysis from form data
+      console.log('📋 Using form-based site analysis (no images)');
+      visionAnalysis = {
+        sunExposure: {
+          assessment: data.sunExposure || 'mixed',
+          confidence: 'user_provided',
+          evidence: 'User-provided site conditions',
+        },
+        soilConditions: {
+          type: data.soilType || 'unknown',
+          moisture: data.moisture || 'moist',
+        },
+        existingPlants: [],
+        structuralElements: [],
+        challenges: [],
+        opportunities: data.specialRequirements ? [data.specialRequirements] : [],
+        overallAssessment: data.designerStyle
+          ? `Plan based on ${data.designerStyle} designer style with user-provided site conditions.`
+          : 'Plan based on user-provided site conditions.',
+      };
+    }
+
+    // Step 3: Create site analysis record
     console.log('💾 Storing site analysis...');
     const { data: siteAnalysisData, error: siteError } = await supabase
       .from('site_analyses')
@@ -93,7 +124,7 @@ export async function POST(request: NextRequest) {
         rhs_zone: locationData.rhsZone,
         latitude: locationData.latitude,
         longitude: locationData.longitude,
-        sun_exposure: visionAnalysis.sunExposure.assessment,
+        sun_exposure: visionAnalysis?.sunExposure?.assessment || data.sunExposure || 'mixed',
         soil_type: data.soilType || 'unknown',
         moisture: data.moisture || 'moist',
         area_sqm: data.areaSqm,
@@ -110,7 +141,7 @@ export async function POST(request: NextRequest) {
 
     console.log('✓ Site analysis stored:', siteAnalysisData.id);
 
-    // Step 5: Create planting plan record
+    // Step 4: Create planting plan record
     console.log('📋 Creating planting plan...');
     const { data: planData, error: planError } = await supabase
       .from('planting_plans')
@@ -121,9 +152,10 @@ export async function POST(request: NextRequest) {
         maintenance_level: data.maintenanceLevel,
         budget_min: data.budgetMin,
         budget_max: data.budgetMax,
-        special_requirements: data.description || data.specialRequirements, // Use description field
+        special_requirements: data.description || data.specialRequirements,
+        designer_style_slug: data.designerStyle || null,
         status: 'draft',
-        design_rationale: visionAnalysis.overallAssessment,
+        design_rationale: visionAnalysis?.overallAssessment || `Plan based on user preferences${data.designerStyle ? ` and ${data.designerStyle} designer style` : ''}.`,
       })
       .select()
       .single();
@@ -148,7 +180,7 @@ export async function POST(request: NextRequest) {
       console.log('ℹ️ No authentication - free plan generation (no credit consumed)');
     }
 
-    // Step 6: Generate plant recommendations
+    // Step 5: Generate plant recommendations
     console.log('🌿 Generating plant recommendations...');
     try {
       // Call the recommendations API internally

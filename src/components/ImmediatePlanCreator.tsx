@@ -100,7 +100,7 @@ export function ImmediatePlanCreator() {
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       {/* What Do You Want? - PROMINENT */}
       <div className="bg-moss/20 border border-moss/30 p-8 rounded-sm">
-        <label className="block mb-4">
+        <label htmlFor="description" className="block mb-4">
           <span className="font-heading text-lg uppercase tracking-wider text-copper mb-2 block">
             What do you want in your garden?
           </span>
@@ -108,13 +108,17 @@ export function ImmediatePlanCreator() {
             Describe your vision, any specific plants you love, colors you want, features you need (wildlife, fragrance, year-round interest, etc.)
           </span>
           <textarea
+            id="description"
             {...form.register('description')}
             rows={5}
             placeholder="e.g., I want a low-maintenance cottage garden with lots of purple and white flowers, some fragrant plants for bees, and something interesting in winter. I love lavender and roses but need plants that can handle partial shade and clay soil..."
-            className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:outline-none resize-none leading-relaxed"
+            aria-required="true"
+            aria-invalid={!!form.formState.errors.description}
+            aria-describedby={form.formState.errors.description ? "description-error" : undefined}
+            className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none resize-none leading-relaxed"
           />
           {form.formState.errors.description && (
-            <span className="text-xs text-red-400 mt-2 block">
+            <span id="description-error" role="alert" className="text-xs text-red-400 mt-2 block">
               {form.formState.errors.description.message}
             </span>
           )}
@@ -131,14 +135,16 @@ export function ImmediatePlanCreator() {
           <p className="text-stone text-sm mb-4">
             Upload 3-10 photos showing different angles of your garden space
           </p>
-          <label className="inline-block px-6 py-2 bg-dark/50 border border-white/10 text-stone text-xs uppercase tracking-wider hover:border-copper hover:text-copper transition-colors duration-300 cursor-pointer">
+          <label htmlFor="image-upload" className="inline-block px-6 py-2 bg-dark/50 border border-white/10 text-stone text-xs uppercase tracking-wider hover:border-copper hover:text-copper transition-colors duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-copper/50">
             Choose Files
             <input
+              id="image-upload"
               type="file"
               accept="image/*"
               multiple
               onChange={handleImageUpload}
-              className="hidden"
+              aria-label="Upload site photos"
+              className="sr-only"
             />
           </label>
         </div>
@@ -173,23 +179,27 @@ export function ImmediatePlanCreator() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Location */}
         <div>
-          <label className="block">
+          <label htmlFor="postcode" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block flex items-center gap-2">
               <MapPin className="h-4 w-4 text-copper" aria-hidden="true" />
               UK Postcode
             </span>
             <input
+              id="postcode"
               type="text"
               {...form.register('postcode')}
               placeholder="e.g., SW1A 1AA"
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:outline-none uppercase"
+              aria-required="true"
+              aria-invalid={!!form.formState.errors.postcode}
+              aria-describedby={form.formState.errors.postcode ? "postcode-error" : "postcode-help"}
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none uppercase"
             />
             {form.formState.errors.postcode && (
-              <span className="text-xs text-red-400 mt-1 block">
+              <span id="postcode-error" role="alert" className="text-xs text-red-400 mt-1 block">
                 {form.formState.errors.postcode.message}
               </span>
             )}
-            <span className="text-xs text-stone/70 mt-1 block">
+            <span id="postcode-help" className="text-xs text-stone/70 mt-1 block">
               Helps determine your climate zone
             </span>
           </label>
@@ -197,17 +207,19 @@ export function ImmediatePlanCreator() {
 
         {/* Area */}
         <div>
-          <label className="block">
+          <label htmlFor="areaSqm" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block">
               Area (m²)
             </span>
             <input
+              id="areaSqm"
               type="number"
               {...form.register('areaSqm', { valueAsNumber: true })}
               placeholder="e.g., 50"
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:outline-none"
+              aria-describedby="area-help"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none"
             />
-            <span className="text-xs text-stone/70 mt-1 block">
+            <span id="area-help" className="text-xs text-stone/70 mt-1 block">
               Optional: helps with quantities
             </span>
           </label>
@@ -215,14 +227,15 @@ export function ImmediatePlanCreator() {
 
         {/* Sun Exposure */}
         <div>
-          <label className="block">
+          <label htmlFor="sunExposure" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block flex items-center gap-2">
               <Sun className="h-4 w-4 text-copper" aria-hidden="true" />
               Sun Exposure
             </span>
             <select
+              id="sunExposure"
               {...form.register('sunExposure')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="full_sun">Full Sun (6+ hours)</option>
               <option value="partial_shade">Partial Shade (3-6 hours)</option>
@@ -234,14 +247,15 @@ export function ImmediatePlanCreator() {
 
         {/* Soil Type */}
         <div>
-          <label className="block">
+          <label htmlFor="soilType" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block flex items-center gap-2">
               <Leaf className="h-4 w-4 text-copper" aria-hidden="true" />
               Soil Type
             </span>
             <select
+              id="soilType"
               {...form.register('soilType')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="unknown">Not Sure</option>
               <option value="clay">Clay</option>
@@ -256,14 +270,15 @@ export function ImmediatePlanCreator() {
 
         {/* Moisture */}
         <div>
-          <label className="block">
+          <label htmlFor="moisture" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block flex items-center gap-2">
               <Droplets className="h-4 w-4 text-copper" aria-hidden="true" />
               Moisture Level
             </span>
             <select
+              id="moisture"
               {...form.register('moisture')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="moist">Moist (typical)</option>
               <option value="dry">Dry</option>
@@ -275,13 +290,14 @@ export function ImmediatePlanCreator() {
 
         {/* Garden Style */}
         <div>
-          <label className="block">
+          <label htmlFor="style" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block">
               Garden Style
             </span>
             <select
+              id="style"
               {...form.register('style')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="mixed">Mixed Style</option>
               <option value="cottage">Cottage Garden</option>
@@ -295,13 +311,14 @@ export function ImmediatePlanCreator() {
 
         {/* Maintenance Level */}
         <div>
-          <label className="block">
+          <label htmlFor="maintenanceLevel" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block">
               Maintenance Level
             </span>
             <select
+              id="maintenanceLevel"
               {...form.register('maintenanceLevel')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="low">Low - Minimal upkeep</option>
               <option value="medium">Medium - Regular care</option>
@@ -312,30 +329,32 @@ export function ImmediatePlanCreator() {
 
         {/* Budget Min */}
         <div>
-          <label className="block">
+          <label htmlFor="budgetMin" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block">
               Budget Min (£)
             </span>
             <input
+              id="budgetMin"
               type="number"
               {...form.register('budgetMin', { valueAsNumber: true })}
               placeholder="500"
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:outline-none"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none"
             />
           </label>
         </div>
 
         {/* Budget Max */}
         <div>
-          <label className="block">
+          <label htmlFor="budgetMax" className="block">
             <span className="font-heading text-xs uppercase tracking-wider text-stone mb-2 block">
               Budget Max (£)
             </span>
             <input
+              id="budgetMax"
               type="number"
               {...form.register('budgetMax', { valueAsNumber: true })}
               placeholder="2000"
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:outline-none"
+              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none"
             />
           </label>
         </div>
@@ -344,13 +363,20 @@ export function ImmediatePlanCreator() {
       {/* Progress Bar */}
       {isGenerating && (
         <div className="space-y-3">
-          <div className="h-2 bg-dark/50 rounded-full overflow-hidden">
+          <div
+            role="progressbar"
+            aria-valuenow={progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Plan generation progress"
+            className="h-2 bg-dark/50 rounded-full overflow-hidden"
+          >
             <div
               className="h-full bg-copper transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-sm text-center text-stone uppercase tracking-wider">
+          <p className="text-sm text-center text-stone uppercase tracking-wider" aria-live="polite">
             Generating your planting plan...
           </p>
         </div>

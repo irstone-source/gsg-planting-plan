@@ -35,8 +35,17 @@ export async function uploadImage(
 
 /**
  * Convert File to base64 string for Claude Vision
+ * Works in both browser and Node.js (server) environments
  */
 export async function fileToBase64(file: File): Promise<string> {
+  // Server-side (Node.js) - convert File to Buffer then to base64
+  if (typeof window === 'undefined') {
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    return buffer.toString('base64');
+  }
+
+  // Browser-side - use FileReader
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);

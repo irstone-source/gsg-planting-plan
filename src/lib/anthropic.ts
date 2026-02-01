@@ -38,7 +38,7 @@ export async function analyzeImages(
   }));
 
   const message = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-sonnet-4-20250514',
     max_tokens: 4096,
     messages: [
       {
@@ -75,7 +75,7 @@ export async function generateText(
   }
 ): Promise<string> {
   const message = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-sonnet-4-20250514',
     max_tokens: options?.maxTokens || 2048,
     temperature: options?.temperature || 1.0,
     system: systemPrompt,

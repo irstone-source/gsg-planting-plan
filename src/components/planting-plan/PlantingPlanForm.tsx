@@ -36,7 +36,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export function PlantingPlanForm() {
+export function PlantingPlanForm({ preselectedStyle }: { preselectedStyle?: string }) {
   const [currentTab, setCurrentTab] = useState('images');
   const [images, setImages] = useState<File[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -73,7 +73,14 @@ export function PlantingPlanForm() {
       // Create FormData for file upload
       const formData = new FormData();
       images.forEach(image => formData.append('images', image));
-      formData.append('data', JSON.stringify(data));
+
+      // Add designer style if present
+      const dataWithStyle = {
+        ...data,
+        designerStyle: preselectedStyle || null,
+      };
+
+      formData.append('data', JSON.stringify(dataWithStyle));
 
       setProgress(30);
 
@@ -130,11 +137,20 @@ export function PlantingPlanForm() {
 
             {/* Images Tab */}
             <TabsContent value="images" className="space-y-4">
+              {preselectedStyle && (
+                <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-800">
+                    <strong>Designer Style Selected:</strong> Your plan will be adapted from your chosen style. Images are optional but help us customize the design for your specific site.
+                  </p>
+                </div>
+              )}
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Upload Site Photos</h3>
+                <h3 className="text-lg font-semibold mb-2">Upload Site Photos {preselectedStyle ? '(Optional)' : ''}</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Upload 3-10 photos showing different angles of your garden space
+                  {preselectedStyle
+                    ? 'Optional: Upload photos to help us adapt the design to your specific site conditions'
+                    : 'Upload 3-10 photos showing different angles of your garden space'}
                 </p>
                 <Input
                   type="file"
@@ -429,7 +445,7 @@ export function PlantingPlanForm() {
                     <Button type="button" variant="outline" onClick={() => setCurrentTab('site')}>
                       Back
                     </Button>
-                    <Button type="submit" disabled={isGenerating || images.length === 0}>
+                    <Button type="submit" disabled={isGenerating}>
                       {isGenerating ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />

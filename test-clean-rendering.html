@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Professional Plant Renderings</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(to bottom, #f0f9f0, #ffffff);
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2d5016;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        .section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #7CBB5D;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .plant-sample {
+            text-align: center;
+        }
+        .plant-sample h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+        .plant-sample p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: #666;
+        }
+        .svg-container {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+        .color-palette {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .color-swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-scientific { background: #e3f2fd; color: #1976d2; }
+        .badge-watercolor { background: #fce4ec; color: #c2185b; }
+        .badge-marker { background: #fff3e0; color: #e65100; }
+        .badge-sketch { background: #f3e5f5; color: #7b1fa2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Clean Professional Plant Renderings</h1>
+        <p class="subtitle">
+            Simple, clean artistic styles based on real landscape architecture practice.<br>
+            No heavy filters - just professional fills, patterns, and gradients.
+        </p>
+
+        <!-- RENDERING STYLES COMPARISON -->
+        <div class="section">
+            <div class="section-title">Rendering Styles (Summer Green)</div>
+            <div class="grid">
+                <!-- Scientific -->
+                <div class="plant-sample">
+                    <h3><span class="badge badge-scientific">Scientific</span></h3>
+                    <p>Clean baseline with dashed spread outline</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <circle cx="250" cy="250" r="170" fill="#228B22" opacity="0.75"/>
+                            <circle cx="250" cy="250" r="200" fill="none" stroke="#155724" stroke-width="2" stroke-dasharray="8,4" opacity="0.6"/>
+                            <circle cx="250" cy="250" r="4" fill="#155724" opacity="0.8"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#228B22"></div>
+                        <div class="color-swatch" style="background:#155724"></div>
+                    </div>
+                </div>
+
+                <!-- Watercolor -->
+                <div class="plant-sample">
+                    <h3><span class="badge badge-watercolor">Watercolor</span></h3>
+                    <p>Overlapping circles with gradients</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="watercolorGrad">
+                                    <stop offset="0%" stop-color="#43AC78" stop-opacity="0.8"/>
+                                    <stop offset="40%" stop-color="#228B22" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#155724" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#155724" stop-opacity="0.3"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#watercolorGrad)" opacity="0.85"/>
+                            <circle cx="210" cy="210" r="120" fill="#43AC78" opacity="0.3"/>
+                            <circle cx="280" cy="280" r="100" fill="#228B22" opacity="0.3"/>
+                            <circle cx="250" cy="290" r="80" fill="#155724" opacity="0.25"/>
+                            <circle cx="250" cy="250" r="200" fill="none" stroke="#155724" stroke-width="1.5" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#43AC78"></div>
+                        <div class="color-swatch" style="background:#228B22"></div>
+                        <div class="color-swatch" style="background:#155724"></div>
+                    </div>
+                </div>
+
+                <!-- Marker -->
+                <div class="plant-sample">
+                    <h3><span class="badge badge-marker">Marker</span></h3>
+                    <p>Bold solid fill with dot pattern</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <pattern id="markerDots" patternUnits="userSpaceOnUse" width="15" height="15">
+                                    <circle cx="7.5" cy="7.5" r="1.5" fill="#155724" opacity="0.15"/>
+                                </pattern>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="#228B22" opacity="0.85"/>
+                            <circle cx="250" cy="250" r="180" fill="url(#markerDots)"/>
+                            <circle cx="250" cy="250" r="180" fill="none" stroke="#155724" stroke-width="3" opacity="0.9"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#228B22"></div>
+                        <div class="color-swatch" style="background:#155724"></div>
+                    </div>
+                </div>
+
+                <!-- Sketch -->
+                <div class="plant-sample">
+                    <h3><span class="badge badge-sketch">Hand-Drawn</span></h3>
+                    <p>Hatching pattern with soft fill</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <pattern id="sketchHatch" patternUnits="userSpaceOnUse" width="8" height="8">
+                                    <path d="M0,0 L8,8 M8,0 L0,8" stroke="#155724" stroke-width="0.5" opacity="0.3"/>
+                                </pattern>
+                            </defs>
+                            <circle cx="250" cy="250" r="170" fill="#228B22" opacity="0.5"/>
+                            <circle cx="250" cy="250" r="170" fill="url(#sketchHatch)"/>
+                            <circle cx="250" cy="250" r="200" fill="none" stroke="#155724" stroke-width="2" stroke-dasharray="12,3" opacity="0.7"/>
+                            <circle cx="310" cy="310" r="60" fill="#155724" opacity="0.15"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#228B22"></div>
+                        <div class="color-swatch" style="background:#155724"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEASONAL COLORS (WATERCOLOR STYLE) -->
+        <div class="section">
+            <div class="section-title">Seasonal Colors - Deciduous (Watercolor Style)</div>
+            <div class="grid">
+                <!-- Spring -->
+                <div class="plant-sample">
+                    <h3>🌸 Spring</h3>
+                    <p>Fresh yellow-green new growth</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="springGrad">
+                                    <stop offset="0%" stop-color="#C9DC87" stop-opacity="0.8"/>
+                                    <stop offset="40%" stop-color="#7CBB5D" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#5B9E48" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#5B9E48" stop-opacity="0.3"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#springGrad)" opacity="0.85"/>
+                            <circle cx="210" cy="210" r="120" fill="#C9DC87" opacity="0.3"/>
+                            <circle cx="280" cy="280" r="100" fill="#7CBB5D" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#C9DC87"></div>
+                        <div class="color-swatch" style="background:#7CBB5D"></div>
+                        <div class="color-swatch" style="background:#5B9E48"></div>
+                    </div>
+                </div>
+
+                <!-- Summer -->
+                <div class="plant-sample">
+                    <h3>☀️ Summer</h3>
+                    <p>Deep mature forest green</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="summerGrad">
+                                    <stop offset="0%" stop-color="#43AC78" stop-opacity="0.8"/>
+                                    <stop offset="40%" stop-color="#228B22" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#155724" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#155724" stop-opacity="0.3"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#summerGrad)" opacity="0.85"/>
+                            <circle cx="210" cy="210" r="120" fill="#43AC78" opacity="0.3"/>
+                            <circle cx="280" cy="280" r="100" fill="#228B22" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#43AC78"></div>
+                        <div class="color-swatch" style="background:#228B22"></div>
+                        <div class="color-swatch" style="background:#155724"></div>
+                    </div>
+                </div>
+
+                <!-- Autumn -->
+                <div class="plant-sample">
+                    <h3>🍂 Autumn</h3>
+                    <p>Warm oranges and reds</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="autumnGrad">
+                                    <stop offset="0%" stop-color="#FCB829" stop-opacity="0.8"/>
+                                    <stop offset="40%" stop-color="#FE7126" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#D00127" stop-opacity="0.6"/>
+                                    <stop offset="100%" stop-color="#D00127" stop-opacity="0.3"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#autumnGrad)" opacity="0.85"/>
+                            <circle cx="210" cy="210" r="120" fill="#FCB829" opacity="0.3"/>
+                            <circle cx="280" cy="280" r="100" fill="#FE7126" opacity="0.3"/>
+                            <circle cx="250" cy="290" r="80" fill="#D00127" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#FCB829"></div>
+                        <div class="color-swatch" style="background:#FE7126"></div>
+                        <div class="color-swatch" style="background:#D00127"></div>
+                    </div>
+                </div>
+
+                <!-- Winter -->
+                <div class="plant-sample">
+                    <h3>❄️ Winter</h3>
+                    <p>Brown bare branches</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <!-- Bare branch structure -->
+                            <line x1="250" y1="350" x2="250" y2="150" stroke="#644A2A" stroke-width="8"/>
+                            <line x1="250" y1="220" x2="180" y2="180" stroke="#644A2A" stroke-width="5"/>
+                            <line x1="250" y1="220" x2="320" y2="180" stroke="#644A2A" stroke-width="5"/>
+                            <line x1="250" y1="280" x2="200" y2="310" stroke="#644A2A" stroke-width="5"/>
+                            <line x1="250" y1="280" x2="300" y2="310" stroke="#644A2A" stroke-width="5"/>
+                            <circle cx="250" cy="250" r="200" fill="none" stroke="#875D4A" stroke-width="1.5" stroke-dasharray="8,4" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#BBA89A"></div>
+                        <div class="color-swatch" style="background:#875D4A"></div>
+                        <div class="color-swatch" style="background:#644A2A"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVERGREEN SEASONAL -->
+        <div class="section">
+            <div class="section-title">Seasonal Colors - Evergreen (Watercolor Style)</div>
+            <div class="grid">
+                <!-- Spring Evergreen -->
+                <div class="plant-sample">
+                    <h3>🌸 Spring</h3>
+                    <p>Bright green with new tips</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="springEvergreenGrad">
+                                    <stop offset="0%" stop-color="#7CBB5D" stop-opacity="0.8"/>
+                                    <stop offset="40%" stop-color="#4E8F38" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#2E6F40" stop-opacity="0.6"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#springEvergreenGrad)" opacity="0.85"/>
+                            <circle cx="210" cy="210" r="120" fill="#7CBB5D" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#7CBB5D"></div>
+                        <div class="color-swatch" style="background:#4E8F38"></div>
+                        <div class="color-swatch" style="background:#2E6F40"></div>
+                    </div>
+                </div>
+
+                <!-- Summer Evergreen -->
+                <div class="plant-sample">
+                    <h3>☀️ Summer</h3>
+                    <p>Standard deep green</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="summerEvergreenGrad">
+                                    <stop offset="0%" stop-color="#43AC78" stop-opacity="0.8"/>
+                                    <stop offset="40%" stop-color="#228B22" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#155724" stop-opacity="0.6"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#summerEvergreenGrad)" opacity="0.85"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#43AC78"></div>
+                        <div class="color-swatch" style="background:#228B22"></div>
+                        <div class="color-swatch" style="background:#155724"></div>
+                    </div>
+                </div>
+
+                <!-- Autumn Evergreen -->
+                <div class="plant-sample">
+                    <h3>🍂 Autumn</h3>
+                    <p>Green with bronze tinting</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="autumnEvergreenGrad">
+                                    <stop offset="0%" stop-color="#CD7F32" stop-opacity="0.5"/>
+                                    <stop offset="40%" stop-color="#228B22" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#155724" stop-opacity="0.6"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#autumnEvergreenGrad)" opacity="0.85"/>
+                            <circle cx="210" cy="210" r="100" fill="#CD7F32" opacity="0.25"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#228B22"></div>
+                        <div class="color-swatch" style="background:#CD7F32"></div>
+                        <div class="color-swatch" style="background:#155724"></div>
+                    </div>
+                </div>
+
+                <!-- Winter Evergreen -->
+                <div class="plant-sample">
+                    <h3>❄️ Winter</h3>
+                    <p>Bronzed green tones</p>
+                    <div class="svg-container">
+                        <svg viewBox="0 0 500 500" width="200" height="200">
+                            <defs>
+                                <radialGradient id="winterEvergreenGrad">
+                                    <stop offset="0%" stop-color="#CD7F32" stop-opacity="0.6"/>
+                                    <stop offset="40%" stop-color="#637E68" stop-opacity="0.7"/>
+                                    <stop offset="80%" stop-color="#05472A" stop-opacity="0.6"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="250" cy="250" r="180" fill="url(#winterEvergreenGrad)" opacity="0.85"/>
+                            <circle cx="280" cy="280" r="100" fill="#CD7F32" opacity="0.3"/>
+                        </svg>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background:#637E68"></div>
+                        <div class="color-swatch" style="background:#CD7F32"></div>
+                        <div class="color-swatch" style="background:#05472A"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; padding: 40px 20px; color: #666;">
+            <p><strong>✅ Clean Professional Renderings</strong></p>
+            <p>No heavy filters • Just simple fills, gradients, and patterns • Professional appearance</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="1600" viewBox="0 0 1200 1600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- ============================================ -->
+    <!-- WATERCOLOR FILTERS -->
+    <!-- ============================================ -->
+
+    <!-- Full Watercolor Effect -->
+    <filter id="watercolor" x="-50%" y="-50%" width="200%" height="200%">
+      <!-- Paper texture -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+      <feColorMatrix in="noise" type="saturate" values="0" result="desaturatedNoise" />
+      <feComponentTransfer in="desaturatedNoise" result="texture">
+        <feFuncA type="discrete" tableValues="0 0 0 1 1" />
+      </feComponentTransfer>
+
+      <!-- Soft edges -->
+      <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" seed="1" result="edgeNoise" />
+      <feDisplacementMap in="SourceGraphic" in2="edgeNoise" scale="8" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+      <feGaussianBlur in="displaced" stdDeviation="2" result="softEdges" />
+
+      <!-- Combine texture and soft edges -->
+      <feBlend in="softEdges" in2="texture" mode="multiply" result="textured" />
+
+      <!-- Subtle color variation -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="2" seed="5" result="colorNoise" />
+      <feColorMatrix in="colorNoise" type="hueRotate" values="30" result="colorVariation" />
+      <feBlend in="textured" in2="colorVariation" mode="overlay" opacity="0.3" />
+    </filter>
+
+    <!-- Marker Effect -->
+    <filter id="marker" x="-20%" y="-20%" width="140%" height="140%">
+      <!-- Clean edges with slight irregularity -->
+      <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="1" seed="2" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" result="slightWarp" />
+
+      <!-- Marker stroke texture -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.2" numOctaves="2" seed="3" result="strokeTexture" />
+      <feColorMatrix in="strokeTexture" type="saturate" values="0" result="grayTexture" />
+      <feBlend in="slightWarp" in2="grayTexture" mode="multiply" opacity="0.15" />
+    </filter>
+
+    <!-- Hand-Drawn Sketch Effect -->
+    <filter id="sketch" x="-30%" y="-30%" width="160%" height="160%">
+      <!-- Irregular edges -->
+      <feTurbulence type="turbulence" baseFrequency="0.03" numOctaves="3" seed="4" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" result="wobbly" />
+
+      <!-- Rough texture -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="4" seed="6" result="roughness" />
+      <feColorMatrix in="roughness" type="saturate" values="0" result="grayRough" />
+      <feBlend in="wobbly" in2="grayRough" mode="multiply" opacity="0.2" />
+    </filter>
+
+    <!-- ============================================ -->
+    <!-- SEASONAL GRADIENTS -->
+    <!-- ============================================ -->
+
+    <!-- Spring Gradient -->
+    <radialGradient id="springGradient">
+      <stop offset="0%" stop-color="#C9DC87" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#7CBB5D" stop-opacity="0.85" />
+      <stop offset="70%" stop-color="#5B9E48" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#177245" stop-opacity="0.75" />
+    </radialGradient>
+
+    <!-- Summer Gradient -->
+    <radialGradient id="summerGradient">
+      <stop offset="0%" stop-color="#43AC78" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#228B22" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#155724" stop-opacity="0.85" />
+    </radialGradient>
+
+    <!-- Autumn Gradient -->
+    <radialGradient id="autumnGradient">
+      <stop offset="0%" stop-color="#FCB829" stop-opacity="0.9" />
+      <stop offset="30%" stop-color="#FE7126" stop-opacity="0.85" />
+      <stop offset="60%" stop-color="#D00127" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#644A2A" stop-opacity="0.75" />
+    </radialGradient>
+
+    <!-- Winter Evergreen with Bronzing -->
+    <radialGradient id="winterGradient">
+      <stop offset="0%" stop-color="#4E8F38" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#637E68" stop-opacity="0.85" />
+      <stop offset="80%" stop-color="#CD7F32" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#05472A" stop-opacity="0.8" />
+    </radialGradient>
+
+    <!-- ============================================ -->
+    <!-- SHADOW & HIGHLIGHT GRADIENTS -->
+    <!-- ============================================ -->
+
+    <!-- Shadow -->
+    <radialGradient id="canopyShadow">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="70%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.3" />
+    </radialGradient>
+
+    <!-- Highlight -->
+    <radialGradient id="canopyHighlight">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.4" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- ============================================ -->
+    <!-- FOLIAGE PATTERNS -->
+    <!-- ============================================ -->
+
+    <!-- Leaf Cluster Pattern -->
+    <pattern id="leafCluster" patternUnits="userSpaceOnUse" width="20" height="20">
+      <circle cx="5" cy="5" r="3" fill="currentColor" opacity="0.3" />
+      <circle cx="15" cy="8" r="2.5" fill="currentColor" opacity="0.25" />
+      <circle cx="8" cy="15" r="2" fill="currentColor" opacity="0.2" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" opacity="0.15" />
+    </pattern>
+
+    <!-- Hatching Pattern (Cross) -->
+    <pattern id="hatchCross" patternUnits="userSpaceOnUse" width="8" height="8">
+      <path d="M0,0 L8,8 M8,0 L0,8" stroke="#000000" stroke-width="0.5" opacity="0.2" />
+    </pattern>
+
+    <!-- Diagonal Hatching -->
+    <pattern id="hatchDiagonal" patternUnits="userSpaceOnUse" width="6" height="6">
+      <path d="M0,0 L6,6" stroke="#000000" stroke-width="0.4" opacity="0.25" />
+    </pattern>
+
+    <!-- Stippling Pattern -->
+    <filter id="stipple">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="7" result="noise" />
+      <feColorMatrix in="noise" type="saturate" values="0" result="gray" />
+      <feComponentTransfer result="dots">
+        <feFuncA type="discrete" tableValues="0 0 0 1" />
+      </feComponentTransfer>
+      <feComposite in="dots" in2="SourceGraphic" operator="in" />
+    </filter>
+  </defs>
+
+  <!-- ============================================ -->
+  <!-- TITLE -->
+  <!-- ============================================ -->
+  <text x="600" y="40" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#333333">
+    Watercolor Plant Rendering Samples
+  </text>
+  <text x="600" y="70" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#666666">
+    SVG Filter Demonstrations for Landscape Architecture
+  </text>
+
+  <!-- ============================================ -->
+  <!-- ROW 1: RENDERING STYLES (SUMMER GREEN) -->
+  <!-- ============================================ -->
+  <text x="100" y="130" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333333">
+    Rendering Styles Comparison
+  </text>
+
+  <!-- Scientific (No Filter) -->
+  <g transform="translate(150, 170)">
+    <text x="0" y="-20" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Scientific (Clean)
+    </text>
+    <circle cx="0" cy="0" r="60" fill="#228B22" opacity="0.9" />
+    <circle cx="0" cy="0" r="70" fill="none" stroke="#228B22" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.6" />
+  </g>
+
+  <!-- Watercolor -->
+  <g transform="translate(400, 170)">
+    <text x="0" y="-20" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Watercolor
+    </text>
+    <circle cx="0" cy="0" r="60" fill="#228B22" opacity="0.8" filter="url(#watercolor)" />
+    <ellipse cx="5" cy="8" rx="50" ry="45" fill="url(#canopyShadow)" />
+    <ellipse cx="-10" cy="-10" rx="25" ry="22" fill="url(#canopyHighlight)" />
+  </g>
+
+  <!-- Marker -->
+  <g transform="translate(650, 170)">
+    <text x="0" y="-20" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Marker
+    </text>
+    <circle cx="0" cy="0" r="60" fill="#228B22" opacity="0.85" filter="url(#marker)" />
+    <circle cx="0" cy="0" r="60" fill="none" stroke="#000000" stroke-width="2" />
+  </g>
+
+  <!-- Hand-Drawn Sketch -->
+  <g transform="translate(900, 170)">
+    <text x="0" y="-20" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Hand-Drawn Sketch
+    </text>
+    <circle cx="0" cy="0" r="60" fill="#228B22" opacity="0.75" filter="url(#sketch)" />
+    <circle cx="0" cy="0" r="60" fill="url(#hatchCross)" />
+  </g>
+
+  <!-- ============================================ -->
+  <!-- ROW 2: SEASONAL COLORS (WATERCOLOR STYLE) -->
+  <!-- ============================================ -->
+  <text x="100" y="380" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333333">
+    Seasonal Color Progression (Deciduous)
+  </text>
+
+  <!-- Spring -->
+  <g transform="translate(200, 450)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Spring
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      New Growth
+    </text>
+    <circle cx="0" cy="0" r="70" fill="url(#springGradient)" filter="url(#watercolor)" />
+    <ellipse cx="5" cy="8" rx="60" ry="55" fill="url(#canopyShadow)" />
+    <ellipse cx="-10" cy="-10" rx="28" ry="25" fill="url(#canopyHighlight)" />
+
+    <!-- Color palette -->
+    <g transform="translate(-70, 90)">
+      <circle cx="0" cy="0" r="8" fill="#C9DC87" />
+      <circle cx="20" cy="0" r="8" fill="#7CBB5D" />
+      <circle cx="40" cy="0" r="8" fill="#5B9E48" />
+      <circle cx="60" cy="0" r="8" fill="#177245" />
+    </g>
+  </g>
+
+  <!-- Summer -->
+  <g transform="translate(450, 450)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Summer
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Mature Foliage
+    </text>
+    <circle cx="0" cy="0" r="70" fill="url(#summerGradient)" filter="url(#watercolor)" />
+    <ellipse cx="5" cy="8" rx="60" ry="55" fill="url(#canopyShadow)" />
+    <ellipse cx="-10" cy="-10" rx="28" ry="25" fill="url(#canopyHighlight)" />
+
+    <!-- Color palette -->
+    <g transform="translate(-50, 90)">
+      <circle cx="0" cy="0" r="8" fill="#43AC78" />
+      <circle cx="20" cy="0" r="8" fill="#228B22" />
+      <circle cx="40" cy="0" r="8" fill="#155724" />
+    </g>
+  </g>
+
+  <!-- Autumn -->
+  <g transform="translate(700, 450)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Autumn
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Fall Colors
+    </text>
+    <circle cx="0" cy="0" r="70" fill="url(#autumnGradient)" filter="url(#watercolor)" />
+
+    <!-- Layered autumn spots -->
+    <circle cx="-20" cy="-15" r="25" fill="#FCB829" opacity="0.7" filter="url(#watercolor)" />
+    <circle cx="15" cy="20" r="22" fill="#FE7126" opacity="0.6" filter="url(#watercolor)" />
+    <circle cx="-10" cy="25" r="18" fill="#D00127" opacity="0.7" filter="url(#watercolor)" />
+
+    <ellipse cx="5" cy="8" rx="60" ry="55" fill="url(#canopyShadow)" />
+    <ellipse cx="-15" cy="-15" rx="28" ry="25" fill="url(#canopyHighlight)" />
+
+    <!-- Color palette -->
+    <g transform="translate(-70, 90)">
+      <circle cx="0" cy="0" r="8" fill="#FCB829" />
+      <circle cx="20" cy="0" r="8" fill="#FE7126" />
+      <circle cx="40" cy="0" r="8" fill="#D00127" />
+      <circle cx="60" cy="0" r="8" fill="#644A2A" />
+    </g>
+  </g>
+
+  <!-- Winter (Deciduous - Bare) -->
+  <g transform="translate(950, 450)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Winter
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Bare Branches
+    </text>
+
+    <!-- Bare branch structure -->
+    <g filter="url(#sketch)">
+      <line x1="0" y1="0" x2="0" y2="-60" stroke="#875D4A" stroke-width="8" stroke-linecap="round" />
+      <line x1="0" y1="-20" x2="-35" y2="-50" stroke="#875D4A" stroke-width="5" stroke-linecap="round" />
+      <line x1="0" y1="-20" x2="35" y2="-50" stroke="#875D4A" stroke-width="5" stroke-linecap="round" />
+      <line x1="0" y1="-40" x2="-25" y2="-65" stroke="#644A2A" stroke-width="3" stroke-linecap="round" />
+      <line x1="0" y1="-40" x2="25" y2="-65" stroke="#644A2A" stroke-width="3" stroke-linecap="round" />
+    </g>
+
+    <!-- Shadow ellipse for branch structure -->
+    <ellipse cx="0" cy="10" rx="40" ry="15" fill="#000000" opacity="0.15" filter="url(#watercolor)" />
+
+    <!-- Color palette -->
+    <g transform="translate(-70, 90)">
+      <circle cx="0" cy="0" r="8" fill="#BBA89A" />
+      <circle cx="20" cy="0" r="8" fill="#875D4A" />
+      <circle cx="40" cy="0" r="8" fill="#644A2A" />
+      <circle cx="60" cy="0" r="8" fill="#3E2723" />
+    </g>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- ROW 3: EVERGREEN SEASONAL VARIATIONS -->
+  <!-- ============================================ -->
+  <text x="100" y="680" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333333">
+    Seasonal Color Progression (Evergreen)
+  </text>
+
+  <!-- Spring Evergreen -->
+  <g transform="translate(200, 750)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Spring
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Bright Green
+    </text>
+    <circle cx="0" cy="0" r="70" fill="#00FF7F" opacity="0.85" filter="url(#watercolor)" />
+    <ellipse cx="5" cy="8" rx="60" ry="55" fill="url(#canopyShadow)" />
+    <ellipse cx="-10" cy="-10" rx="28" ry="25" fill="url(#canopyHighlight)" />
+  </g>
+
+  <!-- Summer Evergreen -->
+  <g transform="translate(450, 750)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Summer
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Deep Green
+    </text>
+    <circle cx="0" cy="0" r="70" fill="#228B22" opacity="0.9" filter="url(#watercolor)" />
+    <ellipse cx="5" cy="8" rx="60" ry="55" fill="url(#canopyShadow)" />
+    <ellipse cx="-10" cy="-10" rx="28" ry="25" fill="url(#canopyHighlight)" />
+  </g>
+
+  <!-- Autumn Evergreen -->
+  <g transform="translate(700, 750)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Autumn
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Slight Bronze
+    </text>
+    <circle cx="0" cy="0" r="70" fill="#2E6F40" opacity="0.9" filter="url(#watercolor)" />
+    <circle cx="-15" cy="-20" r="20" fill="#CD7F32" opacity="0.3" filter="url(#watercolor)" />
+    <ellipse cx="5" cy="8" rx="60" ry="55" fill="url(#canopyShadow)" />
+    <ellipse cx="-10" cy="-10" rx="28" ry="25" fill="url(#canopyHighlight)" />
+  </g>
+
+  <!-- Winter Evergreen -->
+  <g transform="translate(950, 750)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Winter
+    </text>
+    <text x="0" y="-70" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Bronzed Green
+    </text>
+    <circle cx="0" cy="0" r="70" fill="url(#winterGradient)" filter="url(#watercolor)" />
+    <ellipse cx="5" cy="8" rx="60" ry="55" fill="url(#canopyShadow)" />
+    <ellipse cx="-10" cy="-10" rx="28" ry="25" fill="url(#canopyHighlight)" />
+  </g>
+
+  <!-- ============================================ -->
+  <!-- ROW 4: FOLIAGE PATTERNS & TEXTURES -->
+  <!-- ============================================ -->
+  <text x="100" y="980" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333333">
+    Foliage Patterns & Textures
+  </text>
+
+  <!-- Dense Canopy (Solid) -->
+  <g transform="translate(200, 1050)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Dense Canopy
+    </text>
+    <circle cx="0" cy="0" r="70" fill="#228B22" opacity="0.9" filter="url(#watercolor)" />
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#228B22" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5" />
+  </g>
+
+  <!-- Medium Density (with leaf clusters) -->
+  <g transform="translate(450, 1050)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Medium Density
+    </text>
+    <circle cx="0" cy="0" r="70" fill="#228B22" opacity="0.6" filter="url(#watercolor)" />
+    <circle cx="0" cy="0" r="70" fill="url(#leafCluster)" stroke="none" />
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#228B22" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5" />
+  </g>
+
+  <!-- With Cross Hatching -->
+  <g transform="translate(700, 1050)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Cross Hatching
+    </text>
+    <circle cx="0" cy="0" r="70" fill="#228B22" opacity="0.7" filter="url(#sketch)" />
+    <circle cx="0" cy="0" r="70" fill="url(#hatchCross)" />
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#228B22" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5" />
+  </g>
+
+  <!-- Stippling -->
+  <g transform="translate(950, 1050)">
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666666">
+      Stippling
+    </text>
+    <circle cx="0" cy="0" r="70" fill="#228B22" filter="url(#stipple)" />
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#228B22" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5" />
+  </g>
+
+  <!-- ============================================ -->
+  <!-- ROW 5: BEFORE & AFTER COMPARISON -->
+  <!-- ============================================ -->
+  <text x="100" y="1280" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333333">
+    Before & After: Scientific vs. Watercolor
+  </text>
+
+  <!-- Before (Scientific) -->
+  <g transform="translate(300, 1380)">
+    <text x="0" y="-110" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      Before: Scientific
+    </text>
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Clean, precise, technical
+    </text>
+
+    <!-- Canopy -->
+    <circle cx="0" cy="0" r="80" fill="#228B22" opacity="0.9" />
+
+    <!-- Spread outline -->
+    <circle cx="0" cy="0" r="95" fill="none" stroke="#228B22" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.6" />
+
+    <!-- Simple shadow -->
+    <ellipse cx="0" cy="90" rx="75" ry="15" fill="#000000" opacity="0.15" />
+  </g>
+
+  <!-- After (Watercolor) -->
+  <g transform="translate(700, 1380)">
+    <text x="0" y="-110" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#333333">
+      After: Artistic Watercolor
+    </text>
+    <text x="0" y="-90" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">
+      Soft, organic, expressive
+    </text>
+
+    <!-- Watercolor canopy with autumn colors -->
+    <circle cx="0" cy="0" r="80" fill="url(#autumnGradient)" filter="url(#watercolor)" />
+
+    <!-- Color variation spots -->
+    <circle cx="-25" cy="-20" r="30" fill="#FCB829" opacity="0.7" filter="url(#watercolor)" />
+    <circle cx="20" cy="25" r="28" fill="#FE7126" opacity="0.6" filter="url(#watercolor)" />
+    <circle cx="-15" cy="30" r="22" fill="#D00127" opacity="0.7" filter="url(#watercolor)" />
+
+    <!-- Spread outline (softer) -->
+    <circle cx="0" cy="0" r="95" fill="none" stroke="#D00127" stroke-width="1" stroke-dasharray="3 5" opacity="0.4" filter="url(#watercolor)" />
+
+    <!-- Watercolor shadow -->
+    <ellipse cx="8" cy="90" rx="75" ry="18" fill="#000000" opacity="0.2" filter="url(#watercolor)" />
+
+    <!-- Highlight -->
+    <ellipse cx="-15" cy="-15" rx="35" ry="32" fill="url(#canopyHighlight)" />
+  </g>
+
+  <!-- ============================================ -->
+  <!-- FOOTER NOTES -->
+  <!-- ============================================ -->
+  <text x="600" y="1550" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#999999">
+    SVG Filter Techniques: feTurbulence, feDisplacementMap, feGaussianBlur, feBlend, feColorMatrix
+  </text>
+  <text x="600" y="1570" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#999999">
+    Research Reference: RENDERING-RESEARCH.md | Version 1.0 | February 2026
+  </text>
+</svg>
