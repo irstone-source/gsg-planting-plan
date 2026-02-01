@@ -252,14 +252,14 @@ export function ExamplesHub() {
       <Header />
 
       {/* Hero Section */}
-      <RevealSection className="pt-32 pb-20">
+      <RevealSection className="pt-32 pb-12">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl uppercase tracking-wider font-bold text-mist mb-6">
               EXAMPLE PLANTING PLANS
             </h1>
             <p className="text-lg md:text-xl text-stone leading-relaxed max-w-3xl mb-8">
-              Browse 14 professional plans tailored to UK gardens. Filter by size, conditions, style, and maintenance level. All plans designed for UK hardiness zones 7-9.
+              Browse 14 professional plans, 9 designer-inspired styles, and explore our parametric plant symbol library with scientific accuracy. All plans designed for UK hardiness zones 7-9.
             </p>
             <div className="flex flex-wrap gap-3">
               <div className="bg-copper/10 border border-copper/30 px-4 py-2">
@@ -271,6 +271,84 @@ export function ExamplesHub() {
               <div className="bg-copper/10 border border-copper/30 px-4 py-2">
                 <span className="text-sm uppercase tracking-wider text-copper">RHS 2026 Trends</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* Featured Collections */}
+      <RevealSection className="pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="font-heading text-2xl md:text-3xl uppercase tracking-wider font-bold text-mist mb-8">
+              Featured Collections
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Designer Styles */}
+              <Link
+                href="/styles"
+                className="group block bg-gradient-to-br from-copper/20 to-moss/20 border-2 border-copper/40 p-8 hover:border-copper transition-all duration-300"
+              >
+                <div className="mb-4">
+                  <svg className="h-12 w-12 text-copper" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+                <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-mist mb-3">
+                  Designer Styles
+                </h3>
+                <p className="text-stone mb-4 leading-relaxed">
+                  9 curated styles inspired by Chelsea Flower Show, Piet Oudolf, Monty Don, and historic UK gardens. Get the professional look for £79.
+                </p>
+                <div className="flex items-center gap-2 text-copper text-sm uppercase tracking-wider font-bold">
+                  Browse Styles
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </div>
+              </Link>
+
+              {/* Scientific Plant Symbols */}
+              <Link
+                href="/examples/plant-library-symbols"
+                className="group block bg-gradient-to-br from-moss/20 to-copper/20 border-2 border-moss/40 p-8 hover:border-moss transition-all duration-300"
+              >
+                <div className="mb-4">
+                  <svg className="h-12 w-12 text-moss" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                  </svg>
+                </div>
+                <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-mist mb-3">
+                  Plant Symbol Library
+                </h3>
+                <p className="text-stone mb-4 leading-relaxed">
+                  Parametric SVG plant symbols with scientific accuracy. Explore 60+ color palettes, growth stages, and artistic rendering styles.
+                </p>
+                <div className="flex items-center gap-2 text-moss text-sm uppercase tracking-wider font-bold">
+                  Explore Symbols
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </div>
+              </Link>
+
+              {/* Scientific Visualization */}
+              <Link
+                href="/examples/scientific-viz"
+                className="group block bg-gradient-to-br from-mist/20 to-copper/20 border-2 border-mist/40 p-8 hover:border-mist transition-all duration-300"
+              >
+                <div className="mb-4">
+                  <svg className="h-12 w-12 text-mist" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                </div>
+                <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-mist mb-3">
+                  Scientific Visualization
+                </h3>
+                <p className="text-stone mb-4 leading-relaxed">
+                  Growth progression simulations, seasonal color analysis, and professional landscape architect rendering engine in action.
+                </p>
+                <div className="flex items-center gap-2 text-mist text-sm uppercase tracking-wider font-bold">
+                  View Demonstrations
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
