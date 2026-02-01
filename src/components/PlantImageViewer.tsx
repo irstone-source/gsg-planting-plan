@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ExternalLink, Camera } from 'lucide-react';
+import { ExternalLink, Camera, Download } from 'lucide-react';
 import Image from 'next/image';
 
 interface PlantImageViewerProps {
@@ -10,9 +10,16 @@ interface PlantImageViewerProps {
   badgeColor: string;
   badgeText: string;
   imageUrl?: string;
+  mode?: 'diy' | 'professional';
 }
 
-export function PlantImageViewer({ scientificName, commonName, badgeColor, badgeText }: PlantImageViewerProps) {
+export function PlantImageViewer({
+  scientificName,
+  commonName,
+  badgeColor,
+  badgeText,
+  mode = 'diy'
+}: PlantImageViewerProps) {
   const googleSearchQuery = `${scientificName} ${commonName}`.replace(/ /g, '+');
   const plantSlug = scientificName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
@@ -20,6 +27,7 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
   const [maturity, setMaturity] = useState<1 | 3 | 5>(3);
   const [imageError, setImageError] = useState(false);
   const [selectedThumbnail, setSelectedThumbnail] = useState(0);
+  const [showScientific, setShowScientific] = useState(mode === 'professional');
 
   // Generate Wikimedia Commons image URLs for plant thumbnails
   const thumbnailImages = [
@@ -40,7 +48,19 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
     <div className="bg-dark/30 border border-white/5">
       {/* Main Image Display */}
       <div className="relative h-64 bg-dark overflow-hidden">
-        {!imageError ? (
+        {mode === 'professional' && showScientific ? (
+          // Scientific SVG Visualization
+          <div className="relative h-full bg-gradient-to-br from-dark to-concrete/20 flex items-center justify-center p-8">
+            <Image
+              src={`/api/plant/render?species=${encodeURIComponent(scientificName)}&view=${view}&maturity=${maturity}`}
+              alt={`${scientificName} scientific symbol - ${view} view, ${maturity} years`}
+              width={400}
+              height={400}
+              className="w-full h-full object-contain"
+              unoptimized // SVG rendering
+            />
+          </div>
+        ) : !imageError ? (
           <Image
             src={getImagePath()}
             alt={`${scientificName} (${commonName}) - ${view} view, ${maturity} years`}
@@ -146,6 +166,52 @@ export function PlantImageViewer({ scientificName, commonName, badgeColor, badge
           </div>
         </div>
       </div>
+
+      {/* Professional Mode Controls */}
+      {mode === 'professional' && (
+        <div className="bg-dark/50 border-t border-white/5 px-4 py-4 space-y-3">
+          {/* Scientific Visualization Toggle */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs uppercase tracking-wider text-stone font-heading w-24">Display:</span>
+            <div className="flex gap-2 flex-1">
+              <button
+                onClick={() => setShowScientific(false)}
+                className={`px-3 py-1.5 text-xs uppercase tracking-wider font-heading transition-all duration-300 ${
+                  !showScientific
+                    ? 'bg-copper text-dark'
+                    : 'bg-dark/50 border border-white/10 text-stone hover:border-copper hover:text-copper'
+                }`}
+              >
+                Photo
+              </button>
+              <button
+                onClick={() => setShowScientific(true)}
+                className={`px-3 py-1.5 text-xs uppercase tracking-wider font-heading transition-all duration-300 ${
+                  showScientific
+                    ? 'bg-copper text-dark'
+                    : 'bg-dark/50 border border-white/10 text-stone hover:border-copper hover:text-copper'
+                }`}
+              >
+                Scientific Symbol
+              </button>
+            </div>
+          </div>
+
+          {/* Download Button */}
+          <button
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = `/api/plant/render?species=${encodeURIComponent(scientificName)}&view=${view}&maturity=${maturity}&format=png`;
+              link.download = `${plantSlug}-${view}-${maturity}yr.png`;
+              link.click();
+            }}
+            className="w-full px-4 py-2 bg-moss text-dark text-xs uppercase tracking-wider font-heading hover:bg-moss/80 transition-colors duration-300 flex items-center justify-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Download Symbol (PNG)
+          </button>
+        </div>
+      )}
 
       {/* External Links - Architectural Styling */}
       <div className="bg-dark/30 border-t border-white/5 px-4 py-3">

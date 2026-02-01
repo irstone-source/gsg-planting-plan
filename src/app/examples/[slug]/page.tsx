@@ -315,6 +315,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                           commonName={plantDetail.commonName}
                           badgeColor={plantDetail.badge.color}
                           badgeText={plantDetail.badge.text}
+                          mode="professional"
                         />
                         <div className="p-6">
                           <h4 className="font-heading text-lg font-bold text-mist mb-2">
@@ -360,6 +361,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                           commonName={plantDetail.commonName}
                           badgeColor={plantDetail.badge.color}
                           badgeText={plantDetail.badge.text}
+                          mode="professional"
                         />
                         <div className="p-6">
                           <h4 className="font-heading text-lg font-bold text-mist mb-2">
@@ -405,6 +407,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
                           commonName={plantDetail.commonName}
                           badgeColor={plantDetail.badge.color}
                           badgeText={plantDetail.badge.text}
+                          mode="professional"
                         />
                         <div className="p-6">
                           <h4 className="font-heading text-lg font-bold text-mist mb-2">
