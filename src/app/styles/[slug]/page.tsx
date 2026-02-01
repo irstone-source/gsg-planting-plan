@@ -3,7 +3,10 @@ import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Sparkles, TreePine, Calendar, Leaf, ExternalLink } from 'lucide-react';
+import { examplePlansExpanded } from '@/data/example-plans-expanded';
+import { PlantImageViewer } from '@/components/PlantImageViewer';
+import { getPlantDetail } from '@/data/plant-database';
 
 // Map designer style slugs to their corresponding example plan slugs
 function getExampleSlug(styleSlug: string): string {
@@ -153,32 +156,105 @@ export default async function StylePage({ params }: { params: Promise<{ slug: st
             </div>
           </RevealSection>
 
-          {/* Example Plan CTA */}
+          {/* Sample Planting Palette */}
           <RevealSection>
-            <div className="bg-concrete/60 backdrop-blur-md border border-copper/30 p-10 mb-16">
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-copper/20 border border-copper flex items-center justify-center">
-                    <Sparkles className="h-8 w-8 text-copper" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h2 className="font-heading text-2xl uppercase tracking-wider font-bold text-mist mb-3">
-                    See This Style in Action
-                  </h2>
-                  <p className="text-stone mb-6 leading-relaxed">
-                    View a complete example planting plan using this style. See the full plant palette,
-                    site analysis, and maintenance schedule with interactive plant visualizations.
-                  </p>
-                  <Link
-                    href={`/examples/${getExampleSlug(style.slug)}`}
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-copper text-dark font-heading text-sm uppercase tracking-wider font-bold hover:bg-[#D4A373] transition-colors"
-                  >
-                    View Example Plan
-                    <ArrowRight className="h-5 w-5" />
-                  </Link>
-                </div>
-              </div>
+            <div className="mb-16">
+              <h2 className="font-heading text-3xl uppercase tracking-wider font-bold text-mist mb-4">
+                Sample Planting Palette
+              </h2>
+              <p className="text-stone mb-8 leading-relaxed">
+                Example plants that work beautifully in this style. Your custom plan will be adapted to your specific site conditions.
+              </p>
+
+              {(() => {
+                const examplePlan = examplePlansExpanded.find(plan => plan.slug === getExampleSlug(style.slug));
+                if (!examplePlan) return null;
+
+                return (
+                  <>
+                    {/* Structure Plants */}
+                    {examplePlan.plantingPalette.structure && examplePlan.plantingPalette.structure.length > 0 && (
+                      <div className="mb-12">
+                        <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-copper mb-6 flex items-center gap-2">
+                          <TreePine className="h-5 w-5" />
+                          Structure & Framework
+                        </h3>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {examplePlan.plantingPalette.structure.map((plantName: string, idx: number) => {
+                            const plantDetail = getPlantDetail(plantName);
+                            if (!plantDetail) return null;
+
+                            return (
+                              <PlantImageViewer
+                                key={`structure-${idx}-${plantName}`}
+                                scientificName={plantDetail.scientificName}
+                                commonName={plantDetail.commonName}
+                                badgeColor="bg-copper text-dark"
+                                badgeText="Structure"
+                                mode="professional"
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Seasonal Interest */}
+                    {examplePlan.plantingPalette.seasonal && examplePlan.plantingPalette.seasonal.length > 0 && (
+                      <div className="mb-12">
+                        <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-copper mb-6 flex items-center gap-2">
+                          <Calendar className="h-5 w-5" />
+                          Seasonal Interest
+                        </h3>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {examplePlan.plantingPalette.seasonal.map((plantName: string, idx: number) => {
+                            const plantDetail = getPlantDetail(plantName);
+                            if (!plantDetail) return null;
+
+                            return (
+                              <PlantImageViewer
+                                key={`seasonal-${idx}-${plantName}`}
+                                scientificName={plantDetail.scientificName}
+                                commonName={plantDetail.commonName}
+                                badgeColor="bg-moss text-dark"
+                                badgeText="Seasonal"
+                                mode="professional"
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Ground Cover */}
+                    {examplePlan.plantingPalette.groundCover && examplePlan.plantingPalette.groundCover.length > 0 && (
+                      <div className="mb-12">
+                        <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-copper mb-6 flex items-center gap-2">
+                          <Leaf className="h-5 w-5" />
+                          Ground Cover & Fillers
+                        </h3>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {examplePlan.plantingPalette.groundCover.map((plantName: string, idx: number) => {
+                            const plantDetail = getPlantDetail(plantName);
+                            if (!plantDetail) return null;
+
+                            return (
+                              <PlantImageViewer
+                                key={`groundcover-${idx}-${plantName}`}
+                                scientificName={plantDetail.scientificName}
+                                commonName={plantDetail.commonName}
+                                badgeColor="bg-stone/80 text-dark"
+                                badgeText="Ground Cover"
+                                mode="professional"
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           </RevealSection>
 
@@ -244,28 +320,29 @@ export default async function StylePage({ params }: { params: Promise<{ slug: st
 
           {/* Attribution */}
           <RevealSection>
-            <div className="border-t border-white/10 pt-12">
-              <h3 className="font-heading text-lg uppercase tracking-wider font-bold text-mist mb-4">
-                Attribution & Sources
+            <div className="bg-copper/5 border-l-4 border-copper p-8 mb-16">
+              <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-copper mb-4 flex items-center gap-2">
+                <ExternalLink className="h-5 w-5" />
+                Design Inspiration & Sources
               </h3>
-              <p className="text-sm text-stone mb-6 leading-relaxed">
+              <p className="text-base text-stone mb-6 leading-relaxed">
                 {style.attribution_text}
               </p>
 
               {style.source_links && Array.isArray(style.source_links) && style.source_links.length > 0 && (
                 <div>
-                  <p className="text-sm font-heading uppercase tracking-wider text-mist mb-3">Learn More:</p>
-                  <ul className="space-y-2">
+                  <p className="text-sm font-heading uppercase tracking-wider text-mist mb-4">Official Sources & Further Reading:</p>
+                  <ul className="space-y-3">
                     {style.source_links.map((link: any, i: number) => (
                       <li key={i}>
                         <a
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-copper hover:underline inline-flex items-center gap-2"
+                          className="text-base text-copper hover:text-mist transition-colors inline-flex items-center gap-2 font-medium"
                         >
+                          <ExternalLink className="h-4 w-4 flex-shrink-0" />
                           {link.title}
-                          <ArrowRight className="h-4 w-4" />
                         </a>
                       </li>
                     ))}
