@@ -1,10 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load environment variables from .env.local
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 // Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Error: Missing Supabase credentials');
+  console.error('Make sure .env.local contains:');
+  console.error('- NEXT_PUBLIC_SUPABASE_URL');
+  console.error('- NEXT_PUBLIC_SUPABASE_ANON_KEY (or SUPABASE_SERVICE_ROLE_KEY)');
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const designerStyles = [
   // Show Gardens (3 styles for MVP)
