@@ -42,8 +42,9 @@ async function getStyle(slug: string) {
   return data;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const style = await getStyle(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const style = await getStyle(slug);
 
   if (!style) {
     return {
@@ -58,8 +59,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function StylePage({ params }: { params: { slug: string } }) {
-  const style = await getStyle(params.slug);
+export default async function StylePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const style = await getStyle(slug);
 
   if (!style) {
     notFound();
