@@ -5,6 +5,23 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 
+// Map designer style slugs to their corresponding example plan slugs
+function getExampleSlug(styleSlug: string): string {
+  const mapping: Record<string, string> = {
+    'piet-oudolf-prairie': 'piet-oudolf-prairie-style',
+    'monty-don-cottage': 'monty-don-cottage-garden',
+    'chelsea-2023-gold': 'chelsea-2023-gold-modern',
+    'chelsea-wildlife': 'chelsea-wildlife-haven',
+    'chelsea-urban': 'chelsea-urban-retreat',
+    'dan-pearson-meadow': 'dan-pearson-meadow',
+    'sissinghurst-white': 'sissinghurst-white-garden',
+    'great-dixter-exotic': 'great-dixter-exotic',
+    'gardeners-world-family': 'gardeners-world-family',
+  };
+
+  return mapping[styleSlug] || styleSlug;
+}
+
 async function getStyle(slug: string) {
   const { data, error } = await supabase
     .from('designer_styles')
@@ -131,6 +148,35 @@ export default async function StylePage({ params }: { params: { slug: string } }
                 className="text-stone leading-relaxed whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: style.long_description.replace(/\n/g, '<br /><br />') }}
               />
+            </div>
+          </RevealSection>
+
+          {/* Example Plan CTA */}
+          <RevealSection>
+            <div className="bg-concrete/60 backdrop-blur-md border border-copper/30 p-10 mb-16">
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-copper/20 border border-copper flex items-center justify-center">
+                    <Sparkles className="h-8 w-8 text-copper" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h2 className="font-heading text-2xl uppercase tracking-wider font-bold text-mist mb-3">
+                    See This Style in Action
+                  </h2>
+                  <p className="text-stone mb-6 leading-relaxed">
+                    View a complete example planting plan using this style. See the full plant palette,
+                    site analysis, and maintenance schedule with interactive plant visualizations.
+                  </p>
+                  <Link
+                    href={`/examples/${getExampleSlug(style.slug)}`}
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-copper text-dark font-heading text-sm uppercase tracking-wider font-bold hover:bg-[#D4A373] transition-colors"
+                  >
+                    View Example Plan
+                    <ArrowRight className="h-5 w-5" />
+                  </Link>
+                </div>
+              </div>
             </div>
           </RevealSection>
 

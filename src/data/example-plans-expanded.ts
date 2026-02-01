@@ -768,6 +768,610 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     season: 'Spring-Autumn'
   },
 
+  // DESIGNER STYLE EXAMPLE PLANS
+  // These showcase each designer style with appropriate plant selections
+
+  // 1. PIET OUDOLF PRAIRIE STYLE
+  {
+    id: 'designer-piet-oudolf-prairie',
+    slug: 'piet-oudolf-prairie-style',
+    title: 'Piet Oudolf Prairie Garden',
+    postcode: 'SW7 2RL',
+    region: 'Chelsea, London',
+    rhsZone: 'H4',
+    area: 120,
+    budget: '£700-1200',
+    totalPlants: 45,
+    totalCost: 950,
+    description: 'Naturalistic prairie planting inspired by Piet Oudolf\'s Chelsea Flower Show gardens. Structural grasses create the matrix while perennials provide waves of seasonal color and exceptional winter silhouette.',
+    designConcept: 'Matrix planting with 60% grasses as structural framework, 40% perennials for seasonal color. Plants selected for form, texture, and winter interest rather than fleeting flowers. Self-sustaining ecosystem approach.',
+    highlights: [
+      'Signature Oudolf grasses (Molinia, Calamagrostis)',
+      'Perennials with strong architectural form',
+      'Winter structure as design priority',
+      'Self-seeding informal aesthetic',
+      'Year-round visual interest'
+    ],
+    heroImage: '/covers/piet-oudolf-prairie-style.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['London'],
+      gardenType: ['New-build', 'Family lawn'],
+      feeling: ['Wild & natural', 'Modern-minimal'],
+      useCase: ['Wildlife', 'Low-water'],
+      effort: 'Weekend gardener',
+      constraint: []
+    },
+    siteAnalysis: {
+      sun: 'Full sun (6+ hours direct)',
+      soil: 'Free-draining loam',
+      moisture: 'Moist but well-drained',
+      challenges: ['Wind exposure', 'Need for year-round structure', 'Avoiding floppy perennials'],
+      opportunities: ['Excellent sunlight for grasses', 'Space for naturalistic drifts', 'Winter garden interest', 'Movement and light play']
+    },
+    plantingPalette: {
+      structure: [
+        'Calamagrostis x acutiflora Karl Foerster',
+        'Molinia caerulea Transparent',
+        'Miscanthus sinensis Morning Light'
+      ],
+      seasonal: [
+        'Echinacea purpurea',
+        'Rudbeckia fulgida',
+        'Sanguisorba officinalis',
+        'Veronicastrum virginicum',
+        'Eupatorium maculatum',
+        'Actaea simplex'
+      ],
+      groundCover: [
+        'Geranium Rozanne',
+        'Nepeta Six Hills Giant',
+        'Alchemilla mollis'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Cut back winter stems in late March', 'Apply organic mulch', 'Allow self-seeders to germinate'],
+      'Summer': ['Water only during severe drought', 'No staking - plants self-support', 'Enjoy peak flowering'],
+      'Autumn': ['Leave seed heads for birds', 'Cut back selectively', 'Remove only weak growth'],
+      'Winter': ['Enjoy structural silhouettes and frost', 'Plan next season', 'Minimal intervention']
+    },
+    season: 'Year-round'
+  },
+
+  // 2. MONTY DON COTTAGE GARDEN
+  {
+    id: 'designer-monty-don-cottage',
+    slug: 'monty-don-cottage-garden',
+    title: 'Monty Don Cottage Garden',
+    postcode: 'HR6 8LQ',
+    region: 'Herefordshire (Longmeadow-inspired)',
+    rhsZone: 'H4',
+    area: 150,
+    budget: '£600-1000',
+    totalPlants: 55,
+    totalCost: 825,
+    description: 'Traditional English cottage garden inspired by Monty Don\'s Longmeadow. Abundant mixed borders with roses, perennials, and self-seeders creating the quintessential cottage garden romance.',
+    designConcept: 'Layered informal planting with roses as structure, cottage perennials for abundance, and edibles integrated throughout. Generous spacing allows self-seeders to naturalize. Focus on scent, color, and traditional charm.',
+    highlights: [
+      'Classic cottage roses (David Austin varieties)',
+      'Traditional cottage perennials mixed with edibles',
+      'Self-seeding informality (Verbena bonariensis, Aquilegia)',
+      'Scented plants throughout',
+      'Cut flower production'
+    ],
+    heroImage: '/covers/monty-don-cottage-garden.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['Rural'],
+      gardenType: ['Family lawn', 'Cottage'],
+      feeling: ['Romantic', 'Joyful colour'],
+      useCase: ['Cut flowers', 'Edible', 'Wildlife'],
+      effort: 'Weekend gardener',
+      constraint: []
+    },
+    siteAnalysis: {
+      sun: 'Full sun to partial shade',
+      soil: 'Rich, moisture-retentive loam',
+      moisture: 'Moist, well-drained',
+      challenges: ['Need for regular deadheading', 'Rose care required', 'Competitive self-seeders'],
+      opportunities: ['Rich soil suits greedy feeders', 'Space for abundance', 'Mixed sun allows diversity', 'Traditional cottage setting']
+    },
+    plantingPalette: {
+      structure: [
+        'Rosa Gertrude Jekyll',
+        'Rosa The Generous Gardener',
+        'Digitalis purpurea'
+      ],
+      seasonal: [
+        'Aquilegia vulgaris',
+        'Delphinium',
+        'Geranium phaeum',
+        'Alchemilla mollis',
+        'Verbena bonariensis',
+        'Cosmos bipinnatus',
+        'Sweet peas (Lathyrus odoratus)'
+      ],
+      groundCover: [
+        'Nepeta',
+        'Viola',
+        'Hardy geraniums'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Prune roses', 'Mulch heavily', 'Support delphiniums', 'Sow sweet peas'],
+      'Summer': ['Deadhead roses regularly', 'Water in dry spells', 'Harvest for vase', 'Enjoy peak abundance'],
+      'Autumn': ['Cut back perennials', 'Plant spring bulbs', 'Collect seeds', 'Final rose deadheading'],
+      'Winter': ['Prune climbing roses', 'Plan next year', 'Light tidy only']
+    },
+    season: 'Spring-Autumn'
+  },
+
+  // 3. CHELSEA 2023 GOLD MODERN MINIMALIST
+  {
+    id: 'designer-chelsea-modern',
+    slug: 'chelsea-2023-gold-modern',
+    title: 'Chelsea Modern Minimalist',
+    postcode: 'SW3 4LY',
+    region: 'Chelsea, London',
+    rhsZone: 'H4',
+    area: 80,
+    budget: '£800-1500',
+    totalPlants: 32,
+    totalCost: 1180,
+    description: 'Contemporary urban garden inspired by Chelsea 2023 Gold Medal winners. Architectural plants and restrained palette create year-round structure with minimal maintenance.',
+    designConcept: 'Less is more. Limited palette of 5-7 species in generous blocks creates calm, structured aesthetic. Evergreen framework ensures year-round presence. Hard landscaping integral to design.',
+    highlights: [
+      'Multi-stem Betula as sculptural focal point',
+      'Evergreen structure (Buxus, Taxus)',
+      'Limited palette for maximum impact',
+      'Architectural grasses for movement',
+      'Sustainable peat-free planting'
+    ],
+    heroImage: '/covers/chelsea-2023-gold-modern.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['London'],
+      gardenType: ['Courtyard', 'New-build'],
+      feeling: ['Modern-minimal', 'Tidy & structured'],
+      useCase: ['Privacy', 'Low-water'],
+      effort: 'I do nothing',
+      constraint: ['Overlooked']
+    },
+    siteAnalysis: {
+      sun: 'Partial shade (3-4 hours direct)',
+      soil: 'Improved urban loam',
+      moisture: 'Moist, well-drained',
+      challenges: ['Limited direct sun', 'Small footprint', 'Need for year-round interest'],
+      opportunities: ['Vertical space for screening', 'Minimal maintenance design', 'Contemporary architecture suits modern style']
+    },
+    plantingPalette: {
+      structure: [
+        'Betula pendula (multi-stem)',
+        'Taxus baccata (topiary)',
+        'Buxus sempervirens (low hedging)'
+      ],
+      seasonal: [
+        'Molinia caerulea Transparent',
+        'Deschampsia cespitosa',
+        'Hakonechloa macra',
+        'Ferns (Dryopteris)'
+      ],
+      groundCover: [
+        'Pachysandra terminalis',
+        'Epimedium',
+        'Ajuga reptans'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Refresh mulch', 'Clip Buxus once'],
+      'Summer': ['Water sparingly', 'Minimal intervention'],
+      'Autumn': ['Cut back grasses in late autumn', 'Remove fallen leaves'],
+      'Winter': ['Enjoy evergreen structure', 'Plan next season']
+    },
+    season: 'Year-round'
+  },
+
+  // 4. CHELSEA WILDLIFE GARDEN
+  {
+    id: 'designer-chelsea-wildlife',
+    slug: 'chelsea-wildlife-haven',
+    title: 'Chelsea Wildlife Haven',
+    postcode: 'SW11 4NJ',
+    region: 'South London',
+    rhsZone: 'H4',
+    area: 100,
+    budget: '£400-800',
+    totalPlants: 50,
+    totalCost: 620,
+    description: 'Wildlife-friendly garden inspired by Chelsea Wildlife Garden Gold Medal winners. Native plants create habitat for pollinators, birds, and beneficial insects while maintaining visual appeal.',
+    designConcept: 'Nature-first design using predominantly native species. Layered planting creates habitat niches. No pesticides, peat-free, wildlife pond central. Relaxed aesthetic embraces natural processes.',
+    highlights: [
+      'Native plant species for local wildlife',
+      'Pollinator-friendly throughout seasons',
+      'Wildlife pond (conceptual)',
+      'Log piles and habitat features',
+      'Organic, peat-free approach'
+    ],
+    heroImage: '/covers/chelsea-wildlife-haven.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['London', 'Suburbs'],
+      gardenType: ['Family lawn'],
+      feeling: ['Wild & natural'],
+      useCase: ['Wildlife', 'Kids & dog'],
+      effort: 'Weekend gardener',
+      constraint: []
+    },
+    siteAnalysis: {
+      sun: 'Mixed sun and shade',
+      soil: 'Clay loam',
+      moisture: 'Moist',
+      challenges: ['Heavy clay soil', 'Need for wildlife corridors', 'Balancing wildlife and aesthetics'],
+      opportunities: ['Clay suits many natives', 'Space for pond', 'Existing trees provide shelter', 'Natural approach = low maintenance']
+    },
+    plantingPalette: {
+      structure: [
+        'Corylus avellana (hazel)',
+        'Ilex aquifolium (holly)',
+        'Crataegus monogyna (hawthorn)'
+      ],
+      seasonal: [
+        'Digitalis purpurea (foxglove)',
+        'Primula vulgaris (primrose)',
+        'Hyacinthoides non-scripta (bluebell)',
+        'Succisa pratensis (devil\'s-bit scabious)',
+        'Leucanthemum vulgare (ox-eye daisy)',
+        'Silene dioica (red campion)'
+      ],
+      groundCover: [
+        'Ajuga reptans',
+        'Geum urbanum (wood avens)',
+        'Viola riviniana (common violet)'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Refresh mulch around natives', 'Sow wildflower seed', 'Clean pond (if applicable)'],
+      'Summer': ['Allow grasses to self-seed', 'Water new plants only', 'Enjoy pollinators'],
+      'Autumn': ['Leave seed heads for birds', 'Cut back selectively', 'Plant spring bulbs (natives)'],
+      'Winter': ['Leave habitat intact', 'Feed birds', 'Plan wildlife features']
+    },
+    season: 'Year-round'
+  },
+
+  // 5. CHELSEA URBAN OASIS
+  {
+    id: 'designer-chelsea-urban',
+    slug: 'chelsea-urban-retreat',
+    title: 'Chelsea Urban Retreat',
+    postcode: 'N1 9AA',
+    region: 'North London',
+    rhsZone: 'H4',
+    area: 60,
+    budget: '£600-1000',
+    totalPlants: 38,
+    totalCost: 780,
+    description: 'Small urban courtyard transformed into lush sanctuary. Vertical planting, containers, and evergreens maximize limited space while creating year-round privacy and calm.',
+    designConcept: 'Maximize vertical space with climbers and wall-trained plants. Containers add flexibility. Evergreen framework ensures year-round presence. Water feature adds sound (conceptual).',
+    highlights: [
+      'Vertical planting for privacy',
+      'Container flexibility for seasonal interest',
+      'Evergreen structure',
+      'Shade-tolerant palette',
+      'Sound and scent focus'
+    ],
+    heroImage: '/covers/chelsea-urban-retreat.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['London', 'Urban'],
+      gardenType: ['Courtyard'],
+      feeling: ['Calm', 'Lush'],
+      useCase: ['Privacy', 'Shade rescue'],
+      effort: 'Weekend gardener',
+      constraint: ['North-facing', 'Overlooked']
+    },
+    siteAnalysis: {
+      sun: 'Partial to full shade',
+      soil: 'Container mix (peat-free)',
+      moisture: 'Container-dependent, requires irrigation',
+      challenges: ['Very limited direct sun', 'Small footprint', 'Overlooked by neighbors'],
+      opportunities: ['Vertical growing maximizes space', 'Shade suits lush foliage plants', 'Containers allow seasonal refresh']
+    },
+    plantingPalette: {
+      structure: [
+        'Trachelospermum jasminoides (star jasmine climber)',
+        'Hedera helix (ivy varieties)',
+        'Fatsia japonica'
+      ],
+      seasonal: [
+        'Hostas (container)',
+        'Hydrangea (shade varieties)',
+        'Astilbe',
+        'Ferns (Asplenium, Dryopteris)',
+        'Hakonechloa macra'
+      ],
+      groundCover: [
+        'Vinca minor',
+        'Epimedium',
+        'Brunnera macrophylla'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Refresh container compost', 'Feed evergreens', 'Prune climbers'],
+      'Summer': ['Water containers daily', 'Deadhead hydrangeas', 'Enjoy lush foliage'],
+      'Autumn': ['Reduce watering', 'Cut back perennials', 'Mulch containers'],
+      'Winter': ['Protect tender container plants', 'Enjoy evergreen structure']
+    },
+    season: 'Year-round'
+  },
+
+  // 6. DAN PEARSON WILDFLOWER MEADOW
+  {
+    id: 'designer-dan-pearson-meadow',
+    slug: 'dan-pearson-meadow',
+    title: 'Dan Pearson Wildflower Meadow',
+    postcode: 'BA2 7EW',
+    region: 'Somerset',
+    rhsZone: 'H4',
+    area: 200,
+    budget: '£400-700',
+    totalPlants: 100,
+    totalCost: 520,
+    description: 'Naturalistic wildflower meadow inspired by Dan Pearson\'s sensitivity to place and native flora. Low-intervention planting creates a self-sustaining ecosystem with seasonal beauty.',
+    designConcept: 'Site-specific native meadow. Poor soil maintained for wildflower success. Annual cut-and-lift regime. Bulbs for early season, followed by native meadow flowers. Self-sustaining once established.',
+    highlights: [
+      'Native wildflower species',
+      'Low-maintenance once established',
+      'Pollinator magnet',
+      'Seasonal mowing regime',
+      'Self-seeding natural aesthetic'
+    ],
+    heroImage: '/covers/dan-pearson-meadow.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['Rural'],
+      gardenType: ['Family lawn'],
+      feeling: ['Wild & natural'],
+      useCase: ['Wildlife', 'Low-water'],
+      effort: 'I do nothing',
+      constraint: []
+    },
+    siteAnalysis: {
+      sun: 'Full sun',
+      soil: 'Poor, free-draining (ideal for wildflowers)',
+      moisture: 'Dry to moist',
+      challenges: ['Fertility must be kept low', 'Initial establishment period', 'Unwanted species control'],
+      opportunities: ['Large open area', 'Full sun', 'Poor soil perfect for wildflowers', 'Low ongoing maintenance']
+    },
+    plantingPalette: {
+      structure: [
+        'Native grasses (Festuca rubra, Anthoxanthum odoratum)',
+        'Bulbs (Narcissus, Crocus)'
+      ],
+      seasonal: [
+        'Leucanthemum vulgare (ox-eye daisy)',
+        'Centaurea nigra (knapweed)',
+        'Knautia arvensis (field scabious)',
+        'Silene dioica (red campion)',
+        'Primula veris (cowslip)',
+        'Lotus corniculatus (bird\'s-foot trefoil)',
+        'Rhinanthus minor (yellow rattle - parasitic, reduces grass vigor)'
+      ],
+      groundCover: [
+        'Thymus polytrichus (wild thyme)',
+        'Trifolium repens (white clover)',
+        'Plantago lanceolata (ribwort plantain)'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Allow spring bulbs and early flowers', 'No mowing until July'],
+      'Summer': ['Peak flowering - enjoy', 'Single cut in late July/August', 'Remove cuttings to reduce fertility'],
+      'Autumn': ['Scatter yellow rattle seed', 'Monitor unwanted species', 'Minimal intervention'],
+      'Winter': ['Leave seed heads', 'Plan species additions if needed']
+    },
+    season: 'Spring-Summer'
+  },
+
+  // 7. SISSINGHURST WHITE GARDEN
+  {
+    id: 'designer-sissinghurst-white',
+    slug: 'sissinghurst-white-garden',
+    title: 'Sissinghurst White Garden',
+    postcode: 'TN17 2AB',
+    region: 'Kent (Sissinghurst-inspired)',
+    rhsZone: 'H4',
+    area: 100,
+    budget: '£700-1200',
+    totalPlants: 42,
+    totalCost: 985,
+    description: 'All-white formal border inspired by Vita Sackville-West\'s iconic White Garden at Sissinghurst. Silver foliage and white flowers create luminous, sophisticated scheme.',
+    designConcept: 'Monochromatic white palette with silver-grey foliage. Formal structure with clipped box edging. Succession of white blooms from spring through autumn. Evening garden focus - whites glow at dusk.',
+    highlights: [
+      'All-white color scheme',
+      'Silver and grey foliage throughout',
+      'Formal box-edged borders',
+      'Fragrant white roses',
+      'Evening luminosity'
+    ],
+    heroImage: '/covers/sissinghurst-white-garden.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['Rural'],
+      gardenType: ['Formal', 'Traditional'],
+      feeling: ['Romantic', 'Tidy & structured'],
+      useCase: ['Entertaining', 'Cut flowers'],
+      effort: 'Enthusiast',
+      constraint: []
+    },
+    siteAnalysis: {
+      sun: 'Full sun to partial shade',
+      soil: 'Rich, well-drained loam',
+      moisture: 'Moist, well-drained',
+      challenges: ['Maintaining white purity (no pink tones)', 'Box clipping regime', 'Succession planting needed'],
+      opportunities: ['Rich soil suits roses and perennials', 'Evening garden creates romance', 'Formal structure year-round']
+    },
+    plantingPalette: {
+      structure: [
+        'Buxus sempervirens (edging)',
+        'Rosa Iceberg',
+        'Rosa Winchester Cathedral'
+      ],
+      seasonal: [
+        'Digitalis purpurea Alba (white foxglove)',
+        'Delphinium (white varieties)',
+        'Lilium regale (white lily)',
+        'Nicotiana alata (white tobacco plant)',
+        'Cosmos Purity',
+        'Anemone x hybrida Honorine Jobert'
+      ],
+      groundCover: [
+        'Stachys byzantina (lamb\'s ear - silver foliage)',
+        'Artemisia (silver foliage)',
+        'Lamium maculatum White Nancy'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Clip box edging', 'Deadhead roses', 'Support delphiniums', 'Plant white annuals'],
+      'Summer': ['Regular deadheading', 'Water in dry spells', 'Enjoy evening garden', 'Cut flowers for house'],
+      'Autumn': ['Cut back perennials', 'Plant white bulbs', 'Final box clip', 'Mulch borders'],
+      'Winter': ['Prune roses', 'Enjoy box structure', 'Plan white succession']
+    },
+    season: 'Spring-Autumn'
+  },
+
+  // 8. GREAT DIXTER EXOTIC GARDEN
+  {
+    id: 'designer-great-dixter-exotic',
+    slug: 'great-dixter-exotic',
+    title: 'Great Dixter Exotic Garden',
+    postcode: 'TN31 6PH',
+    region: 'East Sussex (Great Dixter-inspired)',
+    rhsZone: 'H4',
+    area: 120,
+    budget: '£800-1400',
+    totalPlants: 48,
+    totalCost: 1150,
+    description: 'Bold exotic planting inspired by Christopher Lloyd\'s famous Exotic Garden at Great Dixter. Tropical look with hardy plants, vibrant colors, and dramatic foliage.',
+    designConcept: 'Create tropical effect with hardy plants. Bold foliage and hot colors dominate. Dahlias provide long season. Cannas, bananas (lifted), tender perennials create drama. High-maintenance but spectacular.',
+    highlights: [
+      'Tropical effect with hardy plants',
+      'Vibrant hot color palette',
+      'Dramatic foliage (Ricinus, Canna)',
+      'Dahlia-focused late summer',
+      'Annual bedding for intensity'
+    ],
+    heroImage: '/covers/great-dixter-exotic.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['South East'],
+      gardenType: ['Family lawn'],
+      feeling: ['Joyful colour', 'Bold'],
+      useCase: ['Entertaining', 'Cut flowers'],
+      effort: 'Enthusiast',
+      constraint: []
+    },
+    siteAnalysis: {
+      sun: 'Full sun',
+      soil: 'Rich, moisture-retentive',
+      moisture: 'Moist, well-drained',
+      challenges: ['High maintenance', 'Tender plants need lifting', 'Intensive feeding required', 'Short season (June-October)'],
+      opportunities: ['Full sun perfect for exotic look', 'Rich soil suits greedy feeders', 'Spectacular impact', 'Unique aesthetic']
+    },
+    plantingPalette: {
+      structure: [
+        'Ricinus communis (castor oil plant - annual)',
+        'Musa basjoo (hardy banana)',
+        'Canna (lifted in winter)'
+      ],
+      seasonal: [
+        'Dahlias (multiple varieties)',
+        'Verbena bonariensis',
+        'Tithonia (Mexican sunflower)',
+        'Salvia (hot colors)',
+        'Crocosmia Lucifer',
+        'Kniphofia (red hot poker)'
+      ],
+      groundCover: [
+        'Ipomoea batatas (sweet potato vine - annual)',
+        'Coleus (annual)',
+        'Begonia (annual)'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Plant tender bedding after frost', 'Feed heavily', 'Stake dahlias'],
+      'Summer': ['Deadhead dahlias weekly', 'Feed fortnightly', 'Water daily in heat', 'Enjoy peak display'],
+      'Autumn': ['Lift tender bulbs before frost', 'Take cuttings', 'Store dahlias', 'Cut back'],
+      'Winter': ['Store tender plants frost-free', 'Plan next year\'s scheme']
+    },
+    season: 'Summer-Autumn'
+  },
+
+  // 9. GARDENERS' WORLD FAMILY GARDEN
+  {
+    id: 'designer-gardeners-world-family',
+    slug: 'gardeners-world-family-garden',
+    title: 'Gardeners\' World Family Garden',
+    postcode: 'B45 8UR',
+    region: 'Midlands',
+    rhsZone: 'H4',
+    area: 180,
+    budget: '£500-900',
+    totalPlants: 52,
+    totalCost: 720,
+    description: 'Practical family garden inspired by BBC Gardeners\' World. Mix of ornamental planting, productive vegetables, play space, and wildlife areas. Real garden for real families.',
+    designConcept: 'Multi-functional zones: ornamental borders, raised veg beds, lawn for play, wildlife corner. Low-toxic plants safe for children. Productive and beautiful. Accessible gardening approach.',
+    highlights: [
+      'Family-friendly plants (non-toxic)',
+      'Productive vegetable area',
+      'Lawn for play',
+      'Wildlife corner',
+      'Seasonal projects for kids'
+    ],
+    heroImage: '/covers/gardeners-world-family-garden.jpg',
+    galleryImages: [],
+    tags: {
+      place: ['Midlands', 'Suburbs'],
+      gardenType: ['Family lawn'],
+      feeling: ['Joyful colour', 'Wild & natural'],
+      useCase: ['Kids & dog', 'Wildlife', 'Edible'],
+      effort: 'Weekend gardener',
+      constraint: []
+    },
+    siteAnalysis: {
+      sun: 'Mixed sun and partial shade',
+      soil: 'Average garden loam',
+      moisture: 'Moist, well-drained',
+      challenges: ['Balancing play space and planting', 'Child and pet safety', 'Maintaining productivity and beauty'],
+      opportunities: ['Large space allows zoning', 'Mixed sun suits variety', 'Engaging kids in gardening', 'Year-round family use']
+    },
+    plantingPalette: {
+      structure: [
+        'Malus (crab apple - safe fruit)',
+        'Sambucus nigra (elderberry)',
+        'Raised beds for vegetables'
+      ],
+      seasonal: [
+        'Sunflowers (Helianthus - kids love)',
+        'Lavandula (safe, sensory)',
+        'Cosmos (easy from seed)',
+        'Calendula (edible flowers)',
+        'Runner beans (productive climber)',
+        'Strawberries (safe, tasty)'
+      ],
+      groundCover: [
+        'Lawn (hard-wearing mix)',
+        'Thyme (between pavers)',
+        'Chamomile (lawn alternative)'
+      ]
+    },
+    maintenanceRhythm: {
+      'Spring': ['Sow seeds with kids', 'Plant veg in raised beds', 'Mow lawn weekly', 'Feed birds'],
+      'Summer': ['Harvest vegetables', 'Water containers', 'Deadhead borders', 'Family garden time'],
+      'Autumn': ['Harvest apples', 'Plant spring bulbs with kids', 'Collect seeds', 'Wildlife prep'],
+      'Winter': ['Feed birds', 'Plan next year\'s veg', 'Light tidy', 'Indoor seed starting']
+    },
+    season: 'Year-round'
+  },
+
   // I'll continue with more examples covering all regions and archetypes...
   // For now, this shows the pattern and diversity
 ];
