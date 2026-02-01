@@ -10,13 +10,13 @@ function getExampleSlug(styleSlug: string): string {
   const mapping: Record<string, string> = {
     'piet-oudolf-prairie': 'piet-oudolf-prairie-style',
     'monty-don-cottage': 'monty-don-cottage-garden',
-    'chelsea-2023-gold': 'chelsea-2023-gold-modern',
-    'chelsea-wildlife': 'chelsea-wildlife-haven',
-    'chelsea-urban': 'chelsea-urban-retreat',
+    'chelsea-2023-gold-modern': 'chelsea-2023-gold-modern',
+    'chelsea-wildlife-haven': 'chelsea-wildlife-haven',
+    'chelsea-urban-retreat': 'chelsea-urban-retreat',
     'dan-pearson-meadow': 'dan-pearson-meadow',
-    'sissinghurst-white': 'sissinghurst-white-garden',
+    'sissinghurst-white-garden': 'sissinghurst-white-garden',
     'great-dixter-exotic': 'great-dixter-exotic',
-    'gardeners-world-family': 'gardeners-world-family',
+    'gardeners-world-family-garden': 'gardeners-world-family-garden',
   };
 
   return mapping[styleSlug] || styleSlug;
