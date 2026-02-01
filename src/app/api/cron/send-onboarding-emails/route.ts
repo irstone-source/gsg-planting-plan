@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     // Day 1: Quick Win Email (24h after purchase)
     const { data: day1Users } = await supabase
       .from('activation_passes')
-      .select('user_id, tier, credits_remaining, purchased_at, user:user_profiles(email, full_name)')
+      .select('user_id, tier, credits_remaining, purchased_at, user:user_profiles!inner(email, full_name)')
       .eq('status', 'active')
       .gte('purchased_at', oneDayAgo.toISOString())
       .lt('purchased_at', new Date(oneDayAgo.getTime() - 1 * 60 * 60 * 1000).toISOString()); // 23-24 hours ago
@@ -40,6 +40,9 @@ export async function GET(request: NextRequest) {
     if (day1Users) {
       for (const pass of day1Users) {
         try {
+          // Type assertion for Supabase relation
+          const user = pass.user as unknown as { email: string; full_name: string | null } | null;
+
           // Check if email already sent
           const { data: existing } = await supabase
             .from('email_onboarding_log')
@@ -48,13 +51,13 @@ export async function GET(request: NextRequest) {
             .eq('email_type', 'quick_win_day1')
             .single();
 
-          if (!existing && pass.user?.email) {
+          if (!existing && user?.email) {
             const { data, error } = await resend.emails.send({
               from: 'PlantingPlans <hello@plantingplans.co.uk>',
-              to: [pass.user.email],
+              to: [user.email],
               subject: 'Quick Win: Create Your First Plan in 3 Minutes ⚡',
               react: QuickWinEmail({
-                name: pass.user.full_name || '',
+                name: user.full_name || '',
                 credits: pass.credits_remaining,
               }),
             });
@@ -91,7 +94,7 @@ export async function GET(request: NextRequest) {
     // Day 3: Inspiration Email
     const { data: day3Users } = await supabase
       .from('activation_passes')
-      .select('user_id, tier, purchased_at, user:user_profiles(email, full_name)')
+      .select('user_id, tier, purchased_at, user:user_profiles!inner(email, full_name)')
       .eq('status', 'active')
       .gte('purchased_at', threeDaysAgo.toISOString())
       .lt('purchased_at', new Date(threeDaysAgo.getTime() - 1 * 60 * 60 * 1000).toISOString()); // 71-72 hours ago
@@ -99,6 +102,9 @@ export async function GET(request: NextRequest) {
     if (day3Users) {
       for (const pass of day3Users) {
         try {
+          // Type assertion for Supabase relation
+          const user = pass.user as unknown as { email: string; full_name: string | null } | null;
+
           // Check if email already sent
           const { data: existing } = await supabase
             .from('email_onboarding_log')
@@ -114,13 +120,13 @@ export async function GET(request: NextRequest) {
             .eq('user_id', pass.user_id)
             .limit(1);
 
-          if (!existing && pass.user?.email) {
+          if (!existing && user?.email) {
             const { data, error } = await resend.emails.send({
               from: 'PlantingPlans <hello@plantingplans.co.uk>',
-              to: [pass.user.email],
+              to: [user.email],
               subject: 'Inspiration from Real Gardens 🌿',
               react: InspirationEmail({
-                name: pass.user.full_name || '',
+                name: user.full_name || '',
                 hasCreatedPlan: (plans?.length || 0) > 0,
               }),
             });
@@ -157,7 +163,7 @@ export async function GET(request: NextRequest) {
     // Day 7: Urgency Email (only if credits remain and pass hasn't expired)
     const { data: day7Users } = await supabase
       .from('activation_passes')
-      .select('user_id, tier, credits_remaining, expires_at, purchased_at, user:user_profiles(email, full_name)')
+      .select('user_id, tier, credits_remaining, expires_at, purchased_at, user:user_profiles!inner(email, full_name)')
       .eq('status', 'active')
       .gt('credits_remaining', 0)
       .gte('purchased_at', sevenDaysAgo.toISOString())
@@ -166,6 +172,9 @@ export async function GET(request: NextRequest) {
     if (day7Users) {
       for (const pass of day7Users) {
         try {
+          // Type assertion for Supabase relation
+          const user = pass.user as unknown as { email: string; full_name: string | null } | null;
+
           // Check if email already sent
           const { data: existing } = await supabase
             .from('email_onboarding_log')
@@ -174,17 +183,17 @@ export async function GET(request: NextRequest) {
             .eq('email_type', 'urgency_day7')
             .single();
 
-          if (!existing && pass.user?.email) {
+          if (!existing && user?.email) {
             const daysUntilExpiry = Math.ceil(
               (new Date(pass.expires_at).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
             );
 
             const { data, error } = await resend.emails.send({
               from: 'PlantingPlans <hello@plantingplans.co.uk>',
-              to: [pass.user.email],
+              to: [user.email],
               subject: `Don't Lose Your ${pass.credits_remaining} Credits ⚠️`,
               react: UrgencyEmail({
-                name: pass.user.full_name || '',
+                name: user.full_name || '',
                 creditsRemaining: pass.credits_remaining,
                 daysUntilExpiry,
               }),

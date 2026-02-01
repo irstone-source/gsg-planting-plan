@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Header, Footer, RevealSection } from '@/components/architectural';
@@ -15,7 +15,7 @@ interface DemoPlanData {
   region: string;
 }
 
-export default function DemoResultPage() {
+function DemoResultContent() {
   const [planData, setPlanData] = useState<DemoPlanData | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -247,5 +247,19 @@ export default function DemoResultPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function DemoResultPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-dark text-mist flex items-center justify-center">
+        <div className="animate-spin">
+          <Sparkles className="h-12 w-12 text-copper" />
+        </div>
+      </div>
+    }>
+      <DemoResultContent />
+    </Suspense>
   );
 }
