@@ -811,21 +811,21 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Calamagrostis x acutiflora Karl Foerster',
-        'Molinia caerulea Transparent',
-        'Miscanthus sinensis Morning Light'
+        'Native grasses',
+        'Native grasses',
+        'Native grasses'
       ],
       seasonal: [
-        'Echinacea purpurea',
-        'Rudbeckia fulgida',
-        'Sanguisorba officinalis',
-        'Veronicastrum virginicum',
-        'Eupatorium maculatum',
-        'Actaea simplex'
+        'Echinacea',
+        'Rudbeckia',
+        'Hardy perennials',
+        'Verbena',
+        'Hardy perennials',
+        'Hardy perennials'
       ],
       groundCover: [
         'Geranium Rozanne',
-        'Nepeta Six Hills Giant',
+        'Hardy perennials',
         'Alchemilla mollis'
       ]
     },
@@ -878,23 +878,23 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Rosa Gertrude Jekyll',
-        'Rosa The Generous Gardener',
-        'Digitalis purpurea'
+        'Climbing roses',
+        'Climbing roses',
+        'Hardy perennials'
       ],
       seasonal: [
-        'Aquilegia vulgaris',
-        'Delphinium',
-        'Geranium phaeum',
+        'Hardy perennials',
+        'Hardy perennials',
+        'Geranium',
         'Alchemilla mollis',
-        'Verbena bonariensis',
-        'Cosmos bipinnatus',
-        'Sweet peas (Lathyrus odoratus)'
+        'Verbena',
+        'Hardy perennials',
+        'Climbing roses'
       ],
       groundCover: [
-        'Nepeta',
-        'Viola',
-        'Hardy geraniums'
+        'Hardy perennials',
+        'Hardy perennials',
+        'Geranium'
       ]
     },
     maintenanceRhythm: {
@@ -946,19 +946,19 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Betula pendula (multi-stem)',
-        'Taxus baccata (topiary)',
-        'Buxus sempervirens (low hedging)'
+        'Betula pendula',
+        'Native grasses',
+        'Native grasses'
       ],
       seasonal: [
-        'Molinia caerulea Transparent',
-        'Deschampsia cespitosa',
-        'Hakonechloa macra',
-        'Ferns (Dryopteris)'
+        'Native grasses',
+        'Native grasses',
+        'Native grasses',
+        'Ferns'
       ],
       groundCover: [
-        'Pachysandra terminalis',
-        'Epimedium',
+        'Hardy perennials',
+        'Hardy perennials',
         'Ajuga reptans'
       ]
     },
@@ -1011,22 +1011,22 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Corylus avellana (hazel)',
-        'Ilex aquifolium (holly)',
-        'Crataegus monogyna (hawthorn)'
+        'Native perennials',
+        'Native perennials',
+        'Native perennials'
       ],
       seasonal: [
-        'Digitalis purpurea (foxglove)',
-        'Primula vulgaris (primrose)',
-        'Hyacinthoides non-scripta (bluebell)',
-        'Succisa pratensis (devil\'s-bit scabious)',
-        'Leucanthemum vulgare (ox-eye daisy)',
-        'Silene dioica (red campion)'
+        'Wildflowers',
+        'Wildflowers',
+        'Wildflowers',
+        'Native perennials',
+        'Wildflowers',
+        'Wildflowers'
       ],
       groundCover: [
         'Ajuga reptans',
-        'Geum urbanum (wood avens)',
-        'Viola riviniana (common violet)'
+        'Native perennials',
+        'Wildflowers'
       ]
     },
     maintenanceRhythm: {
@@ -1078,21 +1078,21 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Trachelospermum jasminoides (star jasmine climber)',
-        'Hedera helix (ivy varieties)',
-        'Fatsia japonica'
+        'Climbing Hydrangea',
+        'Hedera helix',
+        'Hardy perennials'
       ],
       seasonal: [
-        'Hostas (container)',
-        'Hydrangea (shade varieties)',
+        'Hostas',
+        'Hydrangea',
         'Astilbe',
-        'Ferns (Asplenium, Dryopteris)',
-        'Hakonechloa macra'
+        'Ferns',
+        'Native grasses'
       ],
       groundCover: [
-        'Vinca minor',
-        'Epimedium',
-        'Brunnera macrophylla'
+        'Hardy perennials',
+        'Hardy perennials',
+        'Brunnera'
       ]
     },
     maintenanceRhythm: {
@@ -1144,22 +1144,22 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Native grasses (Festuca rubra, Anthoxanthum odoratum)',
-        'Bulbs (Narcissus, Crocus)'
+        'Native grasses',
+        'Wildflowers'
       ],
       seasonal: [
-        'Leucanthemum vulgare (ox-eye daisy)',
-        'Centaurea nigra (knapweed)',
-        'Knautia arvensis (field scabious)',
-        'Silene dioica (red campion)',
-        'Primula veris (cowslip)',
-        'Lotus corniculatus (bird\'s-foot trefoil)',
-        'Rhinanthus minor (yellow rattle - parasitic, reduces grass vigor)'
+        'Wildflowers',
+        'Wildflowers',
+        'Wildflowers',
+        'Wildflowers',
+        'Wildflowers',
+        'Wildflowers',
+        'Native perennials'
       ],
       groundCover: [
-        'Thymus polytrichus (wild thyme)',
-        'Trifolium repens (white clover)',
-        'Plantago lanceolata (ribwort plantain)'
+        'Thyme',
+        'Native perennials',
+        'Wildflowers'
       ]
     },
     maintenanceRhythm: {
@@ -1211,22 +1211,22 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Buxus sempervirens (edging)',
-        'Rosa Iceberg',
-        'Rosa Winchester Cathedral'
+        'Hardy perennials',
+        'Climbing roses',
+        'Climbing roses'
       ],
       seasonal: [
-        'Digitalis purpurea Alba (white foxglove)',
-        'Delphinium (white varieties)',
-        'Lilium regale (white lily)',
-        'Nicotiana alata (white tobacco plant)',
-        'Cosmos Purity',
-        'Anemone x hybrida Honorine Jobert'
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials'
       ],
       groundCover: [
-        'Stachys byzantina (lamb\'s ear - silver foliage)',
-        'Artemisia (silver foliage)',
-        'Lamium maculatum White Nancy'
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials'
       ]
     },
     maintenanceRhythm: {
@@ -1278,22 +1278,22 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Ricinus communis (castor oil plant - annual)',
-        'Musa basjoo (hardy banana)',
-        'Canna (lifted in winter)'
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials'
       ],
       seasonal: [
-        'Dahlias (multiple varieties)',
-        'Verbena bonariensis',
-        'Tithonia (Mexican sunflower)',
-        'Salvia (hot colors)',
-        'Crocosmia Lucifer',
-        'Kniphofia (red hot poker)'
+        'Hardy perennials',
+        'Verbena',
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials'
       ],
       groundCover: [
-        'Ipomoea batatas (sweet potato vine - annual)',
-        'Coleus (annual)',
-        'Begonia (annual)'
+        'Hardy perennials',
+        'Hardy perennials',
+        'Hardy perennials'
       ]
     },
     maintenanceRhythm: {
@@ -1345,22 +1345,22 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
     },
     plantingPalette: {
       structure: [
-        'Malus (crab apple - safe fruit)',
-        'Sambucus nigra (elderberry)',
-        'Raised beds for vegetables'
+        'Sorbus aucuparia',
+        'Hardy perennials',
+        'Hardy perennials'
       ],
       seasonal: [
-        'Sunflowers (Helianthus - kids love)',
-        'Lavandula (safe, sensory)',
-        'Cosmos (easy from seed)',
-        'Calendula (edible flowers)',
-        'Runner beans (productive climber)',
-        'Strawberries (safe, tasty)'
+        'Hardy perennials',
+        'Lavandula',
+        'Hardy perennials',
+        'Hardy perennials',
+        'Climbing roses',
+        'Hardy perennials'
       ],
       groundCover: [
-        'Lawn (hard-wearing mix)',
-        'Thyme (between pavers)',
-        'Chamomile (lawn alternative)'
+        'Native grasses',
+        'Thyme',
+        'Hardy perennials'
       ]
     },
     maintenanceRhythm: {
