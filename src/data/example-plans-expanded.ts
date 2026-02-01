@@ -792,7 +792,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Self-seeding informal aesthetic',
       'Year-round visual interest'
     ],
-    heroImage: '/covers/piet-oudolf-prairie-style.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1595587870672-c79b47875b39?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['London'],
@@ -859,7 +859,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Scented plants throughout',
       'Cut flower production'
     ],
-    heroImage: '/covers/monty-don-cottage-garden.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['Rural'],
@@ -927,7 +927,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Architectural grasses for movement',
       'Sustainable peat-free planting'
     ],
-    heroImage: '/covers/chelsea-2023-gold-modern.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1591958911259-bee2173bdccc?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['London'],
@@ -992,7 +992,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Log piles and habitat features',
       'Organic, peat-free approach'
     ],
-    heroImage: '/covers/chelsea-wildlife-haven.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['London', 'Suburbs'],
@@ -1059,7 +1059,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Shade-tolerant palette',
       'Sound and scent focus'
     ],
-    heroImage: '/covers/chelsea-urban-retreat.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1558904541-efa843a96f01?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['London', 'Urban'],
@@ -1125,7 +1125,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Seasonal mowing regime',
       'Self-seeding natural aesthetic'
     ],
-    heroImage: '/covers/dan-pearson-meadow.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['Rural'],
@@ -1192,7 +1192,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Fragrant white roses',
       'Evening luminosity'
     ],
-    heroImage: '/covers/sissinghurst-white-garden.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['Rural'],
@@ -1259,7 +1259,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Dahlia-focused late summer',
       'Annual bedding for intensity'
     ],
-    heroImage: '/covers/great-dixter-exotic.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1509233725247-49e657c54213?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['South East'],
@@ -1326,7 +1326,7 @@ export const examplePlansExpanded: ExamplePlanExpanded[] = [
       'Wildlife corner',
       'Seasonal projects for kids'
     ],
-    heroImage: '/covers/gardeners-world-family-garden.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1592419044706-39796d40f98c?w=1200&q=80',
     galleryImages: [],
     tags: {
       place: ['Midlands', 'Suburbs'],
