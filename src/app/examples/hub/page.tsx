@@ -1,4 +1,5 @@
 import { ExamplesHub } from '@/components/ExamplesHub';
+import { StickyPricingCTA } from '@/components/StickyPricingCTA';
 
 export const metadata = {
   title: 'Example Planting Plans | PlantingPlans',
@@ -6,5 +7,10 @@ export const metadata = {
 };
 
 export default function ExamplesHubPage() {
-  return <ExamplesHub />;
+  return (
+    <>
+      <ExamplesHub />
+      <StickyPricingCTA />
+    </>
+  );
 }

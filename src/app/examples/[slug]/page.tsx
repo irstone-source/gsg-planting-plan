@@ -6,6 +6,7 @@ import { examplePlansExpanded } from '@/data/example-plans-expanded';
 import { PlantImageViewer } from '@/components/PlantImageViewer';
 import { getPlantDetail } from '@/data/plant-database';
 import { Header, Footer, RevealSection } from '@/components/architectural';
+import { StickyPricingCTA } from '@/components/StickyPricingCTA';
 import {
   ArrowLeft, MapPin, Sun, Droplets, TreePine, Calendar,
   PoundSterling, Leaf, Sprout, AlertCircle, Lightbulb,
@@ -1282,6 +1283,7 @@ export default async function ExamplePlanPage({ params }: PageProps) {
       </main>
 
       <Footer />
+      <StickyPricingCTA />
     </div>
   );
 }

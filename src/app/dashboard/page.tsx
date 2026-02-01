@@ -4,6 +4,7 @@ import { checkEntitlements } from '@/lib/entitlements';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PostPurchaseWelcome } from '@/components/PostPurchaseWelcome';
 import Link from 'next/link';
 import { Sparkles, Calendar, CreditCard, Archive, LogOut } from 'lucide-react';
 
@@ -65,6 +66,16 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-bold mb-2">Your Dashboard</h1>
           <p className="text-gray-600">Manage your planting plans and account</p>
         </div>
+
+        {/* Post-Purchase Welcome Banner */}
+        {entitlements.hasAccess && entitlements.tier && entitlements.expiresAt && (
+          <PostPurchaseWelcome
+            credits={entitlements.creditsRemaining}
+            vaultSlots={entitlements.vaultSlots}
+            tier={entitlements.tier}
+            expiresAt={entitlements.expiresAt.toString()}
+          />
+        )}
 
         {/* Entitlements Overview */}
         {!entitlements.hasAccess ? (

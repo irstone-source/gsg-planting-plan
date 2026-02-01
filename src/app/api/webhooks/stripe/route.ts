@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
+import { Resend } from 'resend';
+import { WelcomeEmail } from '@/lib/email-templates';
 import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -68,6 +71,48 @@ export async function POST(request: NextRequest) {
         .eq('affiliate_code', affiliateCode)
         .order('clicked_at', { ascending: false })
         .limit(1);
+    }
+
+    // Send immediate welcome email
+    try {
+      // Get user profile for email
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('email, full_name')
+        .eq('id', userId)
+        .single();
+
+      if (profile?.email) {
+        const { data: emailData, error: emailError } = await resend.emails.send({
+          from: 'PlantingPlans <hello@plantingplans.co.uk>',
+          to: [profile.email],
+          subject: `Welcome to PlantingPlans! Your ${tier.toUpperCase()} Pass is Active 🎉`,
+          react: WelcomeEmail({
+            name: profile.full_name || '',
+            tier: tier as 'diy' | 'pro',
+            credits: priceConfig.credits,
+            vaultSlots: priceConfig.vaultSlots,
+            expiresAt: expiresAt.toISOString(),
+          }),
+        });
+
+        if (!emailError) {
+          // Log welcome email sent
+          await supabase.from('email_onboarding_log').insert({
+            user_id: userId,
+            email_type: 'welcome',
+            resend_id: emailData?.id || '',
+            status: 'sent',
+          });
+
+          console.log(`Welcome email sent to ${profile.email}`);
+        } else {
+          console.error('Failed to send welcome email:', emailError);
+        }
+      }
+    } catch (emailErr: any) {
+      console.error('Welcome email error:', emailErr);
+      // Don't fail the webhook if email fails - activation pass is still created
     }
 
     console.log(`Activation pass created for user ${userId} (${tier})`);
