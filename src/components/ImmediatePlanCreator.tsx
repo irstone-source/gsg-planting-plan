@@ -34,6 +34,7 @@ export function ImmediatePlanCreator() {
   const [images, setImages] = useState<File[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -50,9 +51,31 @@ export function ImmediatePlanCreator() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
-      setImages(prev => [...prev, ...newFiles]);
+      const newFiles = Array.from(e.target.files).slice(0, 10 - images.length);
+      setImages(prev => [...prev, ...newFiles].slice(0, 10));
     }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files) {
+      const newFiles = Array.from(e.dataTransfer.files)
+        .filter(file => file.type.startsWith('image/'))
+        .slice(0, 10 - images.length);
+      setImages(prev => [...prev, ...newFiles].slice(0, 10));
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
   };
 
   const removeImage = (index: number) => {
@@ -126,16 +149,33 @@ export function ImmediatePlanCreator() {
       </div>
 
       {/* Image Upload */}
-      <div className="bg-concrete/40 border border-white/5 p-8">
+      <div className="bg-concrete/40 border border-white/5 p-4 md:p-8">
         <h3 className="font-heading text-sm uppercase tracking-wider text-copper mb-4">
           Upload Site Photos (Optional)
         </h3>
-        <div className="border-2 border-dashed border-white/10 rounded-sm p-8 text-center hover:border-copper/50 transition-colors duration-300">
-          <Upload className="mx-auto h-10 w-10 text-copper/40 mb-3" aria-hidden="true" />
-          <p className="text-stone text-sm mb-4">
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className={`border-2 border-dashed rounded-sm p-6 md:p-8 text-center transition-all duration-300 ${
+            isDragging
+              ? 'border-copper bg-copper/10 scale-[1.02]'
+              : 'border-white/10 hover:border-copper/50'
+          }`}
+        >
+          <Upload
+            className={`mx-auto h-10 w-10 mb-3 transition-colors duration-300 ${
+              isDragging ? 'text-copper' : 'text-copper/40'
+            }`}
+            aria-hidden="true"
+          />
+          <p className="text-stone text-sm mb-2">
+            Drag and drop photos here, or click to browse
+          </p>
+          <p className="text-stone/70 text-xs mb-4">
             Upload 3-10 photos showing different angles of your garden space
           </p>
-          <label htmlFor="image-upload" className="inline-block px-6 py-2 bg-dark/50 border border-white/10 text-stone text-xs uppercase tracking-wider hover:border-copper hover:text-copper transition-colors duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-copper/50">
+          <label htmlFor="image-upload" className="inline-block px-6 py-3 bg-dark/50 border border-white/10 text-stone text-xs uppercase tracking-wider hover:border-copper hover:text-copper transition-colors duration-300 cursor-pointer focus-within:ring-2 focus-within:ring-copper/50 touch-manipulation">
             Choose Files
             <input
               id="image-upload"
@@ -147,13 +187,18 @@ export function ImmediatePlanCreator() {
               className="sr-only"
             />
           </label>
+          {images.length > 0 && (
+            <p className="text-xs text-moss mt-3">
+              {images.length}/10 photos uploaded
+            </p>
+          )}
         </div>
 
         {images.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 mt-6">
             {images.map((image, index) => (
               <div key={index} className="relative group">
-                <div className="relative h-32 overflow-hidden border border-white/10">
+                <div className="relative h-24 sm:h-28 md:h-32 overflow-hidden border border-white/10 rounded-sm">
                   <Image
                     src={URL.createObjectURL(image)}
                     alt={`Upload ${index + 1}`}
@@ -164,8 +209,8 @@ export function ImmediatePlanCreator() {
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="absolute top-2 right-2 bg-dark/80 border border-copper text-copper rounded-sm p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-copper hover:text-dark"
-                  aria-label="Remove image"
+                  className="absolute top-2 right-2 bg-dark/90 border border-copper text-copper rounded-sm p-1.5 md:p-1 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-copper hover:text-dark touch-manipulation"
+                  aria-label={`Remove image ${index + 1}`}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -176,7 +221,7 @@ export function ImmediatePlanCreator() {
       </div>
 
       {/* Site Details Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Location */}
         <div>
           <label htmlFor="postcode" className="block">
@@ -192,7 +237,7 @@ export function ImmediatePlanCreator() {
               aria-required="true"
               aria-invalid={!!form.formState.errors.postcode}
               aria-describedby={form.formState.errors.postcode ? "postcode-error" : "postcode-help"}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none uppercase"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none uppercase touch-manipulation"
             />
             {form.formState.errors.postcode && (
               <span id="postcode-error" role="alert" className="text-xs text-red-400 mt-1 block">
@@ -217,7 +262,7 @@ export function ImmediatePlanCreator() {
               {...form.register('areaSqm', { valueAsNumber: true })}
               placeholder="e.g., 50"
               aria-describedby="area-help"
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none touch-manipulation"
             />
             <span id="area-help" className="text-xs text-stone/70 mt-1 block">
               Optional: helps with quantities
@@ -235,7 +280,7 @@ export function ImmediatePlanCreator() {
             <select
               id="sunExposure"
               {...form.register('sunExposure')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="full_sun">Full Sun (6+ hours)</option>
               <option value="partial_shade">Partial Shade (3-6 hours)</option>
@@ -255,7 +300,7 @@ export function ImmediatePlanCreator() {
             <select
               id="soilType"
               {...form.register('soilType')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="unknown">Not Sure</option>
               <option value="clay">Clay</option>
@@ -278,7 +323,7 @@ export function ImmediatePlanCreator() {
             <select
               id="moisture"
               {...form.register('moisture')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="moist">Moist (typical)</option>
               <option value="dry">Dry</option>
@@ -297,7 +342,7 @@ export function ImmediatePlanCreator() {
             <select
               id="style"
               {...form.register('style')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="mixed">Mixed Style</option>
               <option value="cottage">Cottage Garden</option>
@@ -318,7 +363,7 @@ export function ImmediatePlanCreator() {
             <select
               id="maintenanceLevel"
               {...form.register('maintenanceLevel')}
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none appearance-none cursor-pointer"
             >
               <option value="low">Low - Minimal upkeep</option>
               <option value="medium">Medium - Regular care</option>
@@ -338,7 +383,7 @@ export function ImmediatePlanCreator() {
               type="number"
               {...form.register('budgetMin', { valueAsNumber: true })}
               placeholder="500"
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none touch-manipulation"
             />
           </label>
         </div>
@@ -354,7 +399,7 @@ export function ImmediatePlanCreator() {
               type="number"
               {...form.register('budgetMax', { valueAsNumber: true })}
               placeholder="2000"
-              className="w-full px-4 py-2 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none"
+              className="w-full px-4 py-3 bg-dark/50 border border-white/10 text-mist placeholder:text-stone/50 focus:border-copper focus:ring-2 focus:ring-copper/50 focus:outline-none touch-manipulation"
             />
           </label>
         </div>
