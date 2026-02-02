@@ -1,22 +1,21 @@
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Header, Footer, ArchitecturalCard, RevealSection } from '@/components/architectural';
 import {
   Upload,
-  FileText,
-  Image,
   Brain,
+  Image,
   Sparkles,
-  Download,
-  FileSpreadsheet,
-  CheckCircle,
-  Search,
-  Layers,
-  Calculator,
   FileOutput,
-  Share2
+  Calculator,
+  Share2,
+  CheckCircle,
+  ArrowRight
 } from 'lucide-react';
+
+export const metadata = {
+  title: 'Professional Tools | PlantingPlans',
+  description: 'Complete toolkit for garden design professionals. AI-powered workflow acceleration.'
+};
 
 export default function ProfessionalsPage() {
   const tools = [
@@ -26,7 +25,6 @@ export default function ProfessionalsPage() {
       description: 'Upload plant lists and automatically generate AI images + Google reference photos for all plants',
       icon: Upload,
       href: '/tools/bulk-generate',
-      color: 'from-blue-500 to-cyan-500',
       features: [
         'CSV or text paste input',
         '3 AI views per plant (top, front, foliage)',
@@ -34,7 +32,8 @@ export default function ProfessionalsPage() {
         'Complete metadata JSON files',
         'Batch processing'
       ],
-      status: 'Live'
+      status: 'Live',
+      badge: 'bg-moss/90'
     },
     {
       id: 'plan-critique',
@@ -42,7 +41,6 @@ export default function ProfessionalsPage() {
       description: 'Get professional analysis of planting plans powered by Claude Sonnet 4.5',
       icon: Brain,
       href: '/tools/plan-critique',
-      color: 'from-purple-500 to-pink-500',
       features: [
         'Plant compatibility analysis',
         'UK-specific advice',
@@ -50,7 +48,8 @@ export default function ProfessionalsPage() {
         'Maintenance time estimates',
         'Professional scoring (1-10)'
       ],
-      status: 'Live'
+      status: 'Live',
+      badge: 'bg-moss/90'
     },
     {
       id: 'image-library',
@@ -58,7 +57,6 @@ export default function ProfessionalsPage() {
       description: 'Browse and search the complete database of AI-generated plant images',
       icon: Image,
       href: '/tools/image-library',
-      color: 'from-green-500 to-emerald-500',
       features: [
         'Search by scientific/common name',
         'Filter by plant type',
@@ -66,7 +64,8 @@ export default function ProfessionalsPage() {
         'Download images',
         'Preview references'
       ],
-      status: 'Live'
+      status: 'Live',
+      badge: 'bg-moss/90'
     },
     {
       id: 'plan-generator',
@@ -74,7 +73,6 @@ export default function ProfessionalsPage() {
       description: 'Create custom planting plans with progressive refinement of preferences',
       icon: Sparkles,
       href: '/create',
-      color: 'from-orange-500 to-red-500',
       features: [
         'Photo upload analysis',
         'Progressive preference refinement',
@@ -82,7 +80,8 @@ export default function ProfessionalsPage() {
         'Budget optimization',
         'Supplier integration'
       ],
-      status: 'Beta'
+      status: 'Beta',
+      badge: 'bg-copper/90'
     },
     {
       id: 'report-generator',
@@ -90,7 +89,6 @@ export default function ProfessionalsPage() {
       description: 'Generate professional PDF reports with your branding for client presentations',
       icon: FileOutput,
       href: '/tools/reports',
-      color: 'from-indigo-500 to-purple-500',
       features: [
         'Custom branding',
         'Professional templates',
@@ -98,7 +96,8 @@ export default function ProfessionalsPage() {
         'Maintenance schedules',
         'Client-ready PDFs'
       ],
-      status: 'Live'
+      status: 'Live',
+      badge: 'bg-moss/90'
     },
     {
       id: 'cost-calculator',
@@ -106,7 +105,6 @@ export default function ProfessionalsPage() {
       description: 'Calculate accurate project costs with real supplier pricing',
       icon: Calculator,
       href: '/tools/calculator',
-      color: 'from-yellow-500 to-orange-500',
       features: [
         'Live supplier pricing',
         'Bulk discounts',
@@ -114,120 +112,91 @@ export default function ProfessionalsPage() {
         'Material quantities',
         'Export quotes'
       ],
-      status: 'Live'
-    },
-    {
-      id: 'client-portal',
-      title: 'Client Portal',
-      description: 'Share plans via secure links with password protection and client feedback',
-      icon: Share2,
-      href: '/tools/client-portal',
-      color: 'from-teal-500 to-cyan-500',
-      features: [
-        'Password-protected links',
-        'Expiring access (1-90 days)',
-        'Client comments & feedback',
-        'Plan approval workflow',
-        'View tracking'
-      ],
-      status: 'Beta'
+      status: 'Live',
+      badge: 'bg-moss/90'
     }
   ];
 
   const stats = [
-    { label: 'Plant Images', value: '52+', icon: Image },
-    { label: 'API Calls', value: '4', icon: Layers },
-    { label: 'Example Plans', value: '4', icon: FileSpreadsheet },
-    { label: 'Active Tools', value: '5', icon: CheckCircle }
+    { label: 'Plant Images', value: '52+' },
+    { label: 'API Endpoints', value: '4' },
+    { label: 'Example Plans', value: '4' },
+    { label: 'Active Tools', value: '5' }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <header className="border-b bg-white/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold text-gray-900">← Back to Home</span>
-          </Link>
-          <Badge className="bg-purple-600 text-white">Professional Tools</Badge>
-        </div>
-      </header>
+    <div className="min-h-screen bg-dark text-mist">
+      <Header />
 
       {/* Hero */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <Badge className="bg-purple-100 text-purple-900 px-4 py-2 text-sm">
-            Professional Designer Tools
-          </Badge>
-          <h1 className="text-5xl font-bold tracking-tight text-gray-900">
-            Complete Toolkit for Garden Professionals
-          </h1>
-          <p className="text-xl text-gray-600">
-            AI-powered tools to accelerate your workflow, from plant image generation to client reports
-          </p>
+      <RevealSection className="pt-32 pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
+            <div className="inline-block px-4 py-2 bg-concrete/40 border border-copper/30 text-copper text-xs uppercase tracking-widest font-bold rounded-sm mb-4">
+              Professional Designer Tools
+            </div>
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl uppercase tracking-wider font-bold text-mist">
+              COMPLETE TOOLKIT
+            </h1>
+            <p className="text-lg md:text-xl text-stone leading-relaxed max-w-2xl mx-auto">
+              AI-powered workflow acceleration for garden design professionals.
+              From plant image generation to client reports.
+            </p>
+          </div>
         </div>
-      </section>
+      </RevealSection>
 
       {/* Stats */}
-      <section className="container mx-auto px-4 pb-12">
-        <div className="grid md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-          {stats.map((stat) => (
-            <Card key={stat.label} className="text-center">
-              <CardContent className="pt-6">
-                <stat.icon className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-                <div className="text-3xl font-bold text-gray-900 mb-1">
+      <RevealSection className="pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            {stats.map((stat, index) => (
+              <div
+                key={stat.label}
+                className="bg-concrete/60 backdrop-blur-md border border-white/5 p-6 text-center"
+              >
+                <div className="text-3xl md:text-4xl font-heading font-bold text-copper mb-2">
                   {stat.value}
                 </div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Tools Grid */}
-      <section className="container mx-auto px-4 pb-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {tools.map((tool) => (
-            <Card
-              key={tool.id}
-              className="overflow-hidden hover:shadow-2xl transition-all duration-300 group relative"
-            >
-              {/* Status Badge */}
-              <div className="absolute top-4 right-4 z-10">
-                <Badge
-                  className={
-                    tool.status === 'Live'
-                      ? 'bg-green-600 text-white'
-                      : tool.status === 'Beta'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-400 text-white'
-                  }
-                >
-                  {tool.status}
-                </Badge>
-              </div>
-
-              {/* Gradient Header */}
-              <div className={`h-32 bg-gradient-to-br ${tool.color} relative`}>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <tool.icon className="h-16 w-16 text-white opacity-90" />
+                <div className="text-sm uppercase tracking-wider text-stone">
+                  {stat.label}
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </RevealSection>
 
-              <CardHeader>
-                <CardTitle className="text-xl">{tool.title}</CardTitle>
-                <CardDescription>{tool.description}</CardDescription>
-              </CardHeader>
+      {/* Tools Grid */}
+      <RevealSection className="pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {tools.map((tool, index) => (
+              <ArchitecturalCard
+                key={tool.id}
+                title={tool.title}
+                description={tool.description}
+                delay={index * 0.1}
+              >
+                {/* Icon & Status Badge */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="h-16 w-16 bg-concrete/40 rounded-sm flex items-center justify-center">
+                    <tool.icon className="h-8 w-8 text-copper" />
+                  </div>
+                  <span className={`px-3 py-1 ${tool.badge} backdrop-blur text-dark text-xs uppercase tracking-wider font-bold rounded-sm`}>
+                    {tool.status}
+                  </span>
+                </div>
 
-              <CardContent className="space-y-4">
                 {/* Features */}
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-gray-700">Features:</p>
-                  <ul className="text-sm text-gray-600 space-y-1.5">
+                <div className="mb-6 space-y-3">
+                  <p className="text-sm uppercase tracking-wider text-copper font-bold">
+                    Features:
+                  </p>
+                  <ul className="space-y-2">
                     {tool.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                      <li key={idx} className="flex items-start gap-2 text-sm text-stone">
+                        <CheckCircle className="h-4 w-4 text-moss flex-shrink-0 mt-0.5" />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -236,66 +205,71 @@ export default function ProfessionalsPage() {
 
                 {/* CTA Button */}
                 <Link href={tool.href}>
-                  <Button
-                    className="w-full"
-                    disabled={tool.status === 'Coming Soon'}
-                    variant={tool.status === 'Live' ? 'default' : 'outline'}
-                  >
+                  <button className="w-full bg-copper text-dark py-3 px-6 text-sm uppercase tracking-wider font-bold hover:bg-[#D4A373] transition-colors flex items-center justify-center gap-2">
                     {tool.status === 'Coming Soon' ? 'Coming Soon' : 'Open Tool'}
-                  </Button>
+                    {tool.status !== 'Coming Soon' && <ArrowRight className="h-4 w-4" />}
+                  </button>
                 </Link>
-              </CardContent>
-            </Card>
-          ))}
+              </ArchitecturalCard>
+            ))}
+          </div>
         </div>
-      </section>
+      </RevealSection>
 
       {/* Quick Start Guide */}
-      <section className="container mx-auto px-4 pb-20">
-        <div className="max-w-4xl mx-auto bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-            Quick Start Guide
-          </h2>
+      <RevealSection className="pb-20">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto bg-concrete/60 backdrop-blur-md border border-white/5 p-8 md:p-12">
+            <h2 className="font-heading text-3xl uppercase tracking-wider font-bold text-mist mb-8 text-center">
+              Quick Start Guide
+            </h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-purple-900">For New Projects</h3>
-              <ol className="space-y-3 text-gray-700">
-                <li className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
-                  <span>Upload your plant list to <strong>Bulk Generator</strong></span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
-                  <span>Run plan through <strong>AI Critique</strong></span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</span>
-                  <span>Generate client reports (coming soon)</span>
-                </li>
-              </ol>
-            </div>
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+              <div className="space-y-4">
+                <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-copper mb-4">
+                  New Projects
+                </h3>
+                <ol className="space-y-4">
+                  {[
+                    'Upload your plant list to Bulk Generator',
+                    'Run plan through AI Critique',
+                    'Generate client reports'
+                  ].map((step, idx) => (
+                    <li key={idx} className="flex gap-3 items-start">
+                      <span className="flex-shrink-0 w-8 h-8 bg-copper text-dark rounded-sm flex items-center justify-center text-sm font-bold">
+                        {idx + 1}
+                      </span>
+                      <span className="text-stone pt-1">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
 
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-purple-900">For Existing Clients</h3>
-              <ol className="space-y-3 text-gray-700">
-                <li className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
-                  <span>Browse <strong>Image Library</strong> for plant visuals</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
-                  <span>Use <strong>Cost Calculator</strong> for quotes</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</span>
-                  <span>Export branded proposals</span>
-                </li>
-              </ol>
+              <div className="space-y-4">
+                <h3 className="font-heading text-xl uppercase tracking-wider font-bold text-copper mb-4">
+                  Existing Clients
+                </h3>
+                <ol className="space-y-4">
+                  {[
+                    'Browse Image Library for plant visuals',
+                    'Use Cost Calculator for quotes',
+                    'Export branded proposals'
+                  ].map((step, idx) => (
+                    <li key={idx} className="flex gap-3 items-start">
+                      <span className="flex-shrink-0 w-8 h-8 bg-copper text-dark rounded-sm flex items-center justify-center text-sm font-bold">
+                        {idx + 1}
+                      </span>
+                      <span className="text-stone pt-1">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </RevealSection>
+
+      <Footer />
     </div>
   );
 }
