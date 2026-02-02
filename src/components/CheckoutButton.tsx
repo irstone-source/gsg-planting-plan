@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 
 interface CheckoutButtonProps {
   tier: 'diy' | 'pro';
@@ -19,9 +20,21 @@ export function CheckoutButton({ tier, price, label }: CheckoutButtonProps) {
     setError('');
 
     try {
+      // Get user session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        // Redirect to login if not authenticated
+        router.push('/auth/login?redirect=/pricing');
+        return;
+      }
+
       const response = await fetch('/api/checkout/create-session', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({ tier }),
       });
 
