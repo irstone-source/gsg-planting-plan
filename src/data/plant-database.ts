@@ -979,6 +979,587 @@ export const plantDatabase: Record<string, PlantDetail> = {
       ]
     },
     rhsLink: 'https://www.rhs.org.uk/plants/euphorbia/characias/details'
+  },
+
+  // PIET OUDOLF PRAIRIE STYLE PLANTS
+
+  'Calamagrostis Karl Foerster': {
+    scientificName: 'Calamagrostis × acutiflora \'Karl Foerster\'',
+    commonName: 'Feather Reed Grass',
+    description: 'Upright, architectural grass. Chelsea & Oudolf staple. Strong winter silhouette with vertical flower spikes in midsummer.',
+    layer: 'structure',
+    badge: { text: 'Oudolf Signature', color: 'bg-amber-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Single annual cutback in late February',
+        'Leave standing through winter for structure',
+        'No staking required',
+        'Tolerates wide range of soils'
+      ],
+      homeowner: [
+        'Extremely low maintenance',
+        'Stands upright in all weathers',
+        'Superb winter interest'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/2326/calamagrostis-x-acutiflora-karl-foerster/details'
+  },
+
+  'Molinia Transparent': {
+    scientificName: 'Molinia caerulea \'Transparent\'',
+    commonName: 'Purple Moor Grass',
+    description: 'Floating flower heads, light and elegant. Excellent in UK conditions. Transparent seed heads create ethereal effect.',
+    layer: 'structure',
+    badge: { text: 'Oudolf Favourite', color: 'bg-amber-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back in late winter',
+        'Self-supporting',
+        'Thrives in moist soils',
+        'Turns golden in autumn'
+      ],
+      homeowner: [
+        'Very easy to grow',
+        'Beautiful movement in wind',
+        'No pest or disease issues'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/11069/molinia-caerulea-transparent/details'
+  },
+
+  'Echinacea pallida': {
+    scientificName: 'Echinacea pallida',
+    commonName: 'Pale Purple Coneflower',
+    description: 'Elegant seed heads with drooping petals. Strong wildlife value. Long-lived Oudolf perennial.',
+    layer: 'seasonal',
+    badge: { text: 'Pollinator', color: 'bg-green-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Leave seed heads for birds',
+        'Cut back in late winter',
+        'Drought tolerant once established',
+        'Deadheading optional'
+      ],
+      homeowner: [
+        'Low maintenance',
+        'Attracts goldfinches',
+        'Long flowering season'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/6872/echinacea-pallida/details'
+  },
+
+  'Rudbeckia Deamii': {
+    scientificName: 'Rudbeckia fulgida var. deamii',
+    commonName: 'Black-Eyed Susan',
+    description: 'Reliable late-summer colour with strong winter structure. Seed heads persist beautifully.',
+    layer: 'seasonal',
+    badge: { text: 'Oudolf Classic', color: 'bg-amber-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back in late February',
+        'Self-supporting',
+        'Leave seed heads for winter interest',
+        'Divide every 3-4 years if needed'
+      ],
+      homeowner: [
+        'Very easy and reliable',
+        'Long flowering period',
+        'Never needs staking'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/15532/rudbeckia-fulgida-var-deamii/details'
+  },
+
+  'Helenium autumnale': {
+    scientificName: 'Helenium autumnale',
+    commonName: 'Sneezeweed',
+    description: 'Key autumn performer in Oudolf planting. Warm tones and strong seed head structure.',
+    layer: 'seasonal',
+    badge: { text: 'Late Season', color: 'bg-orange-600 text-white' },
+    careTime: '1-2 hours',
+    careNotes: {
+      techniques: [
+        'Chelsea chop in late May for bushier plants',
+        'Cut back in late winter',
+        'Benefits from division every 3 years',
+        'Deadhead for extended flowering'
+      ],
+      homeowner: [
+        'Moderate maintenance',
+        'Rich autumn colour',
+        'Excellent pollinator plant'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/8580/helenium-autumnale/details'
+  },
+
+  'Persicaria amplexicaulis': {
+    scientificName: 'Persicaria amplexicaulis',
+    commonName: 'Red Bistort',
+    description: 'Long flowering spikes, late season colour. Matrix plant in Oudolf designs.',
+    layer: 'seasonal',
+    badge: { text: 'Long Flowering', color: 'bg-pink-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back in late winter',
+        'Tolerates wide range of conditions',
+        'Self-supporting',
+        'Flowers June to October'
+      ],
+      homeowner: [
+        'Very easy to grow',
+        'Excellent ground cover',
+        'Minimal care needed'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/13320/persicaria-amplexicaulis/details'
+  },
+
+  'Nepeta Walkers Low': {
+    scientificName: 'Nepeta racemosa \'Walker\'s Low\'',
+    commonName: 'Catmint',
+    description: 'Early structure, pollinator-rich. Oudolf matrix plant creating soft edges and long flowering.',
+    layer: 'groundCover',
+    badge: { text: 'Pollinator', color: 'bg-purple-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Shear back after first flowering for second flush',
+        'Cut back in late winter',
+        'Very drought tolerant',
+        'Aromatic foliage'
+      ],
+      homeowner: [
+        'Easy and reliable',
+        'Loved by bees',
+        'Long flowering season'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/11731/nepeta-racemosa-walkers-low/details'
+  },
+
+  'Sanguisorba officinalis': {
+    scientificName: 'Sanguisorba officinalis',
+    commonName: 'Great Burnet',
+    description: 'Subtle, refined Oudolf favourite with elegant bottle-brush flowers.',
+    layer: 'seasonal',
+    badge: { text: 'Architectural', color: 'bg-red-700 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Leave seed heads standing',
+        'Cut back in late winter',
+        'Prefers moisture-retentive soil',
+        'Self-supporting'
+      ],
+      homeowner: [
+        'Low maintenance',
+        'Unique texture',
+        'Loved by wildlife'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/17094/sanguisorba-officinalis/details'
+  },
+
+  // CHELSEA WILDLIFE GARDEN PLANTS
+
+  'Hawthorn': {
+    scientificName: 'Crataegus monogyna',
+    commonName: 'Hawthorn',
+    description: 'UK native. Nectar for insects, berries for birds, nesting habitat. Chelsea wildlife garden staple.',
+    layer: 'structure',
+    badge: { text: 'Native', color: 'bg-green-600 text-white' },
+    careTime: '2 hours',
+    careNotes: {
+      techniques: [
+        'Can be clipped as hedge or grown as multi-stem tree',
+        'Prune in late winter if needed',
+        'Tolerates hard cutting',
+        'Very hardy and adaptable'
+      ],
+      homeowner: [
+        'Supports 300+ insect species',
+        'Excellent wildlife value',
+        'Beautiful May blossom'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/3874/crataegus-monogyna/details'
+  },
+
+  'Guelder Rose': {
+    scientificName: 'Viburnum opulus',
+    commonName: 'Guelder Rose',
+    description: 'UK native shrub. Pollinator flowers, translucent red berries loved by birds. Chelsea naturalistic hedging.',
+    layer: 'structure',
+    badge: { text: 'Native', color: 'bg-green-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Minimal pruning required',
+        'Remove dead wood in winter',
+        'Prefers moisture-retentive soil',
+        'Autumn colour and berries'
+      ],
+      homeowner: [
+        'Easy to grow',
+        'Multi-season interest',
+        'Excellent wildlife shrub'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/19353/viburnum-opulus/details'
+  },
+
+  'Hazel': {
+    scientificName: 'Corylus avellana',
+    commonName: 'Hazel',
+    description: 'UK native. Nuts for mammals, catkins for early bees. Multi-stem sculptural form.',
+    layer: 'structure',
+    badge: { text: 'Native', color: 'bg-green-600 text-white' },
+    careTime: '1-2 hours',
+    careNotes: {
+      techniques: [
+        'Coppice every 7-10 years for vigour',
+        'Or grow as multi-stem tree',
+        'Prune in late winter',
+        'Catkins appear January-March'
+      ],
+      homeowner: [
+        'Traditional UK hedgerow plant',
+        'Edible nuts',
+        'Important for wildlife'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/4467/corylus-avellana/details'
+  },
+
+  'Oxeye Daisy': {
+    scientificName: 'Leucanthemum vulgare',
+    commonName: 'Oxeye Daisy',
+    description: 'UK native wildflower. Bright, informal drifts. Bees and butterflies. Almost ubiquitous in Chelsea wildlife gardens.',
+    layer: 'seasonal',
+    badge: { text: 'Native Wildflower', color: 'bg-green-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back after flowering',
+        'Self-seeds freely',
+        'No feeding required',
+        'Thrives in poor soil'
+      ],
+      homeowner: [
+        'Very easy to grow',
+        'Classic meadow flower',
+        'Long flowering period'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/10825/leucanthemum-vulgare/details'
+  },
+
+  'Knapweed': {
+    scientificName: 'Centaurea nigra',
+    commonName: 'Common Knapweed',
+    description: 'One of the best UK pollinator plants. Chelsea wildlife garden staple. Purple thistle-like flowers.',
+    layer: 'seasonal',
+    badge: { text: 'Top Pollinator', color: 'bg-purple-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back after flowering',
+        'Leave some seed heads for birds',
+        'Self-seeds moderately',
+        'Thrives in poor, dry soil'
+      ],
+      homeowner: [
+        'Extremely easy',
+        'Loved by butterflies and bees',
+        'Low maintenance wildflower'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/3958/centaurea-nigra/details'
+  },
+
+  'Meadow Cranesbill': {
+    scientificName: 'Geranium pratense',
+    commonName: 'Meadow Cranesbill',
+    description: 'UK native geranium. Bees & hoverflies. Soft, long flowering, excellent filler.',
+    layer: 'seasonal',
+    badge: { text: 'Native', color: 'bg-blue-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back after first flowering for second flush',
+        'Self-seeds freely',
+        'Tolerates wide range of conditions',
+        'Very hardy'
+      ],
+      homeowner: [
+        'Very easy to grow',
+        'Beautiful blue flowers',
+        'Long flowering season'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/8231/geranium-pratense/details'
+  },
+
+  'Field Scabious': {
+    scientificName: 'Knautia arvensis',
+    commonName: 'Field Scabious',
+    description: 'UK native. Butterflies (especially scabious bees). Tall, airy meadow layers. Chelsea wildlife essential.',
+    layer: 'seasonal',
+    badge: { text: 'Butterfly Plant', color: 'bg-pink-600 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back in late winter',
+        'Self-seeds lightly',
+        'Prefers alkaline soil',
+        'Flowers June-September'
+      ],
+      homeowner: [
+        'Easy wildflower',
+        'Attracts many pollinators',
+        'Classic meadow plant'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/9612/knautia-arvensis/details'
+  },
+
+  'Wild Strawberry': {
+    scientificName: 'Fragaria vesca',
+    commonName: 'Wild Strawberry',
+    description: 'UK native groundcover. Pollinators + birds. Soft, edible, tidy groundcover for wildlife gardens.',
+    layer: 'groundCover',
+    badge: { text: 'Edible Native', color: 'bg-red-600 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Spreads by runners',
+        'Cut back old foliage in spring',
+        'Tiny edible fruits',
+        'Tolerates shade'
+      ],
+      homeowner: [
+        'Very low maintenance',
+        'Attractive groundcover',
+        'Wildlife-friendly'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/7735/fragaria-vesca/details'
+  },
+
+  'Selfheal': {
+    scientificName: 'Prunella vulgaris',
+    commonName: 'Selfheal',
+    description: 'UK native. Long flowering nectar source. Chelsea wildlife groundcover and lawn alternatives.',
+    layer: 'groundCover',
+    badge: { text: 'Native', color: 'bg-purple-600 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Mow/trim after flowering if needed',
+        'Tolerates foot traffic',
+        'Self-seeds',
+        'Flowers June-September'
+      ],
+      homeowner: [
+        'Extremely easy',
+        'Good lawn substitute',
+        'Loved by bees'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/14328/prunella-vulgaris/details'
+  },
+
+  'Purple Loosestrife': {
+    scientificName: 'Lythrum salicaria',
+    commonName: 'Purple Loosestrife',
+    description: 'UK native. Bees, hoverflies. Chelsea wetland & rain garden planting. Dramatic spikes.',
+    layer: 'seasonal',
+    badge: { text: 'Wetland', color: 'bg-purple-700 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Cut back in late winter',
+        'Prefers moist soil',
+        'Self-supporting',
+        'Flowers July-September'
+      ],
+      homeowner: [
+        'Easy in damp conditions',
+        'Striking flower spikes',
+        'Excellent pollinator plant'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/11330/lythrum-salicaria/details'
+  },
+
+  // DAN PEARSON WILDFLOWER MEADOW PLANTS
+
+  'Red Fescue': {
+    scientificName: 'Festuca rubra',
+    commonName: 'Red Fescue',
+    description: 'UK native grass. Dan Pearson meadow framework. Fine-leaved, forms dense matrix. Low fertility lover.',
+    layer: 'structure',
+    badge: { text: 'Native Grass', color: 'bg-amber-700 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Single annual cut in late summer',
+        'Remove cuttings to reduce fertility',
+        'Thrives in poor soil',
+        'No fertiliser required'
+      ],
+      homeowner: [
+        'Extremely low maintenance',
+        'Creates meadow texture',
+        'Self-sustaining'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/7625/festuca-rubra/details'
+  },
+
+  'Crested Dog\'s-tail': {
+    scientificName: 'Cynosurus cristatus',
+    commonName: 'Crested Dog\'s-tail',
+    description: 'UK native meadow grass. Dan Pearson signature. Delicate seed heads, essential meadow framework.',
+    layer: 'structure',
+    badge: { text: 'Native Grass', color: 'bg-amber-700 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Cut once in late August',
+        'Tolerates close mowing',
+        'Prefers low fertility',
+        'Self-seeds readily'
+      ],
+      homeowner: [
+        'Very easy',
+        'Traditional meadow grass',
+        'Attractive seed heads'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/5544/cynosurus-cristatus/details'
+  },
+
+  'Sweet Vernal Grass': {
+    scientificName: 'Anthoxanthum odoratum',
+    commonName: 'Sweet Vernal Grass',
+    description: 'UK native. Pearson meadow essential. Sweet hay scent when cut. Early flowering, textural elegance.',
+    layer: 'structure',
+    badge: { text: 'Aromatic Native', color: 'bg-amber-600 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Cut in late summer',
+        'Releases sweet scent when mown',
+        'Flowers April-June',
+        'Low fertility essential'
+      ],
+      homeowner: [
+        'Wonderfully scented',
+        'Easy to establish',
+        'Traditional meadow grass'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/1424/anthoxanthum-odoratum/details'
+  },
+
+  'Bird\'s-foot Trefoil': {
+    scientificName: 'Lotus corniculatus',
+    commonName: 'Bird\'s-foot Trefoil',
+    description: 'UK native legume. Pearson meadow groundcover. Nitrogen-fixing, feeds butterflies. Cheerful yellow flowers.',
+    layer: 'groundCover',
+    badge: { text: 'Native', color: 'bg-yellow-600 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Fixes nitrogen naturally',
+        'No feeding required',
+        'Tolerates poor soil',
+        'Flowers May-September'
+      ],
+      homeowner: [
+        'Self-sufficient',
+        'Loved by Common Blue butterflies',
+        'Improves soil naturally'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/10911/lotus-corniculatus/details'
+  },
+
+  'Meadow Buttercup': {
+    scientificName: 'Ranunculus acris',
+    commonName: 'Meadow Buttercup',
+    description: 'UK native wildflower. Classic Pearson meadow. Glossy yellow cups, traditional hay meadow indicator.',
+    layer: 'seasonal',
+    badge: { text: 'Native', color: 'bg-yellow-700 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Cut after seed set',
+        'Self-seeds freely',
+        'Flowers May-July',
+        'Prefers moisture-retentive soil'
+      ],
+      homeowner: [
+        'Easy and reliable',
+        'Classic meadow flower',
+        'Cheerful golden blooms'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/14935/ranunculus-acris/details'
+  },
+
+  'Red Campion': {
+    scientificName: 'Silene dioica',
+    commonName: 'Red Campion',
+    description: 'UK native woodland edge wildflower. Pearson hedgerow layers. Pink flowers loved by bees and hoverflies.',
+    layer: 'seasonal',
+    badge: { text: 'Native', color: 'bg-pink-600 text-white' },
+    careTime: '30 mins',
+    careNotes: {
+      techniques: [
+        'Self-seeds in dappled shade',
+        'Cut back after flowering',
+        'Tolerates semi-shade',
+        'Flowers May-October'
+      ],
+      homeowner: [
+        'Very easy',
+        'Long flowering season',
+        'Excellent pollinator plant'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/17933/silene-dioica/details'
+  },
+
+  'Devil\'s-bit Scabious': {
+    scientificName: 'Succisa pratensis',
+    commonName: 'Devil\'s-bit Scabious',
+    description: 'UK native. Pearson wet meadow accent. Essential for Marsh Fritillary butterfly. Late season nectar.',
+    layer: 'seasonal',
+    badge: { text: 'Specialist Native', color: 'bg-indigo-700 text-white' },
+    careTime: '1 hour',
+    careNotes: {
+      techniques: [
+        'Prefers damp meadows',
+        'Cut in late winter',
+        'Flowers August-October',
+        'Host plant for rare butterflies'
+      ],
+      homeowner: [
+        'Important conservation plant',
+        'Beautiful blue flowers',
+        'Wet meadow essential'
+      ]
+    },
+    rhsLink: 'https://www.rhs.org.uk/plants/18685/succisa-pratensis/details'
   }
 };
 

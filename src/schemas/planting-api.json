@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://plantingplans.co.uk/schemas/planting-api.json",
+  "title": "PlantingPlans API Schema",
+  "version": "1.0.0",
+  "definitions": {
+    "PlantingStyle": {
+      "type": "object",
+      "required": ["id", "name", "difficulty", "maintenance", "density", "layers", "principles"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the planting style"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["beginner", "intermediate", "advanced"],
+          "description": "Skill level required"
+        },
+        "maintenance": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Maintenance level required"
+        },
+        "density": {
+          "type": "object",
+          "required": ["plants_per_m2"],
+          "properties": {
+            "plants_per_m2": {
+              "type": "array",
+              "items": { "type": "number" },
+              "minItems": 2,
+              "maxItems": 2,
+              "description": "[min, max] planting density"
+            },
+            "seed_rate_g_per_m2": {
+              "type": "number",
+              "description": "Seed rate in grams per m² (for meadows)"
+            }
+          }
+        },
+        "layers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["min", "max"],
+            "properties": {
+              "min": { "type": "number" },
+              "max": { "type": "number" },
+              "percentage": { "type": "number" }
+            }
+          },
+          "description": "Planting layers with min/max/percentage"
+        },
+        "principles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Design principles for this style"
+        }
+      }
+    },
+    "SiteContext": {
+      "type": "object",
+      "required": ["context", "soil", "light", "area_m2"],
+      "properties": {
+        "context": {
+          "type": "string",
+          "enum": ["urban", "suburban", "rural"],
+          "description": "Garden context"
+        },
+        "soil": {
+          "type": "string",
+          "enum": ["clay", "loam", "sandy"],
+          "description": "Soil type"
+        },
+        "light": {
+          "type": "string",
+          "enum": ["full_sun", "partial_shade", "shade"],
+          "description": "Light conditions"
+        },
+        "area_m2": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 1000,
+          "description": "Planting area in square meters"
+        }
+      }
+    },
+    "SubstitutionRule": {
+      "type": "object",
+      "required": ["trigger", "replace", "reason"],
+      "properties": {
+        "trigger": {
+          "type": "object",
+          "properties": {
+            "soil": { "type": "string" },
+            "context": { "type": "string" },
+            "light": { "type": "string" }
+          },
+          "description": "Conditions that trigger this substitution"
+        },
+        "replace": {
+          "type": "object",
+          "required": ["from", "to"],
+          "properties": {
+            "from": { "type": "string" },
+            "to": { "type": "string" }
+          },
+          "description": "Plant substitution mapping"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Explanation for substitution"
+        }
+      }
+    },
+    "PlantQuantities": {
+      "type": "object",
+      "required": ["total", "byLayer", "density", "adjustments"],
+      "properties": {
+        "total": {
+          "type": "number",
+          "description": "Total number of plants"
+        },
+        "byLayer": {
+          "type": "object",
+          "additionalProperties": { "type": "number" },
+          "description": "Plant counts by layer"
+        },
+        "density": {
+          "type": "number",
+          "description": "Adjusted density (plants/m²)"
+        },
+        "adjustments": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Density adjustments applied"
+        }
+      }
+    },
+    "SubstitutionResult": {
+      "type": "object",
+      "required": ["original", "substituted", "reason"],
+      "properties": {
+        "original": { "type": "string" },
+        "substituted": { "type": "string" },
+        "reason": { "type": "string" },
+        "layer": { "type": "string" }
+      }
+    },
+    "PlantingPlan": {
+      "type": "object",
+      "required": ["style", "site", "quantities", "substitutions", "metadata"],
+      "properties": {
+        "style": { "$ref": "#/definitions/PlantingStyle" },
+        "site": { "$ref": "#/definitions/SiteContext" },
+        "quantities": { "$ref": "#/definitions/PlantQuantities" },
+        "substitutions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SubstitutionResult" }
+        },
+        "spacing": {
+          "type": "object",
+          "properties": {
+            "grid_spacing_cm": { "type": "number" },
+            "informal_spacing_cm": { "type": "number" },
+            "notes": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "valid": { "type": "boolean" },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string" },
+                  "field": { "type": "string" },
+                  "message": { "type": "string" }
+                }
+              }
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": { "type": "string" },
+                  "field": { "type": "string" },
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "required": ["generated_at", "api_version"],
+          "properties": {
+            "generated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "api_version": {
+              "type": "string",
+              "pattern": "^v[0-9]+$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

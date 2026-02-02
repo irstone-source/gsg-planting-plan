@@ -7,6 +7,8 @@ import { CheckCircle2, ArrowRight, Sparkles, TreePine, Calendar, Leaf, ExternalL
 import { examplePlansExpanded } from '@/data/example-plans-expanded';
 import { PlantImageViewer } from '@/components/PlantImageViewer';
 import { getPlantDetail } from '@/data/plant-database';
+import { getDesignPhilosophy } from '@/data/design-philosophies';
+import { PhilosophySection } from '@/components/PhilosophySection';
 
 // Map designer style slugs to their corresponding example plan slugs
 function getExampleSlug(styleSlug: string): string {
@@ -257,6 +259,21 @@ export default async function StylePage({ params }: { params: Promise<{ slug: st
               })()}
             </div>
           </RevealSection>
+
+          {/* Design Philosophy Section - Long-form content with quotes */}
+          {(() => {
+            const philosophy = getDesignPhilosophy(style.slug);
+            if (philosophy) {
+              return (
+                <RevealSection>
+                  <div className="mb-16 bg-stone-50 rounded-lg p-12">
+                    <PhilosophySection philosophy={philosophy} />
+                  </div>
+                </RevealSection>
+              );
+            }
+            return null;
+          })()}
 
           {/* Design Principles */}
           {style.design_principles && Array.isArray(style.design_principles) && (
