@@ -1,7 +1,6 @@
-import { Header, Footer, RevealSection, ArchitecturalCard } from '@/components/architectural';
+import { Header, Footer, RevealSection } from '@/components/architectural';
 import { supabase } from '@/lib/supabase';
-import Link from 'next/link';
-import Image from 'next/image';
+import { StyleCardGrid } from '@/components/StyleCard';
 
 export const metadata = {
   title: 'Designer Garden Styles',
@@ -70,75 +69,7 @@ export default async function StylesPage() {
       {/* Styles Grid */}
       <RevealSection className="pb-20">
         <div className="container mx-auto px-4 lg:px-8">
-          {styles.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-xl text-stone mb-4">
-                No designer styles available yet.
-              </p>
-              <p className="text-sm text-stone/70">
-                Check back soon - we're curating the best UK garden styles.
-              </p>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {styles.map((style, index) => (
-                <Link key={style.id} href={`/styles/${style.slug}`}>
-                  <ArchitecturalCard
-                    title={style.name}
-                    description={style.short_description}
-                    delay={index * 0.1}
-                  >
-                    {/* Hero Image Placeholder */}
-                    <div className="relative h-48 bg-concrete/40 mb-4 rounded-sm overflow-hidden">
-                      {style.hero_image_url ? (
-                        <Image
-                          src={style.hero_image_url}
-                          alt={style.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-4xl opacity-20">{style.style_category}</span>
-                        </div>
-                      )}
-
-                      {/* Category Badge */}
-                      <div className="absolute top-3 left-3">
-                        <span className="px-3 py-1 bg-copper/90 backdrop-blur text-dark text-xs uppercase tracking-wider font-bold rounded-sm">
-                          {style.style_category}
-                        </span>
-                      </div>
-
-                      {/* Difficulty Badge */}
-                      <div className="absolute top-3 right-3">
-                        <span className="px-3 py-1 bg-moss/90 backdrop-blur text-dark text-xs uppercase tracking-wider font-bold rounded-sm">
-                          {style.difficulty}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Designer Name */}
-                    {style.designer_name && (
-                      <p className="text-sm text-copper uppercase tracking-wider mb-3">
-                        Inspired by {style.designer_name}
-                      </p>
-                    )}
-
-                    {/* Price Range */}
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-                      <span className="text-lg font-bold text-mist">
-                        £{style.estimated_cost_min}-{style.estimated_cost_max}
-                      </span>
-                      <span className="text-copper hover:underline text-sm uppercase tracking-wider">
-                        View Style →
-                      </span>
-                    </div>
-                  </ArchitecturalCard>
-                </Link>
-              ))}
-            </div>
-          )}
+          <StyleCardGrid styles={styles} showAnalytics={true} />
         </div>
       </RevealSection>
 
