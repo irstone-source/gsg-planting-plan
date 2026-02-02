@@ -9,6 +9,8 @@ import { PlantImageViewer } from '@/components/PlantImageViewer';
 import { getPlantDetail } from '@/data/plant-database';
 import { getDesignPhilosophy } from '@/data/design-philosophies';
 import { PhilosophySection } from '@/components/PhilosophySection';
+import { StyleAnalytics } from '@/components/StyleAnalytics';
+import { StyleCTAButton } from '@/components/StyleCTAButton';
 
 // Map designer style slugs to their corresponding example plan slugs
 function getExampleSlug(styleSlug: string): string {
@@ -74,6 +76,9 @@ export default async function StylePage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="min-h-screen bg-dark text-mist">
+      {/* Analytics tracking */}
+      <StyleAnalytics styleSlug={style.slug} styleName={style.name} />
+
       <Header />
 
       <div className="pt-32 pb-20">
@@ -326,12 +331,13 @@ export default async function StylePage({ params }: { params: Promise<{ slug: st
                 Our AI will adapt this style for your specific garden conditions,
                 size, and budget. Generate your personalized planting plan in minutes.
               </p>
-              <Link
-                href={`/create?style=${style.slug}`}
+              <StyleCTAButton
+                styleSlug={style.slug}
+                styleName={style.name}
                 className="inline-block px-10 py-5 bg-copper text-dark font-heading text-base uppercase tracking-wider font-bold hover:bg-[#D4A373] transition-colors"
               >
                 Create My Custom Plan → £79
-              </Link>
+              </StyleCTAButton>
             </div>
           </RevealSection>
 

@@ -4,9 +4,31 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export const metadata = {
-  title: 'Designer Garden Styles | PlantingPlans',
+  title: 'Designer Garden Styles',
   description: 'Browse 10+ garden styles inspired by Chelsea Flower Show, famous designers, and historic UK gardens. Get professional planting plans for £79.',
-  keywords: ['garden design styles', 'Chelsea Flower Show', 'Piet Oudolf', 'Monty Don', 'Sissinghurst', 'cottage garden', 'modern garden'],
+  keywords: ['garden design styles', 'Chelsea Flower Show', 'Piet Oudolf', 'Monty Don', 'Sissinghurst', 'cottage garden', 'modern garden', 'Dan Pearson', 'wildlife garden'],
+  openGraph: {
+    title: 'Designer Garden Styles | PlantingPlans',
+    description: 'Browse Chelsea-inspired, designer-led garden styles. Piet Oudolf prairie, Dan Pearson meadows, Monty Don cottage gardens & more.',
+    url: 'https://plantingplans.co.uk/styles',
+    type: 'website',
+    images: [
+      {
+        url: '/og-styles.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Designer Garden Styles from PlantingPlans',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Designer Garden Styles | PlantingPlans',
+    description: 'Browse Chelsea-inspired garden styles. Professional planting plans for £79.',
+  },
+  alternates: {
+    canonical: 'https://plantingplans.co.uk/styles',
+  },
 };
 
 async function getDesignerStyles() {
