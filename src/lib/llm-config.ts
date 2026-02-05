@@ -4,8 +4,11 @@
  */
 
 import { OPENROUTER_MODELS } from './openrouter';
+import { GEMINI_MODELS } from './gemini';
+import { OPENAI_MODELS } from './openai-client';
+import { GROK_MODELS } from './grok';
 
-export type LLMProvider = 'openrouter' | 'anthropic' | 'openai';
+export type LLMProvider = 'openrouter' | 'gemini' | 'openai' | 'grok';
 
 export interface LLMConfig {
   provider: LLMProvider;
@@ -54,6 +57,28 @@ export const LLM_CONFIGS = {
     model: OPENROUTER_MODELS.GPT35_TURBO,
     temperature: 0.5,
     max_tokens: 1000,
+  },
+
+  // Alternative providers for testing/comparison
+  GEMINI_FLASH: {
+    provider: 'gemini' as LLMProvider,
+    model: GEMINI_MODELS.FLASH,
+    temperature: 0.7,
+    max_tokens: 2048,
+  },
+
+  OPENAI_GPT4: {
+    provider: 'openai' as LLMProvider,
+    model: OPENAI_MODELS.GPT4_TURBO,
+    temperature: 0.7,
+    max_tokens: 4096,
+  },
+
+  GROK_2: {
+    provider: 'grok' as LLMProvider,
+    model: GROK_MODELS.GROK_2,
+    temperature: 0.7,
+    max_tokens: 4096,
   },
 } as const;
 
