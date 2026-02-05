@@ -54,13 +54,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Images are optional if designer style is provided
+    // Validate that we have enough information to generate a plan
+    // Accept any of: images, designer style, OR a description
     const hasImages = imageFiles.length > 0;
     const hasDesignerStyle = !!data.designerStyle;
+    const hasDescription = !!data.description && data.description.length >= 20;
 
-    if (!hasImages && !hasDesignerStyle) {
+    if (!hasImages && !hasDesignerStyle && !hasDescription) {
       return NextResponse.json(
-        { success: false, error: 'Either site photos or a designer style selection is required' },
+        { success: false, error: 'Please provide either site photos, a designer style, or describe what you want (minimum 20 characters)' },
         { status: 400 }
       );
     }
@@ -143,20 +145,26 @@ export async function POST(request: NextRequest) {
 
     // Step 4: Create planting plan record
     console.log('📋 Creating planting plan...');
+    const planInsert: any = {
+      user_id: user?.id || null,
+      site_analysis_id: siteAnalysisData.id,
+      style: data.style,
+      maintenance_level: data.maintenanceLevel,
+      budget_min: data.budgetMin,
+      budget_max: data.budgetMax,
+      special_requirements: data.description || data.specialRequirements,
+      status: 'draft',
+      design_rationale: visionAnalysis?.overallAssessment || `Plan based on user preferences${data.designerStyle ? ` and ${data.designerStyle} designer style` : ''}.`,
+    };
+
+    // Only include designer_style_slug if provided (column may not exist yet)
+    if (data.designerStyle) {
+      planInsert.designer_style_slug = data.designerStyle;
+    }
+
     const { data: planData, error: planError } = await supabase
       .from('planting_plans')
-      .insert({
-        user_id: user?.id || null,
-        site_analysis_id: siteAnalysisData.id,
-        style: data.style,
-        maintenance_level: data.maintenanceLevel,
-        budget_min: data.budgetMin,
-        budget_max: data.budgetMax,
-        special_requirements: data.description || data.specialRequirements,
-        designer_style_slug: data.designerStyle || null,
-        status: 'draft',
-        design_rationale: visionAnalysis?.overallAssessment || `Plan based on user preferences${data.designerStyle ? ` and ${data.designerStyle} designer style` : ''}.`,
-      })
+      .insert(planInsert)
       .select()
       .single();
 
