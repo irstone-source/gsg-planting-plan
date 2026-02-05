@@ -145,26 +145,27 @@ export async function POST(request: NextRequest) {
 
     // Step 4: Create planting plan record
     console.log('📋 Creating planting plan...');
-    const planInsert: any = {
-      user_id: user?.id || null,
-      site_analysis_id: siteAnalysisData.id,
-      style: data.style,
-      maintenance_level: data.maintenanceLevel,
-      budget_min: data.budgetMin,
-      budget_max: data.budgetMax,
-      special_requirements: data.description || data.specialRequirements,
-      status: 'draft',
-      design_rationale: visionAnalysis?.overallAssessment || `Plan based on user preferences${data.designerStyle ? ` and ${data.designerStyle} designer style` : ''}.`,
-    };
 
-    // Only include designer_style_slug if provided (column may not exist yet)
-    if (data.designerStyle) {
-      planInsert.designer_style_slug = data.designerStyle;
-    }
+    // Note: designer_style_slug column will be added via Supabase migration
+    // For now, store in special_requirements if designerStyle is provided
+    const specialReqs = data.description || data.specialRequirements || '';
+    const designerStyleNote = data.designerStyle
+      ? `\n[Designer Style: ${data.designerStyle}]`
+      : '';
 
     const { data: planData, error: planError } = await supabase
       .from('planting_plans')
-      .insert(planInsert)
+      .insert({
+        user_id: user?.id || null,
+        site_analysis_id: siteAnalysisData.id,
+        style: data.style,
+        maintenance_level: data.maintenanceLevel,
+        budget_min: data.budgetMin,
+        budget_max: data.budgetMax,
+        special_requirements: specialReqs + designerStyleNote,
+        status: 'draft',
+        design_rationale: visionAnalysis?.overallAssessment || `Plan based on user preferences${data.designerStyle ? ` and ${data.designerStyle} designer style` : ''}.`,
+      })
       .select()
       .single();
 
