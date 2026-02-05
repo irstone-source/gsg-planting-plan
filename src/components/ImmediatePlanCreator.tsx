@@ -103,7 +103,8 @@ export function ImmediatePlanCreator() {
       setProgress(60);
 
       if (!response.ok) {
-        throw new Error('Failed to generate planting plan');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate planting plan');
       }
 
       const result = await response.json();
@@ -113,7 +114,8 @@ export function ImmediatePlanCreator() {
       window.location.href = `/plan/${result.planId}`;
     } catch (error) {
       console.error('Error generating plan:', error);
-      alert('Failed to generate planting plan. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate planting plan';
+      alert(`Failed to generate planting plan: ${errorMessage}\n\nPlease try again or contact support if the issue persists.`);
       setIsGenerating(false);
       setProgress(0);
     }
