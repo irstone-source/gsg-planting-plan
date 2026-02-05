@@ -12,7 +12,7 @@ export async function GET() {
   };
 
   // Test Supabase connection
-  let supabaseTest = { connected: false, error: null };
+  let supabaseTest: { connected: boolean; error: string | null } = { connected: false, error: null };
   try {
     const { data, error } = await supabase
       .from('planting_plans')
@@ -21,7 +21,7 @@ export async function GET() {
 
     supabaseTest = {
       connected: !error,
-      error: error?.message || null,
+      error: error?.message ?? null,
     };
   } catch (e) {
     supabaseTest = {

@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
 import {
   getMeadowAgentPrompt,
   calculateMeadowPlan,
   type MeadowAgentMessage,
   type MeadowAgentContext
 } from '@/lib/agents/dan-pearson-meadow-agent';
+import { openrouter, OPENROUTER_MODELS } from '@/lib/openrouter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,23 +33,26 @@ export async function POST(request: NextRequest) {
     // Get the agent prompt with context
     const systemPrompt = getMeadowAgentPrompt(conversationHistory, message);
 
-    // Call Claude API
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      temperature: 0.7,
-      system: systemPrompt,
-      messages: [
+    // Call OpenRouter API (using Claude Sonnet 4)
+    const response = await openrouter.chat(
+      [
+        {
+          role: 'system',
+          content: systemPrompt
+        },
         {
           role: 'user',
           content: message
         }
-      ]
-    });
+      ],
+      {
+        model: OPENROUTER_MODELS.CLAUDE_SONNET_4,
+        max_tokens: 2000,
+        temperature: 0.7
+      }
+    );
 
-    const agentResponse = response.content[0].type === 'text'
-      ? response.content[0].text
-      : '';
+    const agentResponse = response.choices[0].message.content;
 
     // Update conversation history
     const updatedHistory: MeadowAgentMessage[] = [
@@ -90,8 +89,9 @@ export async function POST(request: NextRequest) {
       conversationHistory: updatedHistory,
       plan,
       usage: {
-        input_tokens: response.usage.input_tokens,
-        output_tokens: response.usage.output_tokens
+        prompt_tokens: response.usage.prompt_tokens,
+        completion_tokens: response.usage.completion_tokens,
+        total_tokens: response.usage.total_tokens
       }
     });
 
