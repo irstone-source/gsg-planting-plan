@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { Header, Footer, RevealSection } from '@/components/architectural';
 import { MeadowAgentChat } from '@/components/MeadowAgentChat';
 import { CheckCircle, Calendar, Leaf } from 'lucide-react';
+import { MeadowPhaseTimeline } from '@/components/visuals/MeadowPhaseTimeline';
+import { SeasonalProgression } from '@/components/visuals/SeasonalProgression';
+import { ManagementCalendar } from '@/components/visuals/ManagementCalendar';
 
 export default function MeadowAgentPage() {
   const [generatedPlan, setGeneratedPlan] = useState<any>(null);
@@ -182,6 +185,28 @@ export default function MeadowAgentPage() {
           </div>
         </div>
       </RevealSection>
+
+      {/* Educational Visuals */}
+      <div className="pb-20 bg-dark">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-5xl mx-auto space-y-16">
+            {/* Phase Timeline */}
+            <RevealSection>
+              <MeadowPhaseTimeline />
+            </RevealSection>
+
+            {/* Seasonal Progression */}
+            <RevealSection>
+              <SeasonalProgression />
+            </RevealSection>
+
+            {/* Management Calendar */}
+            <RevealSection>
+              <ManagementCalendar />
+            </RevealSection>
+          </div>
+        </div>
+      </div>
 
       <Footer />
     </div>

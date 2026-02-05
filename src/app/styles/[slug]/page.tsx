@@ -320,6 +320,35 @@ export default async function StylePage({ params }: { params: Promise<{ slug: st
             </RevealSection>
           )}
 
+          {/* Agent CTA - Dan Pearson Meadow Only */}
+          {style.slug === 'dan-pearson-meadow' && (
+            <RevealSection>
+              <div className="bg-moss/20 border-2 border-moss/40 p-12 text-center mb-8">
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  <Sparkles className="h-10 w-10 text-moss" />
+                  <span className="px-3 py-1 bg-moss/30 border border-moss/50 text-moss text-xs uppercase tracking-wider font-bold rounded-sm">
+                    NEW: Style-Bound Agent
+                  </span>
+                </div>
+                <h2 className="font-heading text-3xl uppercase tracking-wider font-bold text-mist mb-4">
+                  Work With Dan Pearson Meadow Agent
+                </h2>
+                <p className="text-lg text-stone mb-8 max-w-2xl mx-auto leading-relaxed">
+                  Chat with a planting expert trained specifically in naturalistic meadow design.
+                  Guided authority. No style blending. Plans that will actually work.
+                </p>
+                <Link href="/agents/meadow">
+                  <button className="inline-block px-10 py-5 bg-moss text-dark font-heading text-base uppercase tracking-wider font-bold hover:bg-[#8BA888] transition-colors">
+                    Start Conversation with Agent →
+                  </button>
+                </Link>
+                <p className="text-xs text-stone/70 mt-4 uppercase tracking-wider">
+                  Free • No signup required • Prototype V1
+                </p>
+              </div>
+            </RevealSection>
+          )}
+
           {/* CTA */}
           <RevealSection>
             <div className="bg-gradient-to-r from-copper/20 to-moss/20 border-2 border-copper/40 p-12 text-center mb-16">
