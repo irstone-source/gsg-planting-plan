@@ -76,25 +76,33 @@ export async function POST(request: NextRequest) {
     let visionAnalysis = null;
 
     if (hasImages) {
-      // Convert images to base64 for Claude Vision
-      console.log('🖼️  Converting images...');
-      const imagesForVision = await Promise.all(
-        imageFiles.map(async (file) => ({
-          data: await fileToBase64(file),
-          mediaType: getMediaType(file),
-        }))
-      );
-      console.log(`✓ Converted ${imagesForVision.length} images`);
+      try {
+        // Convert images to base64 for Claude Vision
+        console.log('🖼️  Converting images...');
+        const imagesForVision = await Promise.all(
+          imageFiles.map(async (file) => ({
+            data: await fileToBase64(file),
+            mediaType: getMediaType(file),
+          }))
+        );
+        console.log(`✓ Converted ${imagesForVision.length} images`);
 
-      // Analyze images with Claude Vision
-      console.log('👁️  Analyzing site with Claude Vision...');
-      visionAnalysis = await analyzeSitePhotos(imagesForVision);
-      console.log('✓ Vision analysis complete:', {
-        sunExposure: visionAnalysis.sunExposure.assessment,
-        confidence: visionAnalysis.sunExposure.confidence,
-        existingPlants: visionAnalysis.existingPlants.length,
-      });
-    } else {
+        // Analyze images with Claude Vision
+        console.log('👁️  Analyzing site with Claude Vision...');
+        visionAnalysis = await analyzeSitePhotos(imagesForVision);
+        console.log('✓ Vision analysis complete:', {
+          sunExposure: visionAnalysis.sunExposure.assessment,
+          confidence: visionAnalysis.sunExposure.confidence,
+          existingPlants: visionAnalysis.existingPlants.length,
+        });
+      } catch (visionError) {
+        console.warn('⚠️ Vision analysis failed, using form data:', visionError);
+        // Fall back to form data if vision analysis fails
+        visionAnalysis = null;
+      }
+    }
+
+    if (!visionAnalysis) {
       // Generate default analysis from form data
       console.log('📋 Using form-based site analysis (no images)');
       visionAnalysis = {
@@ -206,7 +214,8 @@ export async function POST(request: NextRequest) {
         const recData = await recommendationsResponse.json();
         console.log('✓ Recommendations generated:', recData.totalPlants, 'plants');
       } else {
-        console.warn('⚠️ Recommendations generation failed, but plan is created');
+        const errorText = await recommendationsResponse.text();
+        console.warn('⚠️ Recommendations generation failed:', errorText);
       }
     } catch (recError) {
       console.warn('⚠️ Recommendations generation error:', recError);

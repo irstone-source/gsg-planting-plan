@@ -4,5 +4,16 @@
       "path": "/api/cron/send-onboarding-emails",
       "schedule": "0 9 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "src/app/api/generate-plan/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/generate-recommendations/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/agents/meadow/chat/route.ts": {
+      "maxDuration": 30
+    }
+  }
 }

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Upload, MapPin, Sun, Droplets, Leaf, Sparkles, Loader2, X } from 'lucide-react';
 import Image from 'next/image';
+import imageCompression from 'browser-image-compression';
 
 // Form validation schema
 const formSchema = z.object({
