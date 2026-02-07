@@ -12,37 +12,36 @@ interface BackgroundGenerationOptions {
 }
 
 /**
- * Trigger background generation for a plan (fire and forget)
- * This function returns immediately and processes asynchronously
+ * Trigger background generation for a plan via webhook
+ * This function returns immediately and the webhook processes async in separate function
  */
 export function triggerBackgroundGeneration(
   planId: string,
   options: BackgroundGenerationOptions
 ) {
-  // Don't await - fire and forget
-  processGenerationInBackground(planId, options).catch((error) => {
-    console.error(`❌ Background generation failed for plan ${planId}:`, error);
+  // Call webhook in separate serverless function - fire and forget
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
 
-    // Update plan status to 'error' - don't await this either
-    void supabase
-      .from('planting_plans')
-      .update({
-        status: 'error',
-        design_rationale: `Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      })
-      .eq('id', planId)
-      .then(() => console.log(`✓ Plan ${planId} marked as error`));
+  fetch(`${baseUrl}/api/process-plan`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ planId, options }),
+  }).catch((error) => {
+    console.error(`❌ Failed to trigger background generation for plan ${planId}:`, error);
   });
 
   // Return immediately
-  console.log(`✓ Background generation triggered for plan ${planId}`);
+  console.log(`✓ Background generation webhook triggered for plan ${planId}`);
 }
 
 /**
  * Process plan generation in the background
- * This function runs asynchronously after the initial response
+ * This function runs in a separate serverless function with longer timeout
+ * EXPORTED for use by /api/process-plan webhook
  */
-async function processGenerationInBackground(
+export async function processGenerationInBackground(
   planId: string,
   options: BackgroundGenerationOptions
 ) {
