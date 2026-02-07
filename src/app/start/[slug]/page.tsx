@@ -4,9 +4,9 @@ import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 async function getStyle(slug: string) {
@@ -24,7 +24,8 @@ async function getStyle(slug: string) {
 }
 
 export default async function StyleStartPage({ params }: PageProps) {
-  const style = await getStyle(params.slug);
+  const { slug } = await params;
+  const style = await getStyle(slug);
 
   if (!style) {
     notFound();
@@ -95,7 +96,8 @@ export default async function StyleStartPage({ params }: PageProps) {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const style = await getStyle(params.slug);
+  const { slug } = await params;
+  const style = await getStyle(slug);
 
   if (!style) {
     return {
