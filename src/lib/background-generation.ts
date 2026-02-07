@@ -8,6 +8,7 @@ interface BackgroundGenerationOptions {
   hasImages: boolean;
   imageUrls: string[];
   designerStyle?: string;
+  selectedStyleSlug?: string;
 }
 
 /**
