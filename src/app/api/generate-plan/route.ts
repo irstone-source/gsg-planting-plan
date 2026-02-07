@@ -1,14 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
-import { createServerClient } from '@/lib/supabase-auth';
-import { checkEntitlements, consumeCredit } from '@/lib/entitlements';
-import { analyzeSitePhotos } from '@/lib/vision-analysis';
-import { getLocationData, validatePostcode } from '@/lib/location';
-import { fileToBase64, getMediaType } from '@/lib/storage';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * DEPRECATED ENDPOINT
+ * This endpoint has been replaced by /api/create-plan
+ *
+ * The new endpoint provides:
+ * - Faster response time (1-2s instead of 26-38s)
+ * - Asynchronous background processing
+ * - Better error handling
+ * - No timeout issues
+ *
+ * Please update your code to use /api/create-plan instead
+ */
 export async function POST(request: NextRequest) {
+  console.warn('⚠️ Deprecated endpoint /api/generate-plan called. Use /api/create-plan instead.');
+
+  return NextResponse.json(
+    {
+      error: 'This endpoint is deprecated',
+      message: 'Please use /api/create-plan instead. This endpoint will be removed in a future version.',
+      migration_guide: {
+        old: 'POST /api/generate-plan',
+        new: 'POST /api/create-plan',
+        changes: [
+          'Returns immediately with planId and status: "generating"',
+          'Poll /api/plan-status?planId=xxx to check progress',
+          'Redirect to /plan/{planId} when status is "complete"'
+        ]
+      }
+    },
+    { status: 410 } // 410 Gone
+  );
+}
+
+// Keep original implementation commented for reference
+/*
+export async function POST_DEPRECATED(request: NextRequest) {
   try {
     // Check authentication (optional for immediate mode)
     const authSupabase = createServerClient();
@@ -254,3 +283,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+*/

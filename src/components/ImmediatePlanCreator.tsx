@@ -83,6 +83,53 @@ export function ImmediatePlanCreator() {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const pollPlanStatus = async (planId: string) => {
+    const maxAttempts = 60; // 2 minutes max (2s interval)
+    let attempts = 0;
+
+    const poll = async () => {
+      attempts++;
+
+      try {
+        const response = await fetch(`/api/plan-status?planId=${planId}`);
+        const data = await response.json();
+
+        if (data.status === 'complete') {
+          // Success! Redirect to plan page
+          setProgress(100);
+          window.location.href = `/plan/${planId}`;
+          return;
+        }
+
+        if (data.status === 'error') {
+          setIsGenerating(false);
+          setProgress(0);
+          alert(`Plan generation failed: ${data.message}\n\nPlease try again or contact support if the issue persists.`);
+          return;
+        }
+
+        // Still generating - update progress and poll again
+        const progressPercent = 40 + Math.min(50, (attempts / maxAttempts) * 50);
+        setProgress(progressPercent);
+
+        if (attempts < maxAttempts) {
+          setTimeout(poll, 2000); // Poll every 2 seconds
+        } else {
+          setIsGenerating(false);
+          setProgress(0);
+          alert('Plan generation is taking longer than expected. Please check back in a moment by refreshing this page, or contact support if the issue persists.');
+        }
+      } catch (error) {
+        console.error('Error checking plan status:', error);
+        setIsGenerating(false);
+        setProgress(0);
+        alert('Failed to check plan status. Please try again or contact support if the issue persists.');
+      }
+    };
+
+    poll();
+  };
+
   const onSubmit = async (data: FormData) => {
     setIsGenerating(true);
     setProgress(10);
@@ -93,30 +140,33 @@ export function ImmediatePlanCreator() {
       images.forEach(image => formData.append('images', image));
       formData.append('data', JSON.stringify(data));
 
-      setProgress(30);
+      setProgress(20);
 
-      // Call API endpoint (no auth required)
-      const response = await fetch('/api/generate-plan', {
+      // Call new fast plan creation endpoint
+      const response = await fetch('/api/create-plan', {
         method: 'POST',
         body: formData,
       });
 
-      setProgress(60);
+      setProgress(40);
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate planting plan');
+        throw new Error(errorData.error || 'Failed to create planting plan');
       }
 
       const result = await response.json();
-      setProgress(100);
 
-      // Redirect to results page
-      window.location.href = `/plan/${result.planId}`;
+      if (!result.success || !result.planId) {
+        throw new Error('Invalid response from server');
+      }
+
+      // Start polling for status
+      pollPlanStatus(result.planId);
     } catch (error) {
-      console.error('Error generating plan:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to generate planting plan';
-      alert(`Failed to generate planting plan: ${errorMessage}\n\nPlease try again or contact support if the issue persists.`);
+      console.error('Error creating plan:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create planting plan';
+      alert(`Failed to create planting plan: ${errorMessage}\n\nPlease try again or contact support if the issue persists.`);
       setIsGenerating(false);
       setProgress(0);
     }

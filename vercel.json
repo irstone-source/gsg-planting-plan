@@ -9,6 +9,12 @@
     "src/app/api/generate-plan/route.ts": {
       "maxDuration": 60
     },
+    "src/app/api/create-plan/route.ts": {
+      "maxDuration": 10
+    },
+    "src/app/api/plan-status/route.ts": {
+      "maxDuration": 5
+    },
     "src/app/api/generate-recommendations/route.ts": {
       "maxDuration": 60
     },

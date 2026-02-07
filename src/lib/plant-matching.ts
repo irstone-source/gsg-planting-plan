@@ -157,11 +157,22 @@ function filterByMaintenance(plants: any[], maintenanceLevel?: string): any[] {
 export async function matchPlants(criteria: PlantMatchCriteria): Promise<PlantMatch[]> {
   console.log('🌱 Matching plants with criteria:', criteria);
 
-  // Query all plants (we'll add more sophisticated queries later)
-  const { data: plants, error } = await supabase
+  // Query plants with basic filters at database level
+  // Note: Complex scoring still happens in memory, but we reduce initial dataset
+  let query = supabase
     .from('plants')
     .select('*')
     .gt('stock_quantity', 0); // Only in-stock plants
+
+  // Add sun exposure filter if criteria is specific (not 'mixed')
+  if (criteria.sunExposure && criteria.sunExposure !== 'mixed') {
+    query = query.contains('sun_exposure', [criteria.sunExposure]);
+  }
+
+  // Safety limit to prevent fetching excessive data
+  query = query.limit(500);
+
+  const { data: plants, error } = await query;
 
   if (error) {
     console.error('❌ Error fetching plants:', error);
