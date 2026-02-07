@@ -24,15 +24,14 @@ export function triggerBackgroundGeneration(
     console.error(`❌ Background generation failed for plan ${planId}:`, error);
 
     // Update plan status to 'error' - don't await this either
-    supabase
+    void supabase
       .from('planting_plans')
       .update({
         status: 'error',
         design_rationale: `Generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       })
       .eq('id', planId)
-      .then(() => console.log(`✓ Plan ${planId} marked as error`))
-      .catch(err => console.error(`❌ Failed to update error status for plan ${planId}:`, err));
+      .then(() => console.log(`✓ Plan ${planId} marked as error`));
   });
 
   // Return immediately

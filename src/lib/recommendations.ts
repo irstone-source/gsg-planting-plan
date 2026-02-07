@@ -38,7 +38,7 @@ export interface RecommendationResult {
  */
 export async function generatePlantRecommendations(
   criteria: PlantMatchCriteria,
-  visionAnalysis: VisionAnalysisResult,
+  visionAnalysis: VisionAnalysisResult | null,
   userPreferences: {
     style: string;
     maintenanceLevel: string;
@@ -153,7 +153,7 @@ function prepareClaudePlantContext(allMatches: PlantMatch[], layered: any): stri
  */
 function buildRecommendationPrompt(
   criteria: PlantMatchCriteria,
-  visionAnalysis: VisionAnalysisResult,
+  visionAnalysis: VisionAnalysisResult | null,
   userPreferences: any,
   plantContext: string
 ): string {
@@ -165,12 +165,13 @@ SITE CONDITIONS:
 - Soil Type: ${criteria.soilType}
 - Moisture: ${criteria.moisture}
 - Area: ${criteria.areaSqm || 'Unknown'} square meters
-
+${visionAnalysis ? `
 VISION ANALYSIS INSIGHTS:
 Sun Exposure: ${visionAnalysis.sunExposure.details}
 Challenges: ${visionAnalysis.challenges.join('; ')}
 Opportunities: ${visionAnalysis.opportunities.join('; ')}
 Overall Assessment: ${visionAnalysis.overallAssessment}
+` : ''}
 
 CLIENT PREFERENCES:
 - Style: ${userPreferences.style}
