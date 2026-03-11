@@ -6,7 +6,6 @@ import { Upload, CheckCircle, Loader2, FileText } from 'lucide-react';
 
 export function PlantListUploader() {
   const [uploading, setUploading] = useState(false);
-  const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [textInput, setTextInput] = useState('');
@@ -38,11 +37,6 @@ export function PlantListUploader() {
       setResult(uploadData);
       setUploading(false);
 
-      // Auto-start generation
-      if (uploadData.plants && uploadData.plants.length > 0) {
-        await startGeneration(uploadData.plants);
-      }
-
     } catch (err: any) {
       setError(err.message);
       setUploading(false);
@@ -72,40 +66,9 @@ export function PlantListUploader() {
       setResult(uploadData);
       setUploading(false);
 
-      // Auto-start generation
-      if (uploadData.plants && uploadData.plants.length > 0) {
-        await startGeneration(uploadData.plants);
-      }
-
     } catch (err: any) {
       setError(err.message);
       setUploading(false);
-    }
-  };
-
-  const startGeneration = async (plants: any[]) => {
-    setGenerating(true);
-    setError(null);
-
-    try {
-      const genRes = await fetch('/api/generate-plant-images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plants }),
-      });
-
-      const genData = await genRes.json();
-
-      if (!genRes.ok) {
-        throw new Error(genData.error || 'Generation failed');
-      }
-
-      setResult((prev: any) => ({ ...prev, generation: genData }));
-
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setGenerating(false);
     }
   };
 
@@ -126,12 +89,12 @@ Betula pendula, Silver Birch, tree
 Viburnum tinus, Laurustinus, shrub
 Alchemilla mollis, Lady's Mantle, perennial"
           className="w-full h-32 p-3 border rounded-lg text-sm font-mono resize-none"
-          disabled={uploading || generating}
+          disabled={uploading}
         />
 
         <Button
           onClick={handleTextSubmit}
-          disabled={uploading || generating || !textInput.trim()}
+          disabled={uploading || !textInput.trim()}
           className="mt-3"
         >
           {uploading ? (
@@ -164,14 +127,14 @@ Alchemilla mollis, Lady's Mantle, perennial"
           type="file"
           accept=".csv,.txt"
           onChange={handleFileUpload}
-          disabled={uploading || generating}
+          disabled={uploading}
           className="hidden"
           id="plant-list-upload"
         />
 
         <label htmlFor="plant-list-upload">
           <Button
-            disabled={uploading || generating}
+            disabled={uploading}
             className="cursor-pointer"
             asChild
           >
@@ -180,11 +143,6 @@ Alchemilla mollis, Lady's Mantle, perennial"
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Uploading...
-                </>
-              ) : generating ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating Images...
                 </>
               ) : (
                 <>
@@ -213,12 +171,6 @@ Alchemilla mollis, Lady's Mantle, perennial"
             <p className="text-sm text-gray-700">
               {result.count} plants uploaded
             </p>
-            {result.generation && (
-              <p className="text-sm text-gray-700 mt-2">
-                Generating {result.generation.plantCount * 3} images
-                (est. {result.generation.estimatedTime} minutes)
-              </p>
-            )}
           </div>
         )}
 
