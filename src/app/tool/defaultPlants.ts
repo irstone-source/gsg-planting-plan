@@ -5,6 +5,7 @@ export interface Plant {
   cultivar: string;
   colour: string;
   textDark: boolean;
+  radius?: number; // per-species size override (undefined = use global default)
 }
 
 export const defaultPlants: Plant[] = [

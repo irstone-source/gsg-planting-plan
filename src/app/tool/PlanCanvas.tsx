@@ -280,7 +280,7 @@ export default function PlanCanvas({
             const plant = getPlantById(pp.plantId);
             if (!plant) return null;
             const isSelected = selectedIds.has(pp.uid);
-            const r = settings.plantRadius;
+            const r = plant.radius ?? settings.plantRadius;
             return (
               <Group
                 key={pp.uid}

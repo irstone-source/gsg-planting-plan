@@ -161,7 +161,7 @@ export default function Toolbar({
 
       {/* Plant size slider */}
       <div className="flex items-center gap-1.5">
-        <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Size</span>
+        <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Default</span>
         <input
           type="range"
           min={8}

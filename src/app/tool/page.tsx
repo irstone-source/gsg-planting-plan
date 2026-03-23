@@ -91,7 +91,10 @@ export default function ToolPage() {
         {/* Left: Plant Palette */}
         <PlantPalette
           plants={state.plants}
+          defaultRadius={state.settings.plantRadius}
           onAddPlant={state.addCustomPlant}
+          onImportPlants={state.importPlants}
+          onUpdatePlantRadius={state.updatePlantRadius}
           onDragStart={setDragPlantId}
           onDragEnd={() => setDragPlantId(null)}
         />

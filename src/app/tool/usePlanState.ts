@@ -145,6 +145,20 @@ export function usePlanState() {
     setPlants((prev) => [...prev, plant]);
   }, []);
 
+  const importPlants = useCallback((newPlants: Plant[]) => {
+    setPlants((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const toAdd = newPlants.filter((p) => !existingIds.has(p.id));
+      return [...prev, ...toAdd];
+    });
+  }, []);
+
+  const updatePlantRadius = useCallback((plantId: string, radius: number | undefined) => {
+    setPlants((prev) =>
+      prev.map((p) => (p.id === plantId ? { ...p, radius } : p))
+    );
+  }, []);
+
   const toggleSelect = useCallback((uid: string, additive: boolean) => {
     setSelectedIds((prev) => {
       const next = new Set(additive ? prev : []);
@@ -222,6 +236,8 @@ export function usePlanState() {
     deletePlant,
     deleteSelected,
     addCustomPlant,
+    importPlants,
+    updatePlantRadius,
     toggleSelect,
     clearSelection,
     selectAll,
