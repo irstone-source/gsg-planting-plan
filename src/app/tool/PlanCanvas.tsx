@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { Stage, Layer, Circle, Text, Image as KonvaImage, Rect, Group } from "react-konva";
+import { Stage, Layer, Circle, Text, Image as KonvaImage, Rect, Group, Arrow } from "react-konva";
 import Konva from "konva";
 import { Plant } from "./defaultPlants";
-import { PlacedPlant, ProjectSettings } from "./types";
+import { PlacedPlant, ProjectSettings, ViewingArrow } from "./types";
 
 interface PlanCanvasProps {
   plants: Plant[];
@@ -22,6 +22,10 @@ interface PlanCanvasProps {
   onDeleteSelected: () => void;
   dragPlantId: string | null;
   stageRef: React.RefObject<Konva.Stage | null>;
+  viewingArrow: ViewingArrow | null;
+  onSetViewingArrow: (arrow: ViewingArrow | null) => void;
+  arrowMode: boolean;
+  onArrowPlaced: () => void;
 }
 
 const MIN_SCALE = 0.1;
@@ -43,6 +47,10 @@ export default function PlanCanvas({
   onDeleteSelected,
   dragPlantId,
   stageRef,
+  viewingArrow,
+  onSetViewingArrow,
+  arrowMode,
+  onArrowPlaced,
 }: PlanCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>(null);
@@ -140,13 +148,36 @@ export default function PlanCanvas({
     setIsPanning(false);
   }, []);
 
-  // Click on empty canvas = clear selection
+  // Arrow placement state
+  const [arrowStart, setArrowStart] = useState<{ x: number; y: number } | null>(null);
+
+  // Click on empty canvas = clear selection OR place arrow
   const handleStageClick = useCallback((e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (e.target === e.target.getStage() || e.target.attrs.id === "background" || e.target.attrs.id === "bg-image") {
+    const isBackground = e.target === e.target.getStage() || e.target.attrs.id === "background" || e.target.attrs.id === "bg-image";
+
+    if (arrowMode && isBackground) {
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pointer = stage.getPointerPosition();
+      if (!pointer) return;
+      const x = (pointer.x - position.x) / scale;
+      const y = (pointer.y - position.y) / scale;
+
+      if (!arrowStart) {
+        setArrowStart({ x, y });
+      } else {
+        onSetViewingArrow({ x1: arrowStart.x, y1: arrowStart.y, x2: x, y2: y });
+        setArrowStart(null);
+        onArrowPlaced();
+      }
+      return;
+    }
+
+    if (isBackground) {
       onClearSelection();
       setContextMenu(null);
     }
-  }, [onClearSelection]);
+  }, [onClearSelection, arrowMode, arrowStart, position, scale, stageRef, onSetViewingArrow, onArrowPlaced]);
 
   // Right-click context menu
   const handleContextMenu = useCallback((e: Konva.KonvaEventObject<PointerEvent>) => {
@@ -205,7 +236,7 @@ export default function PlanCanvas({
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 bg-neutral-100 overflow-hidden cursor-crosshair"
+      className={`relative flex-1 bg-neutral-100 overflow-hidden ${arrowMode ? "cursor-pointer" : "cursor-crosshair"}`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       style={{ minHeight: 400 }}
@@ -343,6 +374,30 @@ export default function PlanCanvas({
               </Group>
             );
           })}
+
+          {/* Viewing direction arrow */}
+          {viewingArrow && (
+            <Arrow
+              points={[viewingArrow.x1, viewingArrow.y1, viewingArrow.x2, viewingArrow.y2]}
+              stroke="#2563eb"
+              strokeWidth={3}
+              fill="#2563eb"
+              pointerLength={12}
+              pointerWidth={10}
+              dash={[8, 4]}
+              listening={false}
+            />
+          )}
+          {/* Arrow placement preview (first click placed, tracking mouse) */}
+          {arrowStart && arrowMode && (
+            <Circle
+              x={arrowStart.x}
+              y={arrowStart.y}
+              radius={6}
+              fill="#2563eb"
+              listening={false}
+            />
+          )}
         </Layer>
       </Stage>
 

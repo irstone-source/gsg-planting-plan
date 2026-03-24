@@ -23,8 +23,17 @@ export interface PlanState {
   backgroundImage: string | null;
   backgroundWidth: number;
   backgroundHeight: number;
+  viewingArrow: ViewingArrow | null;
 }
 
 export interface HistoryEntry {
   placed: PlacedPlant[];
 }
+
+export interface ViewingArrow {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+

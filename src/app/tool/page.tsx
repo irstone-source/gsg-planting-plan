@@ -8,6 +8,7 @@ import { useAuth } from "./useAuth";
 import { useSavePlan, SavedPlan } from "./useSavePlan";
 import PlantPalette from "./PlantPalette";
 import PlantSchedule from "./PlantSchedule";
+import IllustrationPanel from "./IllustrationPanel";
 import Toolbar from "./Toolbar";
 
 const PlanCanvas = dynamic(() => import("./PlanCanvas"), { ssr: false });
@@ -15,7 +16,8 @@ const PlanCanvas = dynamic(() => import("./PlanCanvas"), { ssr: false });
 export default function ToolPage() {
   const stageRef = useRef<Konva.Stage | null>(null);
   const [dragPlantId, setDragPlantId] = useState<string | null>(null);
-  const [rightPanelTab, setRightPanelTab] = useState<"schedule" | "plans" | "help">("schedule");
+  const [rightPanelTab, setRightPanelTab] = useState<"schedule" | "illustrate" | "plans" | "help">("schedule");
+  const [arrowMode, setArrowMode] = useState(false);
   const state = usePlanState();
   const auth = useAuth();
   const save = useSavePlan(auth.supabase, auth.user);
@@ -142,25 +144,37 @@ export default function ToolPage() {
           onDeleteSelected={state.deleteSelected}
           dragPlantId={dragPlantId}
           stageRef={stageRef}
+          viewingArrow={state.viewingArrow}
+          onSetViewingArrow={state.setViewingArrow}
+          arrowMode={arrowMode}
+          onArrowPlaced={() => setArrowMode(false)}
         />
 
         {/* Right: Schedule / Plans / Help */}
         <div className="w-72 bg-white border-l border-neutral-200 flex flex-col">
           <div className="flex border-b border-neutral-200">
-            {(["schedule", "plans", "help"] as const).map((tab) => (
+            {(["schedule", "illustrate", "plans", "help"] as const).map((tab) => (
               <button key={tab} onClick={() => setRightPanelTab(tab)}
                 className={`flex-1 py-2 text-xs font-medium ${
                   rightPanelTab === tab
                     ? "text-emerald-600 border-b-2 border-emerald-600"
                     : "text-neutral-400 hover:text-neutral-600"
                 }`}>
-                {tab === "schedule" ? "Schedule" : tab === "plans" ? "My Plans" : "Help"}
+                {tab === "schedule" ? "Schedule" : tab === "illustrate" ? "Illustrate" : tab === "plans" ? "Plans" : "Help"}
               </button>
             ))}
           </div>
           <div className="flex-1 overflow-y-auto">
             {rightPanelTab === "schedule" ? (
               <PlantSchedule schedule={state.schedule} totalCount={state.totalCount} settings={state.settings} plants={state.plants} />
+            ) : rightPanelTab === "illustrate" ? (
+              <IllustrationPanel
+                plants={state.plants}
+                placedPlantIds={[...new Set(state.placed.map((p) => p.plantId))]}
+                viewingArrow={state.viewingArrow}
+                onSetArrowMode={setArrowMode}
+                arrowMode={arrowMode}
+              />
             ) : rightPanelTab === "plans" ? (
               <div className="p-3 space-y-3">
                 {!auth.user ? (

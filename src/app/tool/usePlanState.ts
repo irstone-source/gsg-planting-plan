@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Plant, defaultPlants } from "./defaultPlants";
-import { PlacedPlant, ProjectSettings, PlanState, HistoryEntry } from "./types";
+import { PlacedPlant, ProjectSettings, PlanState, HistoryEntry, ViewingArrow } from "./types";
 
 const STORAGE_KEY = "gsg-planting-tool-state";
 
@@ -36,6 +36,7 @@ export function usePlanState() {
   const [backgroundWidth, setBackgroundWidth] = useState(0);
   const [backgroundHeight, setBackgroundHeight] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [viewingArrow, setViewingArrow] = useState<ViewingArrow | null>(null);
 
   // Undo/redo
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -52,6 +53,7 @@ export function usePlanState() {
       setBackgroundImage(saved.backgroundImage || null);
       setBackgroundWidth(saved.backgroundWidth || 0);
       setBackgroundHeight(saved.backgroundHeight || 0);
+      setViewingArrow(saved.viewingArrow || null);
       // Initialize history with loaded state
       setHistory([{ placed: saved.placed || [] }]);
       setHistoryIndex(0);
@@ -71,11 +73,12 @@ export function usePlanState() {
       backgroundImage,
       backgroundWidth,
       backgroundHeight,
+      viewingArrow,
     };
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {}
-  }, [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight]);
+  }, [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow]);
 
   // Push to history when placed changes (but not during undo/redo)
   useEffect(() => {
@@ -236,14 +239,15 @@ export function usePlanState() {
     setBackgroundImage(saved.backgroundImage || null);
     setBackgroundWidth(saved.backgroundWidth || 0);
     setBackgroundHeight(saved.backgroundHeight || 0);
+    setViewingArrow(saved.viewingArrow || null);
     setSelectedIds(new Set());
     setHistory([{ placed: saved.placed || [] }]);
     setHistoryIndex(0);
   }, []);
 
   const getFullState = useCallback((): PlanState => ({
-    plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight,
-  }), [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight]);
+    plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow,
+  }), [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow]);
 
   // Get schedule (aggregated counts)
   const schedule = plants
@@ -264,6 +268,8 @@ export function usePlanState() {
     backgroundWidth,
     backgroundHeight,
     selectedIds,
+    viewingArrow,
+    setViewingArrow,
     schedule,
     totalCount,
     placePlant,
