@@ -160,7 +160,7 @@ export default function ToolPage() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {rightPanelTab === "schedule" ? (
-              <PlantSchedule schedule={state.schedule} totalCount={state.totalCount} />
+              <PlantSchedule schedule={state.schedule} totalCount={state.totalCount} settings={state.settings} plants={state.plants} />
             ) : rightPanelTab === "plans" ? (
               <div className="p-3 space-y-3">
                 {!auth.user ? (

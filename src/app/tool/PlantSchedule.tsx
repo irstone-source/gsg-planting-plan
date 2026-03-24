@@ -1,6 +1,8 @@
 "use client";
 
 import { Plant } from "./defaultPlants";
+import { ProjectSettings } from "./types";
+import { downloadScheduleReport, downloadCareReport } from "./exportReports";
 
 interface ScheduleItem extends Plant {
   quantity: number;
@@ -9,9 +11,11 @@ interface ScheduleItem extends Plant {
 interface PlantScheduleProps {
   schedule: ScheduleItem[];
   totalCount: number;
+  settings: ProjectSettings;
+  plants: Plant[];
 }
 
-export default function PlantSchedule({ schedule, totalCount }: PlantScheduleProps) {
+export default function PlantSchedule({ schedule, totalCount, settings, plants }: PlantScheduleProps) {
   const copyToClipboard = () => {
     const header = "Code\tSpecies\tCultivar\tQty";
     const rows = schedule.map((s) => `${s.code}\t${s.name}\t${s.cultivar}\t${s.quantity}`);
@@ -81,19 +85,35 @@ export default function PlantSchedule({ schedule, totalCount }: PlantSchedulePro
           </tfoot>
         </table>
       </div>
-      <div className="flex gap-1 p-2 border-t border-neutral-200">
-        <button
-          onClick={copyToClipboard}
-          className="flex-1 px-2 py-1.5 text-xs border border-neutral-200 rounded hover:bg-neutral-50 text-neutral-600"
-        >
-          Copy Table
-        </button>
-        <button
-          onClick={exportCSV}
-          className="flex-1 px-2 py-1.5 text-xs border border-neutral-200 rounded hover:bg-neutral-50 text-neutral-600"
-        >
-          Export CSV
-        </button>
+      <div className="p-2 border-t border-neutral-200 space-y-1.5">
+        <div className="flex gap-1">
+          <button
+            onClick={copyToClipboard}
+            className="flex-1 px-2 py-1.5 text-xs border border-neutral-200 rounded hover:bg-neutral-50 text-neutral-600"
+          >
+            Copy Table
+          </button>
+          <button
+            onClick={exportCSV}
+            className="flex-1 px-2 py-1.5 text-xs border border-neutral-200 rounded hover:bg-neutral-50 text-neutral-600"
+          >
+            Export CSV
+          </button>
+        </div>
+        <div className="flex gap-1">
+          <button
+            onClick={() => downloadScheduleReport(schedule, totalCount, settings, plants)}
+            className="flex-1 px-2 py-1.5 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium"
+          >
+            Full Schedule
+          </button>
+          <button
+            onClick={() => downloadCareReport(schedule, settings, plants)}
+            className="flex-1 px-2 py-1.5 text-xs bg-neutral-800 text-white rounded hover:bg-neutral-900 font-medium"
+          >
+            Care Guide
+          </button>
+        </div>
       </div>
     </div>
   );
