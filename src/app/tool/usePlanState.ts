@@ -229,6 +229,22 @@ export function usePlanState() {
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
+  const loadFromState = useCallback((saved: PlanState) => {
+    setPlants(saved.plants?.length ? saved.plants : defaultPlants);
+    setPlaced(saved.placed || []);
+    setSettings(saved.settings || defaultSettings);
+    setBackgroundImage(saved.backgroundImage || null);
+    setBackgroundWidth(saved.backgroundWidth || 0);
+    setBackgroundHeight(saved.backgroundHeight || 0);
+    setSelectedIds(new Set());
+    setHistory([{ placed: saved.placed || [] }]);
+    setHistoryIndex(0);
+  }, []);
+
+  const getFullState = useCallback((): PlanState => ({
+    plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight,
+  }), [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight]);
+
   // Get schedule (aggregated counts)
   const schedule = plants
     .map((plant) => ({
@@ -266,6 +282,8 @@ export function usePlanState() {
     handleImageUpload,
     updateSettings,
     clearAll,
+    loadFromState,
+    getFullState,
     undo,
     redo,
     canUndo: historyIndex > 0,
