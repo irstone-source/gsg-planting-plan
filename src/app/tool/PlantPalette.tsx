@@ -71,6 +71,7 @@ interface PlantPaletteProps {
   onAddPlant: (plant: Plant) => void;
   onImportPlants: (plants: Plant[]) => void;
   onUpdatePlantRadius: (plantId: string, radius: number | undefined) => void;
+  onPlaceAll: () => void;
   onDragStart: (plantId: string) => void;
   onDragEnd: () => void;
 }
@@ -81,6 +82,7 @@ export default function PlantPalette({
   onAddPlant,
   onImportPlants,
   onUpdatePlantRadius,
+  onPlaceAll,
   onDragStart,
   onDragEnd,
 }: PlantPaletteProps) {
@@ -141,7 +143,16 @@ export default function PlantPalette({
   return (
     <div className="w-64 bg-white border-r border-neutral-200 flex flex-col h-full">
       <div className="p-3 border-b border-neutral-200">
-        <h2 className="font-semibold text-sm text-neutral-800 mb-2">Plant Palette</h2>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-semibold text-sm text-neutral-800">Plant Palette</h2>
+          <button
+            onClick={onPlaceAll}
+            className="px-2 py-0.5 text-[10px] font-medium bg-emerald-600 text-white rounded hover:bg-emerald-700"
+            title="Place one of each plant onto the canvas"
+          >
+            Place All
+          </button>
+        </div>
         <input
           type="text"
           placeholder="Search plants..."

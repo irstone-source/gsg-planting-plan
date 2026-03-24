@@ -95,6 +95,7 @@ export default function ToolPage() {
           onAddPlant={state.addCustomPlant}
           onImportPlants={state.importPlants}
           onUpdatePlantRadius={state.updatePlantRadius}
+          onPlaceAll={state.placeAll}
           onDragStart={setDragPlantId}
           onDragEnd={() => setDragPlantId(null)}
         />

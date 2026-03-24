@@ -113,6 +113,20 @@ export function usePlanState() {
     setPlaced((prev) => [...prev, newPlant]);
   }, []);
 
+  const placeAll = useCallback(() => {
+    const spacing = settings.plantRadius * 3;
+    const cols = Math.ceil(Math.sqrt(plants.length));
+    const startX = 100;
+    const startY = 100;
+    const newPlants: PlacedPlant[] = plants.map((plant, i) => ({
+      uid: generateUid(),
+      plantId: plant.id,
+      x: startX + (i % cols) * spacing,
+      y: startY + Math.floor(i / cols) * spacing,
+    }));
+    setPlaced((prev) => [...prev, ...newPlants]);
+  }, [plants, settings.plantRadius]);
+
   const movePlant = useCallback((uid: string, x: number, y: number) => {
     setPlaced((prev) =>
       prev.map((p) => (p.uid === uid ? { ...p, x, y } : p))
@@ -231,6 +245,7 @@ export function usePlanState() {
     schedule,
     totalCount,
     placePlant,
+    placeAll,
     movePlant,
     moveSelected,
     deletePlant,
