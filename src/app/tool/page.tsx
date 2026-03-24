@@ -85,7 +85,7 @@ export default function ToolPage() {
   }, [state]);
 
   return (
-    <div className="h-screen flex flex-col bg-neutral-50 overflow-hidden"
+    <div className="h-screen flex flex-col bg-neutral-50 overflow-hidden text-neutral-900" data-theme="light" style={{ colorScheme: "light" }}
       onDragOver={(e) => { e.preventDefault(); if (e.dataTransfer.types.includes("Files")) setIsDragOver(true); }}
       onDragLeave={() => setIsDragOver(false)} onDrop={handleGlobalDrop}>
 
