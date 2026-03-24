@@ -6,6 +6,14 @@ export interface Plant {
   colour: string;
   textDark: boolean;
   radius?: number; // per-species size override (undefined = use global default)
+  spread?: number; // mature spread in cm (from Trefle or manual)
+  showSpread?: boolean; // render spread circle on canvas
+  slug?: string; // Trefle slug for fetching details
+  family?: string;
+  growthHabit?: string;
+  height?: number; // average height in cm
+  flowerColour?: string[];
+  foliageColour?: string[];
 }
 
 export const defaultPlants: Plant[] = [

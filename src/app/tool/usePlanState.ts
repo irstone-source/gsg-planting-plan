@@ -173,6 +173,12 @@ export function usePlanState() {
     );
   }, []);
 
+  const updatePlant = useCallback((plantId: string, updates: Partial<Plant>) => {
+    setPlants((prev) =>
+      prev.map((p) => (p.id === plantId ? { ...p, ...updates } : p))
+    );
+  }, []);
+
   const toggleSelect = useCallback((uid: string, additive: boolean) => {
     setSelectedIds((prev) => {
       const next = new Set(additive ? prev : []);
@@ -253,6 +259,7 @@ export function usePlanState() {
     addCustomPlant,
     importPlants,
     updatePlantRadius,
+    updatePlant,
     toggleSelect,
     clearSelection,
     selectAll,

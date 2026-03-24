@@ -296,6 +296,18 @@ export default function PlanCanvas({
                   onSelect(pp.uid, e.evt.shiftKey);
                 }}
               >
+                {/* Spread circle */}
+                {plant.showSpread && plant.spread && (
+                  <Circle
+                    radius={plant.spread / 2} // spread is diameter in cm, we use it as canvas units
+                    fill={plant.colour}
+                    opacity={0.12}
+                    stroke={plant.colour}
+                    strokeWidth={1}
+                    dash={[4, 4]}
+                    listening={false}
+                  />
+                )}
                 {/* Selection ring */}
                 {isSelected && (
                   <Circle
