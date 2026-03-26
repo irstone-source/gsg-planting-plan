@@ -9,6 +9,7 @@ import { useSavePlan, SavedPlan } from "./useSavePlan";
 import PlantPalette from "./PlantPalette";
 import PlantSchedule from "./PlantSchedule";
 import IllustrationPanel from "./IllustrationPanel";
+import BulkImportPanel from "./BulkImportPanel";
 import Toolbar from "./Toolbar";
 
 const PlanCanvas = dynamic(() => import("./PlanCanvas"), { ssr: false });
@@ -16,7 +17,7 @@ const PlanCanvas = dynamic(() => import("./PlanCanvas"), { ssr: false });
 export default function ToolPage() {
   const stageRef = useRef<Konva.Stage | null>(null);
   const [dragPlantId, setDragPlantId] = useState<string | null>(null);
-  const [rightPanelTab, setRightPanelTab] = useState<"schedule" | "illustrate" | "plans" | "help">("schedule");
+  const [rightPanelTab, setRightPanelTab] = useState<"schedule" | "illustrate" | "bulk" | "plans" | "help">("schedule");
   const [arrowMode, setArrowMode] = useState(false);
   const state = usePlanState();
   const auth = useAuth();
@@ -153,14 +154,14 @@ export default function ToolPage() {
         {/* Right: Schedule / Plans / Help */}
         <div className="w-72 bg-white border-l border-neutral-200 flex flex-col">
           <div className="flex border-b border-neutral-200">
-            {(["schedule", "illustrate", "plans", "help"] as const).map((tab) => (
+            {(["schedule", "illustrate", "bulk", "plans", "help"] as const).map((tab) => (
               <button key={tab} onClick={() => setRightPanelTab(tab)}
-                className={`flex-1 py-2 text-xs font-medium ${
+                className={`flex-1 py-1.5 text-[10px] font-medium ${
                   rightPanelTab === tab
                     ? "text-emerald-600 border-b-2 border-emerald-600"
                     : "text-neutral-400 hover:text-neutral-600"
                 }`}>
-                {tab === "schedule" ? "Schedule" : tab === "illustrate" ? "Illustrate" : tab === "plans" ? "Plans" : "Help"}
+                {tab === "schedule" ? "Schedule" : tab === "illustrate" ? "Illustrate" : tab === "bulk" ? "Bulk" : tab === "plans" ? "Plans" : "Help"}
               </button>
             ))}
           </div>
@@ -174,6 +175,11 @@ export default function ToolPage() {
                 viewingArrow={state.viewingArrow}
                 onSetArrowMode={setArrowMode}
                 arrowMode={arrowMode}
+              />
+            ) : rightPanelTab === "bulk" ? (
+              <BulkImportPanel
+                existingPlants={state.plants}
+                onImportPlants={state.importPlants}
               />
             ) : rightPanelTab === "plans" ? (
               <div className="p-3 space-y-3">
