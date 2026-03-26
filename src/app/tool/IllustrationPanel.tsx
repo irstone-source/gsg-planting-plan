@@ -120,10 +120,12 @@ export default function IllustrationPanel({
   arrowMode,
 }: IllustrationPanelProps) {
   const [style, setStyle] = useState<VisStyle>("perspective");
+  const [provider, setProvider] = useState<"gemini" | "openai">("gemini");
   const [prompt, setPrompt] = useState("");
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState("");
+  const [usedProvider, setUsedProvider] = useState<string | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
 
   const buildPrompt = useCallback(() => {
@@ -140,16 +142,18 @@ export default function IllustrationPanel({
     setGenerating(true);
     setError("");
     setGeneratedImage(null);
+    setUsedProvider(null);
 
     try {
       const res = await fetch("/api/generate-illustration", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: finalPrompt }),
+        body: JSON.stringify({ prompt: finalPrompt, provider }),
       });
       const data = await res.json();
       if (data.image) {
         setGeneratedImage(data.image);
+        setUsedProvider(data.provider + (data.fallbackFrom ? ` (${data.fallbackFrom} failed)` : ""));
       } else {
         setError(data.error || "No image generated");
       }
@@ -221,6 +225,37 @@ export default function IllustrationPanel({
         </div>
       </div>
 
+      {/* AI Provider */}
+      <div>
+        <label className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">AI Provider</label>
+        <div className="flex gap-1">
+          <button
+            onClick={() => setProvider("gemini")}
+            className={`flex-1 px-2 py-1.5 text-xs rounded-md font-medium ${
+              provider === "gemini"
+                ? "bg-blue-50 text-blue-700 border border-blue-200"
+                : "border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
+            }`}
+          >
+            Gemini Flash
+          </button>
+          <button
+            onClick={() => setProvider("openai")}
+            className={`flex-1 px-2 py-1.5 text-xs rounded-md font-medium ${
+              provider === "openai"
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : "border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
+            }`}
+          >
+            DALL-E 3
+          </button>
+        </div>
+        <p className="text-[10px] text-neutral-400 mt-1">
+          {provider === "gemini" ? "Fast, free tier. Good compositions." : "HD quality, great at labelled diagrams. ~$0.08/image."}
+          {" "}Auto-falls back to the other if one fails.
+        </p>
+      </div>
+
       {/* Custom prompt or preview */}
       {style === "custom" ? (
         <textarea
@@ -277,6 +312,11 @@ export default function IllustrationPanel({
       {/* Result */}
       {generatedImage && (
         <div className="space-y-2">
+          {usedProvider && (
+            <div className="text-[10px] text-neutral-400 text-center">
+              Generated with {usedProvider}
+            </div>
+          )}
           <img
             src={generatedImage}
             alt="Generated planting illustration"
