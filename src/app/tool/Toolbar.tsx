@@ -5,6 +5,8 @@ import Konva from "konva";
 import { User } from "@supabase/supabase-js";
 import { ProjectSettings } from "./types";
 
+export type ViewMode = "colour" | "scientific";
+
 interface ToolbarProps {
   settings: ProjectSettings;
   onUpdateSettings: (partial: Partial<ProjectSettings>) => void;
@@ -24,6 +26,12 @@ interface ToolbarProps {
   saving: boolean;
   saveMessage: string | null;
   currentPlanId: string | null;
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
+  growthYear: number;
+  onGrowthYearChange: (year: number) => void;
+  isAnimating: boolean;
+  onToggleAnimate: () => void;
 }
 
 export default function Toolbar({
@@ -45,6 +53,12 @@ export default function Toolbar({
   saving,
   saveMessage,
   currentPlanId,
+  viewMode,
+  onViewModeChange,
+  growthYear,
+  onGrowthYearChange,
+  isAnimating,
+  onToggleAnimate,
 }: ToolbarProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -214,6 +228,64 @@ export default function Toolbar({
             className="w-16 h-1 accent-emerald-600"
           />
         </div>
+      )}
+
+      <div className="w-px h-6 bg-neutral-200" />
+
+      {/* View Mode Toggle */}
+      <div className="flex items-center bg-neutral-100 rounded-md p-0.5">
+        <button
+          onClick={() => onViewModeChange("colour")}
+          className={`px-2 py-1 text-[10px] rounded font-medium transition-colors ${
+            viewMode === "colour" ? "bg-white text-emerald-700 shadow-sm" : "text-neutral-500"
+          }`}
+          title="Colour-coded circles"
+        >
+          Colour
+        </button>
+        <button
+          onClick={() => onViewModeChange("scientific")}
+          className={`px-2 py-1 text-[10px] rounded font-medium transition-colors ${
+            viewMode === "scientific" ? "bg-white text-blue-700 shadow-sm" : "text-neutral-500"
+          }`}
+          title="Scientific view with spread"
+        >
+          Growth
+        </button>
+      </div>
+
+      {/* Year slider (only in scientific mode) */}
+      {viewMode === "scientific" && (
+        <>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-blue-500 font-bold w-7">Yr {growthYear}</span>
+            <input
+              type="range"
+              min={1}
+              max={5}
+              step={1}
+              value={growthYear}
+              onChange={(e) => onGrowthYearChange(parseInt(e.target.value))}
+              className="w-20 h-1 accent-blue-600"
+            />
+          </div>
+          <button
+            onClick={onToggleAnimate}
+            className={`p-1.5 rounded ${isAnimating ? "bg-blue-100 text-blue-600" : "hover:bg-neutral-100 text-neutral-500"}`}
+            title={isAnimating ? "Stop animation" : "Animate growth (Year 1→5)"}
+          >
+            {isAnimating ? (
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
+        </>
       )}
 
       <div className="flex-1" />

@@ -9,7 +9,7 @@ import { useSavePlan, SavedPlan } from "./useSavePlan";
 import PlantPalette from "./PlantPalette";
 import PlantSchedule from "./PlantSchedule";
 import BulkImportPanel from "./BulkImportPanel";
-import Toolbar from "./Toolbar";
+import Toolbar, { ViewMode } from "./Toolbar";
 
 const PlanCanvas = dynamic(() => import("./PlanCanvas"), { ssr: false });
 
@@ -17,10 +17,38 @@ export default function ToolPage() {
   const stageRef = useRef<Konva.Stage | null>(null);
   const [dragPlantId, setDragPlantId] = useState<string | null>(null);
   const [rightPanelTab, setRightPanelTab] = useState<"schedule" | "bulk" | "plans" | "help">("schedule");
+  const [viewMode, setViewMode] = useState<ViewMode>("colour");
+  const [growthYear, setGrowthYear] = useState(3);
+  const [isAnimating, setIsAnimating] = useState(false);
   const state = usePlanState();
   const auth = useAuth();
   const save = useSavePlan(auth.supabase, auth.user);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+
+  // Growth animation
+  useEffect(() => {
+    if (!isAnimating) return;
+    const interval = setInterval(() => {
+      setGrowthYear((prev) => {
+        if (prev >= 5) {
+          setIsAnimating(false);
+          return 5;
+        }
+        return prev + 1;
+      });
+    }, 800);
+    return () => clearInterval(interval);
+  }, [isAnimating]);
+
+  const handleToggleAnimate = useCallback(() => {
+    if (isAnimating) {
+      setIsAnimating(false);
+    } else {
+      setGrowthYear(1);
+      setViewMode("scientific");
+      setIsAnimating(true);
+    }
+  }, [isAnimating]);
 
   // Fetch plans when user logs in
   useEffect(() => {
@@ -110,6 +138,12 @@ export default function ToolPage() {
         saving={save.saving}
         saveMessage={saveMessage}
         currentPlanId={save.currentPlanId}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        growthYear={growthYear}
+        onGrowthYearChange={setGrowthYear}
+        isAnimating={isAnimating}
+        onToggleAnimate={handleToggleAnimate}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -147,6 +181,8 @@ export default function ToolPage() {
           onSetViewingArrow={state.setViewingArrow}
           arrowMode={false}
           onArrowPlaced={() => {}}
+          viewMode={viewMode}
+          growthYear={growthYear}
         />
 
         {/* Right: Schedule / Plans / Help */}

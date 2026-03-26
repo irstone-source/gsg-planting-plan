@@ -6,6 +6,11 @@ import Konva from "konva";
 import { Plant } from "./defaultPlants";
 import { PlacedPlant, ProjectSettings, ViewingArrow } from "./types";
 
+type ViewMode = "colour" | "scientific";
+
+// Growth multipliers by year (fraction of mature spread)
+const GROWTH_MULTIPLIERS = [0, 0.30, 0.50, 0.70, 0.85, 1.0];
+
 interface PlanCanvasProps {
   plants: Plant[];
   placed: PlacedPlant[];
@@ -26,6 +31,8 @@ interface PlanCanvasProps {
   onSetViewingArrow: (arrow: ViewingArrow | null) => void;
   arrowMode: boolean;
   onArrowPlaced: () => void;
+  viewMode: ViewMode;
+  growthYear: number;
 }
 
 const MIN_SCALE = 0.1;
@@ -51,6 +58,8 @@ export default function PlanCanvas({
   onSetViewingArrow,
   arrowMode,
   onArrowPlaced,
+  viewMode,
+  growthYear,
 }: PlanCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>(null);
@@ -311,7 +320,93 @@ export default function PlanCanvas({
             const plant = getPlantById(pp.plantId);
             if (!plant) return null;
             const isSelected = selectedIds.has(pp.uid);
-            const r = plant.radius ?? settings.plantRadius;
+            const baseR = plant.radius ?? settings.plantRadius;
+
+            if (viewMode === "scientific") {
+              // Scientific / Growth view
+              const matureSpread = plant.spread || baseR * 3; // fallback if no spread data
+              const growthFactor = GROWTH_MULTIPLIERS[growthYear] || 1;
+              const spreadR = (matureSpread / 2) * growthFactor;
+              const coreR = Math.max(4, spreadR * 0.15); // small core dot
+              // Muted green palette based on plant type
+              const isGrass = plant.growthHabit?.toLowerCase().includes("gramin") || ["Anemanthele", "Pennisetum", "Stipa", "Miscanthus"].some(g => plant.name.includes(g));
+              const isShrub = plant.growthHabit?.toLowerCase().includes("shrub") || ["Pittosporum", "Phormium"].some(g => plant.name.includes(g));
+              const spreadFill = isGrass ? "#b8d4b8" : isShrub ? "#6b8e6b" : "#a8c8a0";
+              const spreadStroke = isGrass ? "#7da67d" : isShrub ? "#4a6e4a" : "#6b946b";
+
+              return (
+                <Group
+                  key={pp.uid}
+                  x={pp.x}
+                  y={pp.y}
+                  draggable
+                  plantUid={pp.uid}
+                  onDragEnd={(e) => onMove(pp.uid, e.target.x(), e.target.y())}
+                  onClick={(e) => { e.cancelBubble = true; onSelect(pp.uid, e.evt.shiftKey); }}
+                >
+                  {/* Spread area */}
+                  <Circle
+                    radius={spreadR}
+                    fill={spreadFill}
+                    opacity={0.25}
+                    stroke={spreadStroke}
+                    strokeWidth={1}
+                    dash={[3, 3]}
+                    listening={false}
+                  />
+                  {/* Mature outline (year 5) — shown as ghost */}
+                  {growthYear < 5 && (
+                    <Circle
+                      radius={matureSpread / 2}
+                      stroke={spreadStroke}
+                      strokeWidth={0.5}
+                      opacity={0.15}
+                      dash={[6, 6]}
+                      listening={false}
+                    />
+                  )}
+                  {/* Selection ring */}
+                  {isSelected && (
+                    <Circle radius={spreadR + 3} stroke="#2563eb" strokeWidth={2} dash={[4, 2]} />
+                  )}
+                  {/* Core planting point */}
+                  <Circle
+                    radius={coreR}
+                    fill={plant.colour}
+                    stroke="rgba(0,0,0,0.4)"
+                    strokeWidth={1}
+                    plantUid={pp.uid}
+                  />
+                  {/* Botanical name label */}
+                  <Text
+                    text={`${plant.name}\n${plant.cultivar}`}
+                    fontSize={8}
+                    fontFamily="Arial"
+                    fontStyle="italic"
+                    fill="#374151"
+                    align="center"
+                    y={spreadR + 4}
+                    width={120}
+                    offsetX={60}
+                    listening={false}
+                  />
+                  {/* Spread measurement */}
+                  <Text
+                    text={`${Math.round(matureSpread * growthFactor)}cm`}
+                    fontSize={7}
+                    fontFamily="Arial"
+                    fill="#9ca3af"
+                    align="center"
+                    y={-spreadR - 12}
+                    width={60}
+                    offsetX={30}
+                    listening={false}
+                  />
+                </Group>
+              );
+            }
+
+            // Default: Colour-coded view
             return (
               <Group
                 key={pp.uid}
@@ -319,18 +414,13 @@ export default function PlanCanvas({
                 y={pp.y}
                 draggable
                 plantUid={pp.uid}
-                onDragEnd={(e) => {
-                  onMove(pp.uid, e.target.x(), e.target.y());
-                }}
-                onClick={(e) => {
-                  e.cancelBubble = true;
-                  onSelect(pp.uid, e.evt.shiftKey);
-                }}
+                onDragEnd={(e) => onMove(pp.uid, e.target.x(), e.target.y())}
+                onClick={(e) => { e.cancelBubble = true; onSelect(pp.uid, e.evt.shiftKey); }}
               >
-                {/* Spread circle */}
+                {/* Spread circle (if toggled per-plant) */}
                 {plant.showSpread && plant.spread && (
                   <Circle
-                    radius={plant.spread / 2} // spread is diameter in cm, we use it as canvas units
+                    radius={plant.spread / 2}
                     fill={plant.colour}
                     opacity={0.12}
                     stroke={plant.colour}
@@ -341,16 +431,11 @@ export default function PlanCanvas({
                 )}
                 {/* Selection ring */}
                 {isSelected && (
-                  <Circle
-                    radius={r + 3}
-                    stroke="#2563eb"
-                    strokeWidth={2}
-                    dash={[4, 2]}
-                  />
+                  <Circle radius={baseR + 3} stroke="#2563eb" strokeWidth={2} dash={[4, 2]} />
                 )}
                 {/* Plant circle */}
                 <Circle
-                  radius={r}
+                  radius={baseR}
                   fill={plant.colour}
                   stroke={isSelected ? "#2563eb" : "rgba(0,0,0,0.3)"}
                   strokeWidth={isSelected ? 2 : 1}
@@ -359,16 +444,16 @@ export default function PlanCanvas({
                 {/* Plant code text */}
                 <Text
                   text={plant.code}
-                  fontSize={r * 0.9}
+                  fontSize={baseR * 0.9}
                   fontFamily="Arial"
                   fontStyle="bold"
                   fill={plant.textDark ? "#1a1a1a" : "#ffffff"}
                   align="center"
                   verticalAlign="middle"
-                  width={r * 2}
-                  height={r * 2}
-                  offsetX={r}
-                  offsetY={r}
+                  width={baseR * 2}
+                  height={baseR * 2}
+                  offsetX={baseR}
+                  offsetY={baseR}
                   listening={false}
                 />
               </Group>
