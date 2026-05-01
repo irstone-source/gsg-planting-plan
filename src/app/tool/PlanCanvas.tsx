@@ -4,7 +4,7 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { Stage, Layer, Circle, Text, Image as KonvaImage, Rect, Group, Arrow, Line } from "react-konva";
 import Konva from "konva";
 import { Plant } from "./defaultPlants";
-import { PlacedPlant, ProjectSettings, ViewingArrow, ScaleCalibration, PaperSettings, BorderPolygon } from "./types";
+import { PlacedPlant, ProjectSettings, ViewingArrow, ScaleCalibration, PaperSettings, Bed } from "./types";
 import { resolveRatio, pageBoundsCanvasPx, printableAreaCanvasPx, gridSpacingMetres } from "./paperUtils";
 
 type ViewMode = "colour" | "scientific";
@@ -49,13 +49,13 @@ interface PlanCanvasProps {
         }
       | null,
   ) => void;
-  /** Border drawing */
-  border: BorderPolygon | null;
-  borderMode: boolean;
-  borderInProgress: { x: number; y: number }[];
-  onAddBorderPoint: (x: number, y: number) => void;
-  onFinishBorder: () => void;
-  onCancelBorder: () => void;
+  /** Bed drawing — multiple named polygons */
+  beds: Bed[];
+  bedMode: boolean;
+  bedInProgress: { x: number; y: number }[];
+  onAddBedPoint: (x: number, y: number) => void;
+  onFinishBed: () => void;
+  onCancelBed: () => void;
 }
 
 const MIN_SCALE = 0.1;
@@ -89,12 +89,12 @@ export default function PlanCanvas({
   onScaleModeExit,
   paper,
   onPageInfoChange,
-  border,
-  borderMode,
-  borderInProgress,
-  onAddBorderPoint,
-  onFinishBorder,
-  onCancelBorder,
+  beds,
+  bedMode,
+  bedInProgress,
+  onAddBedPoint,
+  onFinishBed,
+  onCancelBed,
 }: PlanCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>(null);
@@ -304,23 +304,23 @@ export default function PlanCanvas({
     }
 
     // Border drawing — click to add vertices; click near first to close
-    if (borderMode && isBackground) {
+    if (bedMode && isBackground) {
       const stage = stageRef.current;
       if (!stage) return;
       const pointer = stage.getPointerPosition();
       if (!pointer) return;
       const x = (pointer.x - position.x) / canvasScale;
       const y = (pointer.y - position.y) / canvasScale;
-      if (borderInProgress.length >= 3) {
-        const dx = x - borderInProgress[0].x;
-        const dy = y - borderInProgress[0].y;
+      if (bedInProgress.length >= 3) {
+        const dx = x - bedInProgress[0].x;
+        const dy = y - bedInProgress[0].y;
         // Snap-close threshold: ~12 canvas px in screen space
         if (Math.sqrt(dx * dx + dy * dy) * canvasScale < 12) {
-          onFinishBorder();
+          onFinishBed();
           return;
         }
       }
-      onAddBorderPoint(x, y);
+      onAddBedPoint(x, y);
       return;
     }
 
@@ -346,7 +346,7 @@ export default function PlanCanvas({
       onClearSelection();
       setContextMenu(null);
     }
-  }, [onClearSelection, arrowMode, arrowStart, scaleMode, scaleStart, position, canvasScale, stageRef, onSetViewingArrow, onArrowPlaced, onScaleLineDrawn, borderMode, borderInProgress, onAddBorderPoint, onFinishBorder]);
+  }, [onClearSelection, arrowMode, arrowStart, scaleMode, scaleStart, position, canvasScale, stageRef, onSetViewingArrow, onArrowPlaced, onScaleLineDrawn, bedMode, bedInProgress, onAddBedPoint, onFinishBed]);
 
   // Right-click context menu
   const handleContextMenu = useCallback((e: Konva.KonvaEventObject<PointerEvent>) => {
@@ -396,20 +396,20 @@ export default function PlanCanvas({
           onDeleteSelected();
         }
       }
-      if (borderMode) {
+      if (bedMode) {
         if (e.key === "Enter") {
           e.preventDefault();
-          if (borderInProgress.length >= 3) onFinishBorder();
+          if (bedInProgress.length >= 3) onFinishBed();
         }
         if (e.key === "Escape") {
           e.preventDefault();
-          onCancelBorder();
+          onCancelBed();
         }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedIds, onDeleteSelected, borderMode, borderInProgress, onFinishBorder, onCancelBorder]);
+  }, [selectedIds, onDeleteSelected, bedMode, bedInProgress, onFinishBed, onCancelBed]);
 
   const getPlantById = (id: string) => plants.find((p) => p.id === id);
 
@@ -418,7 +418,7 @@ export default function PlanCanvas({
       ref={containerRef}
       className={`relative flex-1 bg-neutral-50 overflow-hidden ${
         isPanning ? "cursor-grabbing" :
-        scaleMode || borderMode ? "cursor-crosshair" :
+        scaleMode || bedMode ? "cursor-crosshair" :
         arrowMode ? "cursor-pointer" :
         "cursor-default"
       }`}
@@ -747,9 +747,10 @@ export default function PlanCanvas({
             );
           })()}
 
-          {/* Completed border polygon + area label */}
-          {border && border.points.length >= 3 && (() => {
-            const pts = border.points;
+          {/* Completed bed polygons + labels */}
+          {beds.map((bed, idx) => {
+            const pts = bed.points;
+            if (pts.length < 3) return null;
             // Shoelace area in canvas pixels
             let s = 0;
             for (let i = 0; i < pts.length; i++) {
@@ -757,74 +758,85 @@ export default function PlanCanvas({
               s += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
             }
             const areaPx = Math.abs(s) / 2;
-            // Centroid
             let cx = 0, cy = 0;
             for (const p of pts) { cx += p.x; cy += p.y; }
             cx /= pts.length; cy /= pts.length;
             const ratio = resolvedRatio ?? 100;
             const ppm = scale?.pixelsPerMetre ?? 100;
             const areaM2 = scale ? areaPx / (ppm * ppm) : null;
-            const fontSizePx = Math.max(16, scale ? ((6 / 1000) * ratio * ppm) : 18);
-            // Flatten for Konva Line
+            const useNumber = settings.bedDisplayMode === "number";
+            const labelText = useNumber ? `${idx + 1}` : bed.name;
+            const fontSizePx = Math.max(16, scale ? ((useNumber ? 9 : 5) / 1000) * ratio * ppm : 18);
+            const subSizePx = Math.max(11, scale ? (3.5 / 1000) * ratio * ppm : 12);
             const flat: number[] = [];
             for (const p of pts) flat.push(p.x, p.y);
+            const labelW = useNumber ? fontSizePx * 1.6 : Math.max(fontSizePx * 6, labelText.length * fontSizePx * 0.5);
             return (
-              <Group listening={false}>
+              <Group key={bed.id} listening={false}>
                 <Line
                   points={flat}
                   closed
-                  fill="rgba(245, 158, 11, 0.10)"
-                  stroke="#d97706"
-                  strokeWidth={Math.max(2, ((0.6 / 1000) * ratio * ppm))}
+                  fill="rgba(15, 118, 110, 0.07)"
+                  stroke="#0f766e"
+                  strokeWidth={Math.max(1.5, ((0.5 / 1000) * ratio * ppm))}
+                />
+                {/* Label box */}
+                <Rect
+                  x={cx - labelW / 2}
+                  y={cy - fontSizePx * 0.7}
+                  width={labelW}
+                  height={fontSizePx * 1.4 + (areaM2 != null ? subSizePx * 1.2 : 0)}
+                  fill="rgba(255,255,255,0.92)"
+                  cornerRadius={4}
+                  stroke="#0f766e"
+                  strokeWidth={1}
+                />
+                <Text
+                  x={cx - labelW / 2}
+                  y={cy - fontSizePx * 0.5}
+                  width={labelW}
+                  text={labelText}
+                  fontSize={fontSizePx}
+                  fontFamily="Arial"
+                  fontStyle="bold"
+                  fill="#134e4a"
+                  align="center"
                 />
                 {areaM2 != null && (
-                  <>
-                    <Rect
-                      x={cx - fontSizePx * 3}
-                      y={cy - fontSizePx * 0.7}
-                      width={fontSizePx * 6}
-                      height={fontSizePx * 1.4}
-                      fill="rgba(255,255,255,0.9)"
-                      cornerRadius={4}
-                      stroke="#d97706"
-                      strokeWidth={1}
-                    />
-                    <Text
-                      x={cx - fontSizePx * 3}
-                      y={cy - fontSizePx * 0.4}
-                      width={fontSizePx * 6}
-                      text={`${areaM2.toFixed(1)} m²`}
-                      fontSize={fontSizePx}
-                      fontFamily="Arial"
-                      fontStyle="bold"
-                      fill="#92400e"
-                      align="center"
-                    />
-                  </>
+                  <Text
+                    x={cx - labelW / 2}
+                    y={cy + fontSizePx * 0.55}
+                    width={labelW}
+                    text={`${areaM2.toFixed(1)} m²`}
+                    fontSize={subSizePx}
+                    fontFamily="Arial"
+                    fill="#525252"
+                    align="center"
+                  />
                 )}
               </Group>
             );
-          })()}
+          })}
 
-          {/* In-progress border drawing */}
-          {borderMode && borderInProgress.length > 0 && (
+          {/* In-progress bed drawing */}
+          {bedMode && bedInProgress.length > 0 && (
             <Group listening={false}>
-              {borderInProgress.length > 1 && (
+              {bedInProgress.length > 1 && (
                 <Line
-                  points={borderInProgress.flatMap((p) => [p.x, p.y])}
-                  stroke="#d97706"
+                  points={bedInProgress.flatMap((p) => [p.x, p.y])}
+                  stroke="#0f766e"
                   strokeWidth={2}
                   dash={[6, 4]}
                 />
               )}
-              {borderInProgress.map((p, i) => (
+              {bedInProgress.map((p, i) => (
                 <Circle
                   key={`bp-${i}`}
                   x={p.x}
                   y={p.y}
-                  radius={i === 0 && borderInProgress.length >= 3 ? 8 : 4}
-                  fill={i === 0 && borderInProgress.length >= 3 ? "#fef3c7" : "#d97706"}
-                  stroke="#d97706"
+                  radius={i === 0 && bedInProgress.length >= 3 ? 8 : 4}
+                  fill={i === 0 && bedInProgress.length >= 3 ? "#ccfbf1" : "#0f766e"}
+                  stroke="#0f766e"
                   strokeWidth={2}
                 />
               ))}
@@ -962,18 +974,18 @@ export default function PlanCanvas({
         </div>
       )}
 
-      {/* Border mode banner */}
-      {borderMode && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white px-4 py-2 rounded-lg shadow-lg text-xs font-medium flex items-center gap-2 z-10">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v18M19 3v18M3 5h18M3 19h18" />
+      {/* Bed mode banner */}
+      {bedMode && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-neutral-900 text-white px-4 py-2 rounded-lg shadow-lg text-xs font-medium flex items-center gap-2 z-10">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6l8-3 8 3v12l-8 3-8-3V6z" />
           </svg>
-          {borderInProgress.length === 0
-            ? "Click around your bed to add corners"
-            : borderInProgress.length < 3
-            ? `Click to add corners (${borderInProgress.length})`
-            : `Click first point to close (${borderInProgress.length} corners) · Enter to finish · Esc to cancel`}
-          <button onClick={onCancelBorder} className="ml-2 px-2 py-0.5 bg-white/20 rounded hover:bg-white/30 text-[10px]">
+          {bedInProgress.length === 0
+            ? `Drawing Bed ${beds.length + 1} · click corners around the bed`
+            : bedInProgress.length < 3
+            ? `${bedInProgress.length} corner${bedInProgress.length === 1 ? "" : "s"} placed — keep clicking`
+            : `Click first point to close (${bedInProgress.length} corners) · Enter to finish · Esc to cancel`}
+          <button onClick={onCancelBed} className="ml-2 px-2 py-0.5 bg-white/15 rounded hover:bg-white/25 text-[10px] transition-colors">
             Cancel
           </button>
         </div>

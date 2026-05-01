@@ -32,8 +32,8 @@ export default function ToolPage() {
     pageRect: { x: number; y: number; w: number; h: number };
     printableRect: { x: number; y: number; w: number; h: number; widthMm: number; heightMm: number };
   } | null>(null);
-  const [borderMode, setBorderMode] = useState(false);
-  const [borderInProgress, setBorderInProgress] = useState<{ x: number; y: number }[]>([]);
+  const [bedMode, setBedMode] = useState(false);
+  const [bedInProgress, setBedInProgress] = useState<{ x: number; y: number }[]>([]);
   const [exportingPrint, setExportingPrint] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const showToast = useCallback((msg: string) => {
@@ -92,37 +92,38 @@ export default function ToolPage() {
     setPendingScaleLine(null);
   }, []);
 
-  // Border drawing handlers
-  const handleBorderModeToggle = useCallback(() => {
-    if (borderMode) {
-      setBorderMode(false);
-      setBorderInProgress([]);
+  // Bed drawing handlers — multi-bed; each finished polygon becomes a Bed
+  const handleBedModeToggle = useCallback(() => {
+    if (bedMode) {
+      setBedMode(false);
+      setBedInProgress([]);
     } else {
-      setBorderInProgress([]);
-      setBorderMode(true);
+      setBedInProgress([]);
+      setBedMode(true);
     }
-  }, [borderMode]);
+  }, [bedMode]);
 
-  const handleAddBorderPoint = useCallback((x: number, y: number) => {
-    setBorderInProgress((prev) => [...prev, { x, y }]);
+  const handleAddBedPoint = useCallback((x: number, y: number) => {
+    setBedInProgress((prev) => [...prev, { x, y }]);
   }, []);
 
-  const handleFinishBorder = useCallback(() => {
-    if (borderInProgress.length >= 3) {
-      state.setBorder({ points: [...borderInProgress] });
+  const handleFinishBed = useCallback(() => {
+    if (bedInProgress.length >= 3) {
+      state.addBed([...bedInProgress]);
     }
-    setBorderInProgress([]);
-    setBorderMode(false);
-  }, [borderInProgress, state]);
+    setBedInProgress([]);
+    setBedMode(false);
+  }, [bedInProgress, state]);
 
-  const handleCancelBorder = useCallback(() => {
-    setBorderInProgress([]);
-    setBorderMode(false);
+  const handleCancelBed = useCallback(() => {
+    setBedInProgress([]);
+    setBedMode(false);
   }, []);
 
-  const handleClearBorder = useCallback(() => {
-    state.setBorder(null);
-  }, [state]);
+  const handleSetBedDisplayMode = useCallback(
+    (mode: "name" | "number") => state.updateSettings({ bedDisplayMode: mode }),
+    [state],
+  );
 
   // Growth timeline export
   const handleExportGrowth = useCallback(async () => {
@@ -292,13 +293,15 @@ export default function ToolPage() {
           state.setScale(null);
         }}
         resolvedRatio={pageInfo?.ratio ?? null}
-        border={state.border}
-        borderMode={borderMode}
-        onBorderModeToggle={handleBorderModeToggle}
-        onClearBorder={handleClearBorder}
+        beds={state.beds}
+        bedMode={bedMode}
+        onBedModeToggle={handleBedModeToggle}
+        bedDisplayMode={state.settings.bedDisplayMode}
+        onSetBedDisplayMode={handleSetBedDisplayMode}
         onExportGrowth={handleExportGrowth}
         onExportPrintPdf={handleExportPrintPdf}
         exportingPrint={exportingPrint}
+        onRemoveBackground={state.removeBackgroundImage}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -344,12 +347,12 @@ export default function ToolPage() {
           onScaleModeExit={() => setScaleMode(false)}
           paper={state.settings.paper}
           onPageInfoChange={setPageInfo}
-          border={state.border}
-          borderMode={borderMode}
-          borderInProgress={borderInProgress}
-          onAddBorderPoint={handleAddBorderPoint}
-          onFinishBorder={handleFinishBorder}
-          onCancelBorder={handleCancelBorder}
+          beds={state.beds}
+          bedMode={bedMode}
+          bedInProgress={bedInProgress}
+          onAddBedPoint={handleAddBedPoint}
+          onFinishBed={handleFinishBed}
+          onCancelBed={handleCancelBed}
         />
 
         {/* Right: Schedule / Plans / Help */}
@@ -368,7 +371,60 @@ export default function ToolPage() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {rightPanelTab === "schedule" ? (
-              <PlantSchedule schedule={state.schedule} totalCount={state.totalCount} settings={state.settings} plants={state.plants} />
+              <>
+                {state.beds.length > 0 && state.scale && (
+                  <div className="border-b border-neutral-200">
+                    <div className="px-3 pt-3 pb-1 flex items-center justify-between">
+                      <h3 className="text-[11px] font-semibold text-neutral-700 uppercase tracking-wide">Beds</h3>
+                      <span className="text-[10px] text-neutral-400">
+                        {(() => {
+                          const ppm = state.scale.pixelsPerMetre;
+                          let total = 0;
+                          for (const b of state.beds) {
+                            let s = 0;
+                            for (let i = 0; i < b.points.length; i++) {
+                              const j = (i + 1) % b.points.length;
+                              s += b.points[i].x * b.points[j].y - b.points[j].x * b.points[i].y;
+                            }
+                            total += Math.abs(s) / 2;
+                          }
+                          return `${(total / (ppm * ppm)).toFixed(1)} m² total`;
+                        })()}
+                      </span>
+                    </div>
+                    <div className="px-2 pb-2 space-y-0.5">
+                      {state.beds.map((bed, idx) => {
+                        let s = 0;
+                        for (let i = 0; i < bed.points.length; i++) {
+                          const j = (i + 1) % bed.points.length;
+                          s += bed.points[i].x * bed.points[j].y - bed.points[j].x * bed.points[i].y;
+                        }
+                        const ppm = state.scale!.pixelsPerMetre;
+                        const areaM2 = Math.abs(s) / 2 / (ppm * ppm);
+                        return (
+                          <div key={bed.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-neutral-50 group">
+                            <span className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-100 text-[10px] font-semibold text-neutral-700 flex items-center justify-center">{idx + 1}</span>
+                            <input
+                              value={bed.name}
+                              onChange={(e) => state.renameBed(bed.id, e.target.value)}
+                              className="flex-1 min-w-0 text-xs bg-transparent border-0 focus:bg-white focus:ring-1 focus:ring-neutral-300 rounded px-1 py-0.5 outline-none"
+                            />
+                            <span className="text-[10px] text-neutral-500 font-mono shrink-0">{areaM2.toFixed(1)} m²</span>
+                            <button
+                              onClick={() => state.removeBed(bed.id)}
+                              className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-50 text-neutral-300 hover:text-red-500 transition-opacity"
+                              title="Delete bed"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+                <PlantSchedule schedule={state.schedule} totalCount={state.totalCount} settings={state.settings} plants={state.plants} />
+              </>
             ) : rightPanelTab === "bulk" ? (
               <BulkImportPanel
                 existingPlants={state.plants}

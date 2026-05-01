@@ -34,6 +34,8 @@ export const DEFAULT_PAPER: PaperSettings = {
   marginMm: 15,
 };
 
+export type BedDisplayMode = "name" | "number";
+
 export interface ProjectSettings {
   name: string;
   drawingNumber: string;
@@ -42,6 +44,8 @@ export interface ProjectSettings {
   backgroundOpacity: number;
   showGrid: boolean;
   paper: PaperSettings;
+  /** "name" → render bed name on canvas; "number" → render index, list names in a key. */
+  bedDisplayMode: BedDisplayMode;
 }
 
 export interface ScaleCalibration {
@@ -57,8 +61,17 @@ export interface ScaleCalibration {
   pixelsPerMetre: number;
 }
 
+/** Single closed polygon (used during migration of legacy plans). */
 export interface BorderPolygon {
-  /** Closed polygon vertices in canvas-pixel coordinates */
+  points: { x: number; y: number }[];
+}
+
+export interface Bed {
+  /** Stable id (used as React key + for rename/delete operations). */
+  id: string;
+  /** User-facing name e.g. "Front Border". */
+  name: string;
+  /** Closed polygon vertices in canvas-pixel coordinates. */
   points: { x: number; y: number }[];
 }
 
@@ -71,7 +84,10 @@ export interface PlanState {
   backgroundHeight: number;
   viewingArrow: ViewingArrow | null;
   scale: ScaleCalibration | null;
-  border: BorderPolygon | null;
+  /** Multiple named beds. Replaces the legacy single `border` field. */
+  beds: Bed[];
+  /** Legacy field for backward-compat reads; never written by current code. */
+  border?: BorderPolygon | null;
 }
 
 export interface HistoryEntry {

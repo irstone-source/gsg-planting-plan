@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Plant, defaultPlants } from "./defaultPlants";
-import { PlacedPlant, ProjectSettings, PlanState, HistoryEntry, ViewingArrow, ScaleCalibration, DEFAULT_PAPER, PaperSettings, BorderPolygon } from "./types";
+import { PlacedPlant, ProjectSettings, PlanState, HistoryEntry, ViewingArrow, ScaleCalibration, DEFAULT_PAPER, PaperSettings, Bed } from "./types";
 
 const STORAGE_KEY = "gsg-planting-tool-state";
 
@@ -14,15 +14,35 @@ const defaultSettings: ProjectSettings = {
   backgroundOpacity: 1.0,
   showGrid: false,
   paper: DEFAULT_PAPER,
+  bedDisplayMode: "name",
 };
 
-function withPaperFallback(s: ProjectSettings | undefined): ProjectSettings {
+function withSettingsFallback(s: ProjectSettings | undefined): ProjectSettings {
   if (!s) return defaultSettings;
-  return { ...s, paper: s.paper ?? DEFAULT_PAPER };
+  return {
+    ...defaultSettings,
+    ...s,
+    paper: s.paper ?? DEFAULT_PAPER,
+    bedDisplayMode: s.bedDisplayMode ?? "name",
+  };
 }
 
 function generateUid(): string {
   return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+}
+
+/**
+ * Migrate legacy single `border` field into the new `beds[]` array.
+ * Existing localStorage / Supabase rows that pre-date multi-bed support
+ * still load cleanly without the user losing their traced outline.
+ */
+function migrateBeds(saved: PlanState | null | undefined): Bed[] {
+  if (!saved) return [];
+  if (Array.isArray(saved.beds) && saved.beds.length > 0) return saved.beds;
+  if (saved.border && Array.isArray(saved.border.points) && saved.border.points.length >= 3) {
+    return [{ id: generateUid(), name: "Bed 1", points: saved.border.points }];
+  }
+  return [];
 }
 
 function loadState(): PlanState | null {
@@ -44,7 +64,7 @@ export function usePlanState() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [viewingArrow, setViewingArrow] = useState<ViewingArrow | null>(null);
   const [scale, setScale] = useState<ScaleCalibration | null>(null);
-  const [border, setBorder] = useState<BorderPolygon | null>(null);
+  const [beds, setBeds] = useState<Bed[]>([]);
 
   // Undo/redo
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -57,14 +77,13 @@ export function usePlanState() {
     if (saved) {
       setPlants(saved.plants?.length ? saved.plants : defaultPlants);
       setPlaced(saved.placed || []);
-      setSettings(withPaperFallback(saved.settings));
+      setSettings(withSettingsFallback(saved.settings));
       setBackgroundImage(saved.backgroundImage || null);
       setBackgroundWidth(saved.backgroundWidth || 0);
       setBackgroundHeight(saved.backgroundHeight || 0);
       setViewingArrow(saved.viewingArrow || null);
       setScale(saved.scale || null);
-      setBorder(saved.border || null);
-      // Initialize history with loaded state
+      setBeds(migrateBeds(saved));
       setHistory([{ placed: saved.placed || [] }]);
       setHistoryIndex(0);
     } else {
@@ -85,12 +104,12 @@ export function usePlanState() {
       backgroundHeight,
       viewingArrow,
       scale,
-      border,
+      beds,
     };
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {}
-  }, [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow, scale, border]);
+  }, [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow, scale, beds]);
 
   // Push to history when placed changes (but not during undo/redo)
   useEffect(() => {
@@ -98,7 +117,7 @@ export function usePlanState() {
       isUndoRedo.current = false;
       return;
     }
-    if (historyIndex === -1) return; // initial mount
+    if (historyIndex === -1) return;
     setHistory((prev) => {
       const trimmed = prev.slice(0, historyIndex + 1);
       return [...trimmed, { placed: [...placed] }];
@@ -143,16 +162,12 @@ export function usePlanState() {
   }, [plants, settings.plantRadius]);
 
   const movePlant = useCallback((uid: string, x: number, y: number) => {
-    setPlaced((prev) =>
-      prev.map((p) => (p.uid === uid ? { ...p, x, y } : p))
-    );
+    setPlaced((prev) => prev.map((p) => (p.uid === uid ? { ...p, x, y } : p)));
   }, []);
 
   const moveSelected = useCallback((dx: number, dy: number) => {
     setPlaced((prev) =>
-      prev.map((p) =>
-        selectedIds.has(p.uid) ? { ...p, x: p.x + dx, y: p.y + dy } : p
-      )
+      prev.map((p) => (selectedIds.has(p.uid) ? { ...p, x: p.x + dx, y: p.y + dy } : p)),
     );
   }, [selectedIds]);
 
@@ -183,32 +198,23 @@ export function usePlanState() {
   }, []);
 
   const updatePlantRadius = useCallback((plantId: string, radius: number | undefined) => {
-    setPlants((prev) =>
-      prev.map((p) => (p.id === plantId ? { ...p, radius } : p))
-    );
+    setPlants((prev) => prev.map((p) => (p.id === plantId ? { ...p, radius } : p)));
   }, []);
 
   const updatePlant = useCallback((plantId: string, updates: Partial<Plant>) => {
-    setPlants((prev) =>
-      prev.map((p) => (p.id === plantId ? { ...p, ...updates } : p))
-    );
+    setPlants((prev) => prev.map((p) => (p.id === plantId ? { ...p, ...updates } : p)));
   }, []);
 
   const toggleSelect = useCallback((uid: string, additive: boolean) => {
     setSelectedIds((prev) => {
       const next = new Set(additive ? prev : []);
-      if (prev.has(uid) && additive) {
-        next.delete(uid);
-      } else {
-        next.add(uid);
-      }
+      if (prev.has(uid) && additive) next.delete(uid);
+      else next.add(uid);
       return next;
     });
   }, []);
 
-  const clearSelection = useCallback(() => {
-    setSelectedIds(new Set());
-  }, []);
+  const clearSelection = useCallback(() => setSelectedIds(new Set()), []);
 
   const selectAll = useCallback(() => {
     setSelectedIds(new Set(placed.map((p) => p.uid)));
@@ -240,6 +246,22 @@ export function usePlanState() {
     }));
   }, []);
 
+  // Bed CRUD
+  const addBed = useCallback((points: { x: number; y: number }[]) => {
+    setBeds((prev) => [
+      ...prev,
+      { id: generateUid(), name: `Bed ${prev.length + 1}`, points },
+    ]);
+  }, []);
+
+  const renameBed = useCallback((id: string, name: string) => {
+    setBeds((prev) => prev.map((b) => (b.id === id ? { ...b, name } : b)));
+  }, []);
+
+  const removeBed = useCallback((id: string) => {
+    setBeds((prev) => prev.filter((b) => b.id !== id));
+  }, []);
+
   const clearAll = useCallback(() => {
     setPlaced([]);
     setSelectedIds(new Set());
@@ -249,28 +271,28 @@ export function usePlanState() {
     setSettings(defaultSettings);
     setPlants(defaultPlants);
     setScale(null);
-    setBorder(null);
+    setBeds([]);
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
   const loadFromState = useCallback((saved: PlanState) => {
     setPlants(saved.plants?.length ? saved.plants : defaultPlants);
     setPlaced(saved.placed || []);
-    setSettings(saved.settings || defaultSettings);
+    setSettings(withSettingsFallback(saved.settings));
     setBackgroundImage(saved.backgroundImage || null);
     setBackgroundWidth(saved.backgroundWidth || 0);
     setBackgroundHeight(saved.backgroundHeight || 0);
     setViewingArrow(saved.viewingArrow || null);
     setScale(saved.scale || null);
-    setBorder(saved.border || null);
+    setBeds(migrateBeds(saved));
     setSelectedIds(new Set());
     setHistory([{ placed: saved.placed || [] }]);
     setHistoryIndex(0);
   }, []);
 
   const getFullState = useCallback((): PlanState => ({
-    plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow, scale, border,
-  }), [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow, scale, border]);
+    plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow, scale, beds,
+  }), [plants, placed, settings, backgroundImage, backgroundWidth, backgroundHeight, viewingArrow, scale, beds]);
 
   // Get schedule (aggregated counts)
   const schedule = plants
@@ -282,6 +304,13 @@ export function usePlanState() {
     .sort((a, b) => a.code.localeCompare(b.code));
 
   const totalCount = placed.length;
+
+  // Remove just the uploaded background image; keep scale, beds, plants, labels.
+  const removeBackgroundImage = useCallback(() => {
+    setBackgroundImage(null);
+    setBackgroundWidth(0);
+    setBackgroundHeight(0);
+  }, []);
 
   return {
     plants,
@@ -295,8 +324,10 @@ export function usePlanState() {
     setViewingArrow,
     scale,
     setScale,
-    border,
-    setBorder,
+    beds,
+    addBed,
+    renameBed,
+    removeBed,
     schedule,
     totalCount,
     placePlant,
@@ -313,6 +344,7 @@ export function usePlanState() {
     clearSelection,
     selectAll,
     handleImageUpload,
+    removeBackgroundImage,
     updateSettings,
     updatePaper,
     clearAll,

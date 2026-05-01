@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Konva from "konva";
 import { User } from "@supabase/supabase-js";
-import { ProjectSettings, ScaleCalibration, PaperSettings, SCALE_RATIOS, BorderPolygon } from "./types";
+import { ProjectSettings, ScaleCalibration, PaperSettings, SCALE_RATIOS, Bed, BedDisplayMode } from "./types";
 
 export type ViewMode = "colour" | "scientific";
 
@@ -39,13 +39,15 @@ interface ToolbarProps {
   onClearScale: () => void;
   /** Resolved ratio after auto-fit (null when scale not set) */
   resolvedRatio: number | null;
-  border: BorderPolygon | null;
-  borderMode: boolean;
-  onBorderModeToggle: () => void;
-  onClearBorder: () => void;
+  beds: Bed[];
+  bedMode: boolean;
+  onBedModeToggle: () => void;
+  bedDisplayMode: BedDisplayMode;
+  onSetBedDisplayMode: (mode: BedDisplayMode) => void;
   onExportGrowth: () => void;
   onExportPrintPdf: () => void;
   exportingPrint?: boolean;
+  onRemoveBackground: () => void;
 }
 
 export default function Toolbar({
@@ -79,13 +81,15 @@ export default function Toolbar({
   onScaleModeToggle,
   onClearScale,
   resolvedRatio,
-  border,
-  borderMode,
-  onBorderModeToggle,
-  onClearBorder,
+  beds,
+  bedMode,
+  onBedModeToggle,
+  bedDisplayMode,
+  onSetBedDisplayMode,
   onExportGrowth,
   onExportPrintPdf,
   exportingPrint = false,
+  onRemoveBackground,
 }: ToolbarProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -291,7 +295,7 @@ export default function Toolbar({
                     key={s}
                     onClick={() => onUpdatePaper({ size: s })}
                     className={`flex-1 px-2 py-1.5 text-xs rounded border ${
-                      paper.size === s ? "bg-teal-600 text-white border-teal-600" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                      paper.size === s ? "bg-neutral-900 text-white border-neutral-900" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
                     }`}
                   >
                     {s}
@@ -307,7 +311,7 @@ export default function Toolbar({
                     key={o}
                     onClick={() => onUpdatePaper({ orientation: o })}
                     className={`flex-1 px-2 py-1.5 text-xs rounded border capitalize ${
-                      paper.orientation === o ? "bg-teal-600 text-white border-teal-600" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                      paper.orientation === o ? "bg-neutral-900 text-white border-neutral-900" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
                     }`}
                   >
                     {o}
@@ -318,7 +322,7 @@ export default function Toolbar({
             <div>
               <label className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">
                 Scale ratio {paper.ratio == null && resolvedRatio != null && (
-                  <span className="text-teal-600 normal-case tracking-normal font-medium ml-1">(auto: 1:{resolvedRatio})</span>
+                  <span className="text-neutral-700 normal-case tracking-normal font-medium ml-1">(auto: 1:{resolvedRatio})</span>
                 )}
               </label>
               <select
@@ -353,52 +357,62 @@ export default function Toolbar({
         )}
       </div>
 
-      {/* Border drawing */}
+      {/* Beds — multi-polygon bed tracing */}
       <button
         disabled={!scale}
-        onClick={onBorderModeToggle}
+        onClick={onBedModeToggle}
         className={`px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 transition-colors ${
           !scale
             ? "text-neutral-300 cursor-not-allowed"
-            : borderMode
+            : bedMode
             ? "bg-red-50 text-red-700 ring-1 ring-red-200"
-            : border
+            : beds.length > 0
             ? "bg-neutral-100 text-neutral-800 hover:bg-neutral-200/70"
             : "text-neutral-600 hover:bg-neutral-100"
         }`}
-        title={!scale ? "Set scale first" : border ? "Re-draw bed border" : "Draw bed border to measure area"}
+        title={!scale ? "Set scale first" : beds.length > 0 ? `Draw another bed (${beds.length} drawn)` : "Trace beds to measure area"}
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M4 6l8-3 8 3v12l-8 3-8-3V6z" />
         </svg>
         {(() => {
-          if (border && scale) {
-            const pts = border.points;
-            let s = 0;
-            for (let i = 0; i < pts.length; i++) {
-              const j = (i + 1) % pts.length;
-              s += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
+          if (beds.length > 0 && scale) {
+            let totalPx = 0;
+            for (const bed of beds) {
+              const pts = bed.points;
+              let s = 0;
+              for (let i = 0; i < pts.length; i++) {
+                const j = (i + 1) % pts.length;
+                s += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
+              }
+              totalPx += Math.abs(s) / 2;
             }
-            const areaPx = Math.abs(s) / 2;
-            const areaM2 = areaPx / (scale.pixelsPerMetre * scale.pixelsPerMetre);
-            return `${areaM2.toFixed(1)} m²`;
+            const areaM2 = totalPx / (scale.pixelsPerMetre * scale.pixelsPerMetre);
+            return bedMode ? `Add bed ${beds.length + 1}` : `${beds.length} bed${beds.length === 1 ? "" : "s"} · ${areaM2.toFixed(1)} m²`;
           }
-          return "Border";
+          return bedMode ? "Drawing bed…" : "Beds";
         })()}
       </button>
-      {border && (
-        <button
-          onClick={onClearBorder}
-          className="p-1 rounded hover:bg-red-50 text-neutral-400 hover:text-red-500"
-          title="Remove border"
-        >
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+
+      {/* Show-as-number toggle (only useful with at least one bed) */}
+      {beds.length > 0 && scale && (
+        <div className="flex items-center bg-neutral-100 rounded-md p-0.5" title="Show bed names or numbered keys">
+          <button
+            onClick={() => onSetBedDisplayMode("name")}
+            className={`px-1.5 py-0.5 text-[10px] rounded font-medium transition-colors ${bedDisplayMode === "name" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}
+          >
+            Aa
+          </button>
+          <button
+            onClick={() => onSetBedDisplayMode("number")}
+            className={`px-1.5 py-0.5 text-[10px] rounded font-medium transition-colors ${bedDisplayMode === "number" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"}`}
+          >
+            123
+          </button>
+        </div>
       )}
 
-      {/* Opacity slider */}
+      {/* Opacity slider + remove */}
       {backgroundImage && (
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] text-neutral-400 font-medium tracking-wide">BG</span>
@@ -411,6 +425,17 @@ export default function Toolbar({
             className="w-16 h-1 accent-neutral-700"
             title="Background image opacity"
           />
+          <button
+            onClick={() => {
+              if (confirm("Remove the uploaded plan? Your traced beds and plants stay.")) onRemoveBackground();
+            }}
+            className="p-1 rounded hover:bg-red-50 text-neutral-400 hover:text-red-500 transition-colors"
+            title="Remove uploaded plan (keeps beds and plants)"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
         </div>
       )}
 
