@@ -326,17 +326,17 @@ export default function PlantPalette({
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-semibold text-sm text-neutral-800">Plant Palette</h2>
           <button onClick={onPlaceAll}
-            className="px-2 py-0.5 text-[10px] font-medium bg-emerald-600 text-white rounded hover:bg-emerald-700"
+            className="px-2 py-0.5 text-[10px] font-medium bg-emerald-700 text-white rounded hover:bg-emerald-800"
             title="Place one of each plant onto the canvas">Place All</button>
         </div>
         <input type="text" placeholder="Filter palette..." value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-2 py-1.5 text-xs border border-neutral-200 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-500 bg-neutral-50" />
+          className="w-full px-2 py-1.5 text-xs border border-neutral-200 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400 bg-neutral-50" />
         <div className="flex gap-0.5 mt-1.5">
           {(["alpha", "genus", "colour"] as SortMode[]).map((mode) => (
             <button key={mode} onClick={() => setSortMode(mode)}
               className={`flex-1 px-1 py-0.5 text-[10px] rounded transition-colors ${
-                sortMode === mode ? "bg-emerald-100 text-emerald-700 font-medium" : "text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50"
+                sortMode === mode ? "bg-neutral-900 text-white font-medium" : "text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50"
               }`}>
               {mode === "alpha" ? "A-Z" : mode === "genus" ? "Genus" : "Colour"}
             </button>
@@ -415,7 +415,7 @@ export default function PlantPalette({
                         <div className="flex items-center gap-1.5">
                           <input type="range" min={6} max={50} value={currentRadius}
                             onChange={(e) => { const v = parseInt(e.target.value); onUpdatePlantRadius(plant.id, v === defaultRadius ? undefined : v); }}
-                            className="flex-1 h-1 accent-emerald-600" />
+                            className="flex-1 h-1 accent-neutral-700" />
                           <span className="text-[10px] text-neutral-500 font-mono w-5 text-right">{currentRadius}</span>
                           {plant.radius !== undefined && (
                             <button onClick={() => onUpdatePlantRadius(plant.id, undefined)}
@@ -524,7 +524,7 @@ export default function PlantPalette({
             </div>
             <input type="text" placeholder="e.g. Lavandula, Echinacea, grass..."
               value={dbQuery} onChange={(e) => setDbQuery(e.target.value)}
-              className="w-full px-2 py-1.5 text-xs border rounded bg-neutral-50 focus:outline-none focus:ring-1 focus:ring-emerald-500" autoFocus />
+              className="w-full px-2 py-1.5 text-xs border rounded bg-neutral-50 focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400" autoFocus />
             <div className="max-h-48 overflow-y-auto space-y-0.5">
               {dbLoading && <div className="text-xs text-neutral-400 text-center py-2">Searching...</div>}
               {dbError && <div className="text-xs text-red-500 text-center py-2">{dbError}</div>}
@@ -563,13 +563,13 @@ export default function PlantPalette({
             </div>
             <textarea value={importText} onChange={(e) => handleImportTextChange(e.target.value)}
               placeholder={`An, Anemanthele, lessoniana, #8DB580\nGa, Gaura, lindheimeri`}
-              className="w-full h-28 px-2 py-1.5 text-xs border rounded bg-neutral-50 font-mono resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500" autoFocus />
+              className="w-full h-28 px-2 py-1.5 text-xs border rounded bg-neutral-50 font-mono resize-none focus:outline-none focus:ring-1 focus:ring-neutral-400 focus:border-neutral-400" autoFocus />
             {importPreview.length > 0 && (
-              <div className="text-[10px] text-emerald-600">{importPreview.length} plant{importPreview.length !== 1 ? "s" : ""} detected</div>
+              <div className="text-[10px] text-emerald-700">{importPreview.length} plant{importPreview.length !== 1 ? "s" : ""} detected</div>
             )}
             <div className="flex gap-1">
               <button onClick={handleImportConfirm} disabled={importPreview.length === 0}
-                className="flex-1 px-2 py-1.5 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 disabled:opacity-40">
+                className="flex-1 px-2 py-1.5 text-xs bg-emerald-700 text-white rounded hover:bg-emerald-800 disabled:opacity-40">
                 Import {importPreview.length > 0 ? `(${importPreview.length})` : ""}</button>
               <button onClick={() => { setShowImport(false); setImportText(""); setImportPreview([]); }}
                 className="px-2 py-1.5 text-xs border rounded hover:bg-neutral-50">Cancel</button>
@@ -592,14 +592,14 @@ export default function PlantPalette({
               </label>
             </div>
             <div className="flex gap-1">
-              <button onClick={handleAdd} className="flex-1 px-2 py-1.5 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700">Add</button>
+              <button onClick={handleAdd} className="flex-1 px-2 py-1.5 text-xs bg-emerald-700 text-white rounded hover:bg-emerald-800">Add</button>
               <button onClick={() => setShowAddForm(false)} className="px-2 py-1.5 text-xs border rounded hover:bg-neutral-50">Cancel</button>
             </div>
           </div>
         ) : (
           <div className="space-y-1">
             <button onClick={() => setShowDbSearch(true)}
-              className="w-full px-2 py-1.5 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 font-medium flex items-center justify-center gap-1.5">
+              className="w-full px-2 py-1.5 text-xs bg-emerald-700 text-white rounded-md hover:bg-emerald-800 font-medium flex items-center justify-center gap-1.5">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               Search Plant Database

@@ -247,12 +247,12 @@ export default function BulkImportPanel({ existingPlants, onImportPlants }: Bulk
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
             placeholder={`Betula pendula, Silver Birch, tree\nViburnum tinus, Laurustinus, shrub\nAlchemilla mollis, Lady's Mantle, perennial\nStipa tenuissima, Mexican Feather Grass, grass`}
-            className="w-full h-32 px-2 py-1.5 text-xs border rounded bg-neutral-50 font-mono resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full h-32 px-2 py-1.5 text-xs border rounded bg-neutral-50 font-mono resize-none focus:outline-none focus:ring-1 focus:ring-neutral-400"
           />
 
           <div className="flex gap-1">
             <button onClick={handleParse} disabled={parsing || !textInput.trim()}
-              className="flex-1 px-2 py-1.5 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium disabled:opacity-40">
+              className="flex-1 px-2 py-1.5 text-xs bg-emerald-700 text-white rounded hover:bg-emerald-800 font-medium disabled:opacity-40">
               {parsing ? "Parsing..." : "Parse Plant List"}
             </button>
             <label className="flex-1">
@@ -269,7 +269,7 @@ export default function BulkImportPanel({ existingPlants, onImportPlants }: Bulk
 
       {step === "review" && (
         <>
-          <div className="text-[10px] text-emerald-600 font-medium">{parsed.length} plants parsed</div>
+          <div className="text-[10px] text-emerald-700 font-medium">{parsed.length} plants parsed</div>
 
           {/* Plant list preview */}
           <div className="max-h-48 overflow-y-auto space-y-0.5 border rounded bg-neutral-50 p-1.5">
@@ -331,7 +331,7 @@ export default function BulkImportPanel({ existingPlants, onImportPlants }: Bulk
 
             {/* Import */}
             <button onClick={handleImport}
-              className="w-full px-3 py-2 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold">
+              className="w-full px-3 py-2 text-sm bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 font-semibold">
               Import {enriched.length} Plants to Palette
             </button>
           </div>
@@ -340,15 +340,15 @@ export default function BulkImportPanel({ existingPlants, onImportPlants }: Bulk
 
       {step === "done" && (
         <div className="text-center py-6">
-          <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-emerald-100 flex items-center justify-center">
-            <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-neutral-100 flex items-center justify-center">
+            <svg className="w-5 h-5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <p className="text-sm font-medium text-neutral-800">Plants imported!</p>
           <p className="text-xs text-neutral-500 mt-1">Check the palette on the left. You can now drag them onto the canvas.</p>
           <button onClick={() => { setStep("input"); setTextInput(""); setParsed([]); setEnriched([]); }}
-            className="mt-3 text-xs text-emerald-600 hover:text-emerald-700 font-medium">Import more plants</button>
+            className="mt-3 text-xs text-emerald-700 hover:text-emerald-700 font-medium">Import more plants</button>
         </div>
       )}
     </div>

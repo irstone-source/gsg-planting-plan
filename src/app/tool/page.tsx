@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useRef, useState, useEffect, useCallback } from "react";
-import Konva from "konva";
+import type Konva from "konva";
 import { usePlanState } from "./usePlanState";
 import { useAuth } from "./useAuth";
 import { useSavePlan, SavedPlan } from "./useSavePlan";
@@ -10,6 +10,9 @@ import PlantPalette from "./PlantPalette";
 import PlantSchedule from "./PlantSchedule";
 import BulkImportPanel from "./BulkImportPanel";
 import Toolbar, { ViewMode } from "./Toolbar";
+import ScaleDialog from "./ScaleDialog";
+import { ScaleCalibration } from "./types";
+import { downloadGrowthReport, downloadPrintPdf } from "./exportReports";
 
 const PlanCanvas = dynamic(() => import("./PlanCanvas"), { ssr: false });
 
@@ -20,6 +23,23 @@ export default function ToolPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("colour");
   const [growthYear, setGrowthYear] = useState(3);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [scaleMode, setScaleMode] = useState(false);
+  const [pendingScaleLine, setPendingScaleLine] = useState<{
+    x1: number; y1: number; x2: number; y2: number; pixelLength: number;
+  } | null>(null);
+  const [pageInfo, setPageInfo] = useState<{
+    ratio: number;
+    pageRect: { x: number; y: number; w: number; h: number };
+    printableRect: { x: number; y: number; w: number; h: number; widthMm: number; heightMm: number };
+  } | null>(null);
+  const [borderMode, setBorderMode] = useState(false);
+  const [borderInProgress, setBorderInProgress] = useState<{ x: number; y: number }[]>([]);
+  const [exportingPrint, setExportingPrint] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3500);
+  }, []);
   const state = usePlanState();
   const auth = useAuth();
   const save = useSavePlan(auth.supabase, auth.user);
@@ -49,6 +69,123 @@ export default function ToolPage() {
       setIsAnimating(true);
     }
   }, [isAnimating]);
+
+  // Scale calibration handlers
+  const handleScaleLineDrawn = useCallback((x1: number, y1: number, x2: number, y2: number, pixelLength: number) => {
+    setPendingScaleLine({ x1, y1, x2, y2, pixelLength });
+    setScaleMode(false);
+  }, []);
+
+  const handleScaleConfirm = useCallback((realMetres: number) => {
+    if (!pendingScaleLine) return;
+    const { x1, y1, x2, y2, pixelLength } = pendingScaleLine;
+    const calibration: ScaleCalibration = {
+      x1, y1, x2, y2,
+      realMetres: realMetres,
+      pixelsPerMetre: pixelLength / realMetres,
+    };
+    state.setScale(calibration);
+    setPendingScaleLine(null);
+  }, [pendingScaleLine, state]);
+
+  const handleScaleCancel = useCallback(() => {
+    setPendingScaleLine(null);
+  }, []);
+
+  // Border drawing handlers
+  const handleBorderModeToggle = useCallback(() => {
+    if (borderMode) {
+      setBorderMode(false);
+      setBorderInProgress([]);
+    } else {
+      setBorderInProgress([]);
+      setBorderMode(true);
+    }
+  }, [borderMode]);
+
+  const handleAddBorderPoint = useCallback((x: number, y: number) => {
+    setBorderInProgress((prev) => [...prev, { x, y }]);
+  }, []);
+
+  const handleFinishBorder = useCallback(() => {
+    if (borderInProgress.length >= 3) {
+      state.setBorder({ points: [...borderInProgress] });
+    }
+    setBorderInProgress([]);
+    setBorderMode(false);
+  }, [borderInProgress, state]);
+
+  const handleCancelBorder = useCallback(() => {
+    setBorderInProgress([]);
+    setBorderMode(false);
+  }, []);
+
+  const handleClearBorder = useCallback(() => {
+    state.setBorder(null);
+  }, [state]);
+
+  // Growth timeline export
+  const handleExportGrowth = useCallback(async () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const prevMode = viewMode;
+    const prevYear = growthYear;
+
+    setViewMode("scientific");
+
+    const captures: { year: number; dataUrl: string }[] = [];
+
+    for (const year of [1, 2, 3, 5]) {
+      setGrowthYear(year);
+      // Wait for React to re-render and Konva to redraw
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            stage.batchDraw();
+            resolve();
+          });
+        });
+      });
+      const dataUrl = stage.toDataURL({ pixelRatio: 2, mimeType: "image/png" });
+      captures.push({ year, dataUrl });
+    }
+
+    // Restore original view
+    setViewMode(prevMode);
+    setGrowthYear(prevYear);
+
+    downloadGrowthReport(captures, state.settings, state.schedule);
+  }, [viewMode, growthYear, stageRef, state.settings, state.schedule]);
+
+  // Print PDF export — paper-sized, true-to-scale
+  const handleExportPrintPdf = useCallback(async () => {
+    const stage = stageRef.current;
+    if (!stage || !state.scale || !pageInfo) {
+      showToast("Set scale first, then choose paper / ratio.");
+      return;
+    }
+    setExportingPrint(true);
+    // Yield so React paints the disabled state before the synchronous toDataURL kicks in
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    try {
+      await downloadPrintPdf(
+        stage,
+        pageInfo.printableRect,
+        pageInfo.ratio,
+        state.settings.paper,
+        state.scale,
+        state.settings,
+        state.schedule,
+      );
+      showToast("Print PDF downloaded — open and print at 100% / Actual size.");
+    } catch (err) {
+      console.error(err);
+      showToast("Export failed — please try again.");
+    } finally {
+      setExportingPrint(false);
+    }
+  }, [stageRef, state.scale, state.settings, state.schedule, pageInfo, showToast]);
 
   // Fetch plans when user logs in
   useEffect(() => {
@@ -122,6 +259,7 @@ export default function ToolPage() {
       <Toolbar
         settings={state.settings}
         onUpdateSettings={state.updateSettings}
+        onUpdatePaper={state.updatePaper}
         onImageUpload={state.handleImageUpload}
         onUndo={state.undo}
         onRedo={state.redo}
@@ -144,6 +282,23 @@ export default function ToolPage() {
         onGrowthYearChange={setGrowthYear}
         isAnimating={isAnimating}
         onToggleAnimate={handleToggleAnimate}
+        scale={state.scale}
+        scaleMode={scaleMode}
+        onScaleModeToggle={() => setScaleMode((prev) => !prev)}
+        onClearScale={() => {
+          if (state.placed.length > 0) {
+            if (!confirm("Clearing the scale will resize every placed plant. Continue?")) return;
+          }
+          state.setScale(null);
+        }}
+        resolvedRatio={pageInfo?.ratio ?? null}
+        border={state.border}
+        borderMode={borderMode}
+        onBorderModeToggle={handleBorderModeToggle}
+        onClearBorder={handleClearBorder}
+        onExportGrowth={handleExportGrowth}
+        onExportPrintPdf={handleExportPrintPdf}
+        exportingPrint={exportingPrint}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -183,6 +338,18 @@ export default function ToolPage() {
           onArrowPlaced={() => {}}
           viewMode={viewMode}
           growthYear={growthYear}
+          scale={state.scale}
+          scaleMode={scaleMode}
+          onScaleLineDrawn={handleScaleLineDrawn}
+          onScaleModeExit={() => setScaleMode(false)}
+          paper={state.settings.paper}
+          onPageInfoChange={setPageInfo}
+          border={state.border}
+          borderMode={borderMode}
+          borderInProgress={borderInProgress}
+          onAddBorderPoint={handleAddBorderPoint}
+          onFinishBorder={handleFinishBorder}
+          onCancelBorder={handleCancelBorder}
         />
 
         {/* Right: Schedule / Plans / Help */}
@@ -190,12 +357,12 @@ export default function ToolPage() {
           <div className="flex border-b border-neutral-200">
             {(["schedule", "bulk", "plans", "help"] as const).map((tab) => (
               <button key={tab} onClick={() => setRightPanelTab(tab)}
-                className={`flex-1 py-2 text-xs font-medium ${
+                className={`flex-1 py-2.5 text-[11px] font-medium tracking-tight transition-colors ${
                   rightPanelTab === tab
-                    ? "text-emerald-600 border-b-2 border-emerald-600"
-                    : "text-neutral-400 hover:text-neutral-600"
+                    ? "text-neutral-900 border-b-2 border-neutral-900"
+                    : "text-neutral-400 hover:text-neutral-700 border-b-2 border-transparent"
                 }`}>
-                {tab === "schedule" ? "Schedule" : tab === "bulk" ? "Bulk Import" : tab === "plans" ? "Plans" : "Help"}
+                {tab === "schedule" ? "Schedule" : tab === "bulk" ? "Import" : tab === "plans" ? "Plans" : "Help"}
               </button>
             ))}
           </div>
@@ -229,7 +396,7 @@ export default function ToolPage() {
                       <span className="text-xs text-neutral-500">{auth.user.email}</span>
                     </div>
                     <button onClick={handleSave}
-                      className="w-full px-3 py-2 text-xs bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium flex items-center justify-center gap-1.5">
+                      className="w-full px-3 py-2 text-xs bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 font-medium flex items-center justify-center gap-1.5">
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                       </svg>
@@ -257,7 +424,7 @@ export default function ToolPage() {
                           {save.savedPlans.map((plan) => (
                             <div key={plan.id}
                               className={`flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 cursor-pointer group ${
-                                save.currentPlanId === plan.id ? "bg-emerald-50 border border-emerald-200" : ""
+                                save.currentPlanId === plan.id ? "bg-neutral-100 border border-neutral-300" : ""
                               }`}
                               onClick={() => handleLoad(plan)}>
                               {plan.thumbnail ? (
@@ -315,14 +482,32 @@ export default function ToolPage() {
         </div>
       </div>
 
+      {/* Scale dialog */}
+      {pendingScaleLine && (
+        <ScaleDialog
+          pixelLength={pendingScaleLine.pixelLength}
+          onConfirm={handleScaleConfirm}
+          onCancel={handleScaleCancel}
+        />
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-neutral-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          {toast}
+        </div>
+      )}
+
       {/* Drag overlay */}
       {isDragOver && (
-        <div className="fixed inset-0 bg-emerald-600/10 border-4 border-dashed border-emerald-500 z-50 flex items-center justify-center pointer-events-none">
-          <div className="bg-white rounded-xl px-8 py-6 shadow-lg text-center">
-            <svg className="mx-auto mb-2 w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        <div className="fixed inset-0 bg-neutral-900/5 backdrop-blur-[2px] border-2 border-dashed border-neutral-400 z-50 flex items-center justify-center pointer-events-none">
+          <div className="bg-white rounded-xl px-8 py-6 shadow-lg text-center border border-neutral-200">
+            <svg className="mx-auto mb-2 w-9 h-9 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v12m0-12l-4 4m4-4l4 4M4 20h16" />
             </svg>
-            <p className="font-semibold text-neutral-800">Drop image to set as plan background</p>
+            <p className="text-sm font-semibold text-neutral-900">Drop to set as plan background</p>
+            <p className="text-xs text-neutral-500 mt-1">JPG, PNG, or WebP</p>
           </div>
         </div>
       )}

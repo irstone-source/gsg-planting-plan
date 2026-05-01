@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
-import { Stage, Layer, Circle, Text, Image as KonvaImage, Rect, Group, Arrow } from "react-konva";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
+import { Stage, Layer, Circle, Text, Image as KonvaImage, Rect, Group, Arrow, Line } from "react-konva";
 import Konva from "konva";
 import { Plant } from "./defaultPlants";
-import { PlacedPlant, ProjectSettings, ViewingArrow } from "./types";
+import { PlacedPlant, ProjectSettings, ViewingArrow, ScaleCalibration, PaperSettings, BorderPolygon } from "./types";
+import { resolveRatio, pageBoundsCanvasPx, printableAreaCanvasPx, gridSpacingMetres } from "./paperUtils";
 
 type ViewMode = "colour" | "scientific";
 
@@ -33,6 +34,28 @@ interface PlanCanvasProps {
   onArrowPlaced: () => void;
   viewMode: ViewMode;
   growthYear: number;
+  scale: ScaleCalibration | null;
+  scaleMode: boolean;
+  onScaleLineDrawn: (x1: number, y1: number, x2: number, y2: number, pixelLength: number) => void;
+  onScaleModeExit: () => void;
+  paper: PaperSettings;
+  /** Notify parent of resolved ratio + paper rect + printable rect (in canvas px). */
+  onPageInfoChange?: (
+    info:
+      | {
+          ratio: number;
+          pageRect: { x: number; y: number; w: number; h: number };
+          printableRect: { x: number; y: number; w: number; h: number; widthMm: number; heightMm: number };
+        }
+      | null,
+  ) => void;
+  /** Border drawing */
+  border: BorderPolygon | null;
+  borderMode: boolean;
+  borderInProgress: { x: number; y: number }[];
+  onAddBorderPoint: (x: number, y: number) => void;
+  onFinishBorder: () => void;
+  onCancelBorder: () => void;
 }
 
 const MIN_SCALE = 0.1;
@@ -60,11 +83,23 @@ export default function PlanCanvas({
   onArrowPlaced,
   viewMode,
   growthYear,
+  scale,
+  scaleMode,
+  onScaleLineDrawn,
+  onScaleModeExit,
+  paper,
+  onPageInfoChange,
+  border,
+  borderMode,
+  borderInProgress,
+  onAddBorderPoint,
+  onFinishBorder,
+  onCancelBorder,
 }: PlanCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [bgImg, setBgImg] = useState<HTMLImageElement | null>(null);
   const [stageSize, setStageSize] = useState({ width: 800, height: 600 });
-  const [scale, setScale] = useState(1);
+  const [canvasScale, setCanvasScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; uid: string } | null>(null);
@@ -102,7 +137,7 @@ export default function PlanCanvas({
       const scaleX = stageSize.width / backgroundWidth;
       const scaleY = stageSize.height / backgroundHeight;
       const fitScale = Math.min(scaleX, scaleY, 1);
-      setScale(fitScale);
+      setCanvasScale(fitScale);
       setPosition({
         x: (stageSize.width - backgroundWidth * fitScale) / 2,
         y: (stageSize.height - backgroundHeight * fitScale) / 2,
@@ -110,13 +145,89 @@ export default function PlanCanvas({
     }
   }, [bgImg, backgroundWidth, backgroundHeight, stageSize]);
 
+  // Helper: convert plant spread (cm) to pixel radius using scale calibration
+  const spreadToPixels = useCallback((spreadCm: number): number => {
+    if (!scale) return spreadCm / 2; // No calibration — use raw value as-is (legacy behaviour)
+    // spreadCm / 100 = metres, * pixelsPerMetre = pixels, / 2 = radius
+    return (spreadCm / 200) * scale.pixelsPerMetre;
+  }, [scale]);
+
+  // Compute drawing bounds (in metres + canvas-px centre) for auto-fit and page placement.
+  // Uses union of placed plants (with their spread) and the background image extent.
+  const drawingBoundsMetres = useMemo(() => {
+    if (!scale) return null;
+    const ppm = scale.pixelsPerMetre;
+    const pts: { x: number; y: number; r: number }[] = [];
+    if (bgImg && backgroundWidth > 0 && backgroundHeight > 0) {
+      pts.push({ x: 0, y: 0, r: 0 });
+      pts.push({ x: backgroundWidth, y: backgroundHeight, r: 0 });
+    }
+    for (const pp of placed) {
+      const plant = plants.find((p) => p.id === pp.plantId);
+      const spread = plant?.spread ?? settings.plantRadius * 2;
+      const r = (spread / 200) * ppm;
+      pts.push({ x: pp.x, y: pp.y, r });
+    }
+    if (pts.length === 0) {
+      // No plants and no image yet — default to a 5m × 5m canvas around origin
+      return { w: 5, h: 5, cx: 0, cy: 0 };
+    }
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const p of pts) {
+      minX = Math.min(minX, p.x - p.r);
+      minY = Math.min(minY, p.y - p.r);
+      maxX = Math.max(maxX, p.x + p.r);
+      maxY = Math.max(maxY, p.y + p.r);
+    }
+    // Add 1m padding so the page doesn't hug the outermost plant
+    const padPx = 1 * ppm;
+    minX -= padPx; minY -= padPx; maxX += padPx; maxY += padPx;
+    return {
+      w: (maxX - minX) / ppm,
+      h: (maxY - minY) / ppm,
+      cx: (minX + maxX) / 2,
+      cy: (minY + maxY) / 2,
+    };
+  }, [scale, placed, plants, bgImg, backgroundWidth, backgroundHeight, settings.plantRadius]);
+
+  const resolvedRatio = useMemo(() => {
+    if (!scale || !drawingBoundsMetres) return null;
+    return resolveRatio(paper, { w: drawingBoundsMetres.w, h: drawingBoundsMetres.h });
+  }, [paper, drawingBoundsMetres, scale]);
+
+  const pageRect = useMemo(() => {
+    if (!scale || !drawingBoundsMetres || resolvedRatio == null) return null;
+    return pageBoundsCanvasPx(paper, scale, drawingBoundsMetres, resolvedRatio);
+  }, [paper, scale, drawingBoundsMetres, resolvedRatio]);
+
+  const printableRect = useMemo(() => {
+    if (!scale || !drawingBoundsMetres || resolvedRatio == null) return null;
+    return printableAreaCanvasPx(paper, scale, drawingBoundsMetres, resolvedRatio);
+  }, [paper, scale, drawingBoundsMetres, resolvedRatio]);
+
+  // Notify parent so the toolbar can show the active ratio + the export can use the same rects
+  useEffect(() => {
+    if (resolvedRatio != null && pageRect && printableRect) {
+      onPageInfoChange?.({ ratio: resolvedRatio, pageRect, printableRect });
+    } else {
+      onPageInfoChange?.(null);
+    }
+  }, [resolvedRatio, pageRect, printableRect, onPageInfoChange]);
+
+  // Real-world grid spacing (canvas pixels per grid line)
+  const gridStepPx = useMemo(() => {
+    if (!scale) return 50; // legacy: 50px when not calibrated
+    const stepM = gridSpacingMetres(resolvedRatio ?? 100);
+    return stepM * scale.pixelsPerMetre;
+  }, [scale, resolvedRatio]);
+
   // Zoom with scroll wheel
   const handleWheel = useCallback((e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
     const stage = stageRef.current;
     if (!stage) return;
 
-    const oldScale = scale;
+    const oldScale = canvasScale;
     const pointer = stage.getPointerPosition();
     if (!pointer) return;
 
@@ -129,12 +240,12 @@ export default function PlanCanvas({
       y: (pointer.y - position.y) / oldScale,
     };
 
-    setScale(newScale);
+    setCanvasScale(newScale);
     setPosition({
       x: pointer.x - mousePointTo.x * newScale,
       y: pointer.y - mousePointTo.y * newScale,
     });
-  }, [scale, position, stageRef]);
+  }, [canvasScale, position, stageRef]);
 
   // Pan with middle mouse or space+drag
   const handleMouseDown = useCallback((e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -160,17 +271,66 @@ export default function PlanCanvas({
   // Arrow placement state
   const [arrowStart, setArrowStart] = useState<{ x: number; y: number } | null>(null);
 
-  // Click on empty canvas = clear selection OR place arrow
+  // Scale line drawing state
+  const [scaleStart, setScaleStart] = useState<{ x: number; y: number } | null>(null);
+  // Reset scaleStart when scaleMode is turned off
+  useEffect(() => {
+    if (!scaleMode) setScaleStart(null);
+  }, [scaleMode]);
+
+  // Click on empty canvas = clear selection OR place arrow OR draw scale line
   const handleStageClick = useCallback((e: Konva.KonvaEventObject<MouseEvent>) => {
     const isBackground = e.target === e.target.getStage() || e.target.attrs.id === "background" || e.target.attrs.id === "bg-image";
+
+    // Scale mode: draw reference line
+    if (scaleMode && isBackground) {
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pointer = stage.getPointerPosition();
+      if (!pointer) return;
+      const x = (pointer.x - position.x) / canvasScale;
+      const y = (pointer.y - position.y) / canvasScale;
+
+      if (!scaleStart) {
+        setScaleStart({ x, y });
+      } else {
+        const dx = x - scaleStart.x;
+        const dy = y - scaleStart.y;
+        const pixelLength = Math.sqrt(dx * dx + dy * dy);
+        onScaleLineDrawn(scaleStart.x, scaleStart.y, x, y, pixelLength);
+        setScaleStart(null);
+      }
+      return;
+    }
+
+    // Border drawing — click to add vertices; click near first to close
+    if (borderMode && isBackground) {
+      const stage = stageRef.current;
+      if (!stage) return;
+      const pointer = stage.getPointerPosition();
+      if (!pointer) return;
+      const x = (pointer.x - position.x) / canvasScale;
+      const y = (pointer.y - position.y) / canvasScale;
+      if (borderInProgress.length >= 3) {
+        const dx = x - borderInProgress[0].x;
+        const dy = y - borderInProgress[0].y;
+        // Snap-close threshold: ~12 canvas px in screen space
+        if (Math.sqrt(dx * dx + dy * dy) * canvasScale < 12) {
+          onFinishBorder();
+          return;
+        }
+      }
+      onAddBorderPoint(x, y);
+      return;
+    }
 
     if (arrowMode && isBackground) {
       const stage = stageRef.current;
       if (!stage) return;
       const pointer = stage.getPointerPosition();
       if (!pointer) return;
-      const x = (pointer.x - position.x) / scale;
-      const y = (pointer.y - position.y) / scale;
+      const x = (pointer.x - position.x) / canvasScale;
+      const y = (pointer.y - position.y) / canvasScale;
 
       if (!arrowStart) {
         setArrowStart({ x, y });
@@ -186,7 +346,7 @@ export default function PlanCanvas({
       onClearSelection();
       setContextMenu(null);
     }
-  }, [onClearSelection, arrowMode, arrowStart, position, scale, stageRef, onSetViewingArrow, onArrowPlaced]);
+  }, [onClearSelection, arrowMode, arrowStart, scaleMode, scaleStart, position, canvasScale, stageRef, onSetViewingArrow, onArrowPlaced, onScaleLineDrawn, borderMode, borderInProgress, onAddBorderPoint, onFinishBorder]);
 
   // Right-click context menu
   const handleContextMenu = useCallback((e: Konva.KonvaEventObject<PointerEvent>) => {
@@ -217,10 +377,10 @@ export default function PlanCanvas({
     if (!containerRect) return;
 
     // Convert screen coords to canvas coords
-    const x = (e.clientX - containerRect.left - position.x) / scale;
-    const y = (e.clientY - containerRect.top - position.y) / scale;
+    const x = (e.clientX - containerRect.left - position.x) / canvasScale;
+    const y = (e.clientY - containerRect.top - position.y) / canvasScale;
     onPlace(plantId, x, y);
-  }, [onPlace, position, scale, stageRef]);
+  }, [onPlace, position, canvasScale, stageRef]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -229,23 +389,39 @@ export default function PlanCanvas({
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       if (e.key === "Delete" || e.key === "Backspace") {
         if (selectedIds.size > 0) {
           e.preventDefault();
           onDeleteSelected();
         }
       }
+      if (borderMode) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (borderInProgress.length >= 3) onFinishBorder();
+        }
+        if (e.key === "Escape") {
+          e.preventDefault();
+          onCancelBorder();
+        }
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedIds, onDeleteSelected]);
+  }, [selectedIds, onDeleteSelected, borderMode, borderInProgress, onFinishBorder, onCancelBorder]);
 
   const getPlantById = (id: string) => plants.find((p) => p.id === id);
 
   return (
     <div
       ref={containerRef}
-      className={`relative flex-1 bg-neutral-100 overflow-hidden ${arrowMode ? "cursor-pointer" : "cursor-crosshair"}`}
+      className={`relative flex-1 bg-neutral-50 overflow-hidden ${
+        isPanning ? "cursor-grabbing" :
+        scaleMode || borderMode ? "cursor-crosshair" :
+        arrowMode ? "cursor-pointer" :
+        "cursor-default"
+      }`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       style={{ minHeight: 400 }}
@@ -254,8 +430,8 @@ export default function PlanCanvas({
         ref={stageRef}
         width={stageSize.width}
         height={stageSize.height}
-        scaleX={scale}
-        scaleY={scale}
+        scaleX={canvasScale}
+        scaleY={canvasScale}
         x={position.x}
         y={position.y}
         onWheel={handleWheel}
@@ -289,31 +465,43 @@ export default function PlanCanvas({
             />
           )}
 
-          {/* Grid overlay */}
-          {settings.showGrid && bgImg && (
-            <>
-              {Array.from({ length: Math.ceil(backgroundWidth / 50) }, (_, i) => (
-                <Rect
-                  key={`gv-${i}`}
-                  x={i * 50}
-                  y={0}
-                  width={1}
-                  height={backgroundHeight}
-                  fill="rgba(0,0,0,0.08)"
-                />
-              ))}
-              {Array.from({ length: Math.ceil(backgroundHeight / 50) }, (_, i) => (
-                <Rect
-                  key={`gh-${i}`}
-                  x={0}
-                  y={i * 50}
-                  width={backgroundWidth}
-                  height={1}
-                  fill="rgba(0,0,0,0.08)"
-                />
-              ))}
-            </>
-          )}
+          {/* Grid overlay (real-world metres when scale is set, falls back to 50px) */}
+          {settings.showGrid && (() => {
+            // Determine grid extent: prefer page rect when set, else image, else nothing.
+            const gx = pageRect ? pageRect.x : 0;
+            const gy = pageRect ? pageRect.y : 0;
+            const gw = pageRect ? pageRect.w : backgroundWidth;
+            const gh = pageRect ? pageRect.h : backgroundHeight;
+            if (gw <= 0 || gh <= 0) return null;
+            const verticals = Math.ceil(gw / gridStepPx) + 1;
+            const horizontals = Math.ceil(gh / gridStepPx) + 1;
+            return (
+              <>
+                {Array.from({ length: verticals }, (_, i) => (
+                  <Rect
+                    key={`gv-${i}`}
+                    x={gx + i * gridStepPx}
+                    y={gy}
+                    width={1}
+                    height={gh}
+                    fill="rgba(0,0,0,0.08)"
+                    listening={false}
+                  />
+                ))}
+                {Array.from({ length: horizontals }, (_, i) => (
+                  <Rect
+                    key={`gh-${i}`}
+                    x={gx}
+                    y={gy + i * gridStepPx}
+                    width={gw}
+                    height={1}
+                    fill="rgba(0,0,0,0.08)"
+                    listening={false}
+                  />
+                ))}
+              </>
+            );
+          })()}
 
           {/* Placed plants */}
           {placed.map((pp) => {
@@ -324,9 +512,10 @@ export default function PlanCanvas({
 
             if (viewMode === "scientific") {
               // Scientific / Growth view
-              const matureSpread = plant.spread || baseR * 3; // fallback if no spread data
+              const matureSpreadCm = plant.spread || baseR * 3; // fallback if no spread data
               const growthFactor = GROWTH_MULTIPLIERS[growthYear] || 1;
-              const spreadR = (matureSpread / 2) * growthFactor;
+              const matureR = scale ? spreadToPixels(matureSpreadCm) : matureSpreadCm / 2;
+              const spreadR = matureR * growthFactor;
               const coreR = Math.max(4, spreadR * 0.15); // small core dot
               // Muted green palette based on plant type
               const isGrass = plant.growthHabit?.toLowerCase().includes("gramin") || ["Anemanthele", "Pennisetum", "Stipa", "Miscanthus"].some(g => plant.name.includes(g));
@@ -357,7 +546,7 @@ export default function PlanCanvas({
                   {/* Mature outline (year 5) — shown as ghost */}
                   {growthYear < 5 && (
                     <Circle
-                      radius={matureSpread / 2}
+                      radius={matureR}
                       stroke={spreadStroke}
                       strokeWidth={0.5}
                       opacity={0.15}
@@ -392,7 +581,7 @@ export default function PlanCanvas({
                   />
                   {/* Spread measurement */}
                   <Text
-                    text={`${Math.round(matureSpread * growthFactor)}cm`}
+                    text={`${Math.round(matureSpreadCm * growthFactor)}cm`}
                     fontSize={7}
                     fontFamily="Arial"
                     fill="#9ca3af"
@@ -407,6 +596,11 @@ export default function PlanCanvas({
             }
 
             // Default: Colour-coded view
+            // When scale is calibrated, size the circle to real-world spread
+            const scaledR = scale && plant.spread
+              ? spreadToPixels(plant.spread)
+              : baseR;
+
             return (
               <Group
                 key={pp.uid}
@@ -420,7 +614,7 @@ export default function PlanCanvas({
                 {/* Spread circle (if toggled per-plant) */}
                 {plant.showSpread && plant.spread && (
                   <Circle
-                    radius={plant.spread / 2}
+                    radius={scale ? spreadToPixels(plant.spread) : plant.spread / 2}
                     fill={plant.colour}
                     opacity={0.12}
                     stroke={plant.colour}
@@ -431,11 +625,11 @@ export default function PlanCanvas({
                 )}
                 {/* Selection ring */}
                 {isSelected && (
-                  <Circle radius={baseR + 3} stroke="#2563eb" strokeWidth={2} dash={[4, 2]} />
+                  <Circle radius={scaledR + 3} stroke="#2563eb" strokeWidth={2} dash={[4, 2]} />
                 )}
                 {/* Plant circle */}
                 <Circle
-                  radius={baseR}
+                  radius={scaledR}
                   fill={plant.colour}
                   stroke={isSelected ? "#2563eb" : "rgba(0,0,0,0.3)"}
                   strokeWidth={isSelected ? 2 : 1}
@@ -444,16 +638,16 @@ export default function PlanCanvas({
                 {/* Plant code text */}
                 <Text
                   text={plant.code}
-                  fontSize={baseR * 0.9}
+                  fontSize={Math.min(scaledR * 0.9, 24)}
                   fontFamily="Arial"
                   fontStyle="bold"
                   fill={plant.textDark ? "#1a1a1a" : "#ffffff"}
                   align="center"
                   verticalAlign="middle"
-                  width={baseR * 2}
-                  height={baseR * 2}
-                  offsetX={baseR}
-                  offsetY={baseR}
+                  width={scaledR * 2}
+                  height={scaledR * 2}
+                  offsetX={scaledR}
+                  offsetY={scaledR}
                   listening={false}
                 />
               </Group>
@@ -483,6 +677,270 @@ export default function PlanCanvas({
               listening={false}
             />
           )}
+
+          {/* Scale reference line — sized so it prints visibly at any A4/A3 ratio */}
+          {scale && (() => {
+            // Target sizes on the printed page, in mm. Convert to canvas pixels via ratio.
+            // canvasPx = (mm / 1000) × ratio × pixelsPerMetre.
+            // If no ratio yet, fall back to roughly 0.5m of real world.
+            const ratio = resolvedRatio ?? 100;
+            const ppm = scale.pixelsPerMetre;
+            const mmToPx = (mm: number) => (mm / 1000) * ratio * ppm;
+            const tickMm = 4;       // end-tick half-length on paper
+            const strokeMm = 0.6;   // line stroke width on paper
+            const labelMm = 5;      // label height on paper
+            const tickHalfPx = mmToPx(tickMm);
+            const strokePx = Math.max(2, mmToPx(strokeMm));
+            const fontSizePx = Math.max(14, mmToPx(labelMm));
+            const dx = scale.x2 - scale.x1;
+            const dy = scale.y2 - scale.y1;
+            const len = Math.sqrt(dx * dx + dy * dy) || 1;
+            const nx = -dy / len * tickHalfPx;
+            const ny = dx / len * tickHalfPx;
+            const cx = (scale.x1 + scale.x2) / 2;
+            const cy = (scale.y1 + scale.y2) / 2;
+            // Offset the label perpendicular to the line so it sits above
+            const offMagPx = mmToPx(7);
+            const offX = -dy / len * offMagPx;
+            const offY = dx / len * offMagPx;
+            const labelW = fontSizePx * 5;
+            return (
+              <Group listening={false}>
+                <Line
+                  points={[scale.x1, scale.y1, scale.x2, scale.y2]}
+                  stroke="#dc2626"
+                  strokeWidth={strokePx}
+                  dash={[strokePx * 4, strokePx * 2]}
+                />
+                <Line
+                  points={[scale.x1 + nx, scale.y1 + ny, scale.x1 - nx, scale.y1 - ny]}
+                  stroke="#dc2626"
+                  strokeWidth={strokePx}
+                />
+                <Line
+                  points={[scale.x2 + nx, scale.y2 + ny, scale.x2 - nx, scale.y2 - ny]}
+                  stroke="#dc2626"
+                  strokeWidth={strokePx}
+                />
+                {/* White halo behind label so it's readable over plants */}
+                <Rect
+                  x={cx + offX - labelW / 2 - mmToPx(1)}
+                  y={cy + offY - fontSizePx * 0.55 - mmToPx(0.5)}
+                  width={labelW + mmToPx(2)}
+                  height={fontSizePx * 1.1 + mmToPx(1)}
+                  fill="rgba(255,255,255,0.85)"
+                  cornerRadius={mmToPx(0.5)}
+                />
+                <Text
+                  x={cx + offX}
+                  y={cy + offY - fontSizePx * 0.5}
+                  text={`${scale.realMetres}m reference`}
+                  fontSize={fontSizePx}
+                  fontFamily="Arial"
+                  fontStyle="bold"
+                  fill="#dc2626"
+                  align="center"
+                  width={labelW}
+                  offsetX={labelW / 2}
+                />
+              </Group>
+            );
+          })()}
+
+          {/* Completed border polygon + area label */}
+          {border && border.points.length >= 3 && (() => {
+            const pts = border.points;
+            // Shoelace area in canvas pixels
+            let s = 0;
+            for (let i = 0; i < pts.length; i++) {
+              const j = (i + 1) % pts.length;
+              s += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
+            }
+            const areaPx = Math.abs(s) / 2;
+            // Centroid
+            let cx = 0, cy = 0;
+            for (const p of pts) { cx += p.x; cy += p.y; }
+            cx /= pts.length; cy /= pts.length;
+            const ratio = resolvedRatio ?? 100;
+            const ppm = scale?.pixelsPerMetre ?? 100;
+            const areaM2 = scale ? areaPx / (ppm * ppm) : null;
+            const fontSizePx = Math.max(16, scale ? ((6 / 1000) * ratio * ppm) : 18);
+            // Flatten for Konva Line
+            const flat: number[] = [];
+            for (const p of pts) flat.push(p.x, p.y);
+            return (
+              <Group listening={false}>
+                <Line
+                  points={flat}
+                  closed
+                  fill="rgba(245, 158, 11, 0.10)"
+                  stroke="#d97706"
+                  strokeWidth={Math.max(2, ((0.6 / 1000) * ratio * ppm))}
+                />
+                {areaM2 != null && (
+                  <>
+                    <Rect
+                      x={cx - fontSizePx * 3}
+                      y={cy - fontSizePx * 0.7}
+                      width={fontSizePx * 6}
+                      height={fontSizePx * 1.4}
+                      fill="rgba(255,255,255,0.9)"
+                      cornerRadius={4}
+                      stroke="#d97706"
+                      strokeWidth={1}
+                    />
+                    <Text
+                      x={cx - fontSizePx * 3}
+                      y={cy - fontSizePx * 0.4}
+                      width={fontSizePx * 6}
+                      text={`${areaM2.toFixed(1)} m²`}
+                      fontSize={fontSizePx}
+                      fontFamily="Arial"
+                      fontStyle="bold"
+                      fill="#92400e"
+                      align="center"
+                    />
+                  </>
+                )}
+              </Group>
+            );
+          })()}
+
+          {/* In-progress border drawing */}
+          {borderMode && borderInProgress.length > 0 && (
+            <Group listening={false}>
+              {borderInProgress.length > 1 && (
+                <Line
+                  points={borderInProgress.flatMap((p) => [p.x, p.y])}
+                  stroke="#d97706"
+                  strokeWidth={2}
+                  dash={[6, 4]}
+                />
+              )}
+              {borderInProgress.map((p, i) => (
+                <Circle
+                  key={`bp-${i}`}
+                  x={p.x}
+                  y={p.y}
+                  radius={i === 0 && borderInProgress.length >= 3 ? 8 : 4}
+                  fill={i === 0 && borderInProgress.length >= 3 ? "#fef3c7" : "#d97706"}
+                  stroke="#d97706"
+                  strokeWidth={2}
+                />
+              ))}
+            </Group>
+          )}
+
+          {/* Scale line drawing preview */}
+          {scaleStart && scaleMode && (
+            <Circle
+              x={scaleStart.x}
+              y={scaleStart.y}
+              radius={6}
+              fill="#dc2626"
+              listening={false}
+            />
+          )}
+
+          {/* Page-bounds rectangles + scale bar (only when scale calibrated) */}
+          {pageRect && printableRect && resolvedRatio != null && scale && (() => {
+            const stepM = gridSpacingMetres(resolvedRatio);
+            const stepPx = stepM * scale.pixelsPerMetre;
+            // 5-step bar with tick labels; never wider than the printable area
+            const maxBarPx = printableRect.w - 200;
+            const stepCount = Math.max(2, Math.min(5, Math.floor(maxBarPx / stepPx)));
+            const barH = Math.max(14, scale.pixelsPerMetre * 0.04); // ~4cm tall in real-world ≈ visible
+            const barX = printableRect.x + 16;
+            const barY = printableRect.y + printableRect.h - barH - 28;
+            const fontSize = Math.max(10, scale.pixelsPerMetre * 0.04);
+            return (
+              <Group listening={false} name="page-overlay">
+                {/* Outer paper edge (dashed, light) */}
+                <Rect
+                  x={pageRect.x}
+                  y={pageRect.y}
+                  width={pageRect.w}
+                  height={pageRect.h}
+                  stroke="#94a3b8"
+                  strokeWidth={1}
+                  dash={[6, 4]}
+                />
+                {/* Inner printable area (solid teal) — what actually prints */}
+                <Rect
+                  x={printableRect.x}
+                  y={printableRect.y}
+                  width={printableRect.w}
+                  height={printableRect.h}
+                  stroke="#0f766e"
+                  strokeWidth={2}
+                  dash={[10, 6]}
+                />
+                <Text
+                  x={printableRect.x + 8}
+                  y={printableRect.y + 8}
+                  text={`${paper.size} ${paper.orientation === "landscape" ? "Landscape" : "Portrait"}  ·  Scale 1:${resolvedRatio}${paper.ratio == null ? " (auto)" : ""}  ·  printable ${printableRect.widthMm.toFixed(0)}×${printableRect.heightMm.toFixed(0)}mm`}
+                  fontSize={Math.max(10, scale.pixelsPerMetre * 0.05)}
+                  fontFamily="Arial"
+                  fontStyle="bold"
+                  fill="#0f766e"
+                />
+
+                {/* Scale-bar — alternating black/white segments aligned to grid */}
+                {Array.from({ length: stepCount }, (_, i) => (
+                  <Rect
+                    key={`sb-${i}`}
+                    x={barX + i * stepPx}
+                    y={barY}
+                    width={stepPx}
+                    height={barH}
+                    fill={i % 2 === 0 ? "#1a1a1a" : "#ffffff"}
+                    stroke="#1a1a1a"
+                    strokeWidth={1}
+                  />
+                ))}
+                {Array.from({ length: stepCount + 1 }, (_, i) => {
+                  const m = i * stepM;
+                  return (
+                    <Text
+                      key={`tk-${i}`}
+                      x={barX + i * stepPx - 24}
+                      y={barY + barH + 2}
+                      width={48}
+                      align="center"
+                      text={`${m}m`}
+                      fontSize={fontSize}
+                      fontFamily="Arial"
+                      fill="#1a1a1a"
+                    />
+                  );
+                })}
+                <Text
+                  x={barX + stepPx * stepCount + 12}
+                  y={barY + barH * 0.25}
+                  text={`Scale 1:${resolvedRatio}  ·  grid ${stepM}m`}
+                  fontSize={fontSize}
+                  fontFamily="Arial"
+                  fontStyle="bold"
+                  fill="#1a1a1a"
+                />
+
+                {/* Calibration checksum — show the scale-line distance and what it should measure on paper */}
+                {(() => {
+                  const refMm = (scale.realMetres * 1000) / resolvedRatio;
+                  return (
+                    <Text
+                      x={printableRect.x + 8}
+                      y={printableRect.y + printableRect.h - barH - 56}
+                      text={`Calibration: ${scale.realMetres}m reference → ${refMm.toFixed(1)}mm on paper at 1:${resolvedRatio}`}
+                      fontSize={fontSize}
+                      fontFamily="Arial"
+                      fill="#525252"
+                    />
+                  );
+                })()}
+              </Group>
+            );
+          })()}
         </Layer>
       </Stage>
 
@@ -504,20 +962,82 @@ export default function PlanCanvas({
         </div>
       )}
 
+      {/* Border mode banner */}
+      {borderMode && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white px-4 py-2 rounded-lg shadow-lg text-xs font-medium flex items-center gap-2 z-10">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v18M19 3v18M3 5h18M3 19h18" />
+          </svg>
+          {borderInProgress.length === 0
+            ? "Click around your bed to add corners"
+            : borderInProgress.length < 3
+            ? `Click to add corners (${borderInProgress.length})`
+            : `Click first point to close (${borderInProgress.length} corners) · Enter to finish · Esc to cancel`}
+          <button onClick={onCancelBorder} className="ml-2 px-2 py-0.5 bg-white/20 rounded hover:bg-white/30 text-[10px]">
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {/* Scale mode banner */}
+      {scaleMode && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg text-xs font-medium flex items-center gap-2 z-10">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          {scaleStart ? "Click the end point of your reference line" : "Click the start point of a known distance"}
+          <button onClick={onScaleModeExit} className="ml-2 px-2 py-0.5 bg-white/20 rounded hover:bg-white/30 text-[10px]">
+            Cancel
+          </button>
+        </div>
+      )}
+
       {/* Zoom indicator */}
       <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur px-2 py-1 rounded text-xs text-neutral-500 font-mono">
-        {Math.round(scale * 100)}%
+        {Math.round(canvasScale * 100)}%
       </div>
 
-      {/* Empty state */}
+      {/* Empty / onboarding state */}
       {!backgroundImage && placed.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center text-neutral-400">
-            <svg className="mx-auto mb-3 w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <p className="text-sm font-medium">Upload a plan image to get started</p>
-            <p className="text-xs mt-1">or drag plants directly onto the canvas</p>
+          <div className="bg-white border border-neutral-200 rounded-xl shadow-sm px-8 py-7 max-w-md">
+            <div className="flex items-center gap-2 mb-1">
+              <svg className="w-5 h-5 text-emerald-700" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2c-3.5 0-6 2.5-6 6 0 2.5 1.5 4.5 3 5.5V20a1 1 0 002 0v-6.5c.5-.2 1-.5 1-.5s.5.3 1 .5V20a1 1 0 002 0v-6.5c1.5-1 3-3 3-5.5 0-3.5-2.5-6-6-6z"/></svg>
+              <h2 className="text-sm font-semibold text-neutral-900 tracking-tight">Plant your plan</h2>
+            </div>
+            <p className="text-xs text-neutral-500 mb-5">Print true-to-scale planting plans on A4 or A3.</p>
+            <ol className="space-y-3 text-[13px] text-neutral-700">
+              <li className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-100 text-neutral-700 text-[11px] font-semibold flex items-center justify-center mt-0.5">1</span>
+                <span><span className="font-medium">Upload</span> your border outline or site plan.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-100 text-neutral-700 text-[11px] font-semibold flex items-center justify-center mt-0.5">2</span>
+                <span><span className="font-medium">Set scale</span> by drawing a line of known length.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-100 text-neutral-700 text-[11px] font-semibold flex items-center justify-center mt-0.5">3</span>
+                <span><span className="font-medium">Pick paper</span> — A4 / A3 at 1:50, 1:100 or auto-fit.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-5 h-5 rounded-full bg-neutral-100 text-neutral-700 text-[11px] font-semibold flex items-center justify-center mt-0.5">4</span>
+                <span><span className="font-medium">Drag plants</span> from the palette &amp; export the print-ready PDF.</span>
+              </li>
+            </ol>
+            <p className="mt-5 text-[11px] text-neutral-400">Drop an image anywhere on this canvas to begin.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Mid-flow nudge: image up, but scale not set yet */}
+      {backgroundImage && !scale && (
+        <div className="absolute top-3 right-3 bg-white border border-neutral-200 rounded-lg shadow-sm px-3 py-2 max-w-[260px] z-10">
+          <div className="flex items-start gap-2">
+            <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold flex items-center justify-center mt-0.5">2</div>
+            <div className="text-[12px] text-neutral-700">
+              <span className="font-medium">Set the scale.</span>
+              <span className="block text-[11px] text-neutral-500 mt-0.5">Click the Scale button, then click two points along a known dimension.</span>
+            </div>
           </div>
         </div>
       )}

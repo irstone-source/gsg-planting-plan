@@ -3,13 +3,14 @@
 import { useRef, useState } from "react";
 import Konva from "konva";
 import { User } from "@supabase/supabase-js";
-import { ProjectSettings } from "./types";
+import { ProjectSettings, ScaleCalibration, PaperSettings, SCALE_RATIOS, BorderPolygon } from "./types";
 
 export type ViewMode = "colour" | "scientific";
 
 interface ToolbarProps {
   settings: ProjectSettings;
   onUpdateSettings: (partial: Partial<ProjectSettings>) => void;
+  onUpdatePaper: (partial: Partial<PaperSettings>) => void;
   onImageUpload: (file: File) => void;
   onUndo: () => void;
   onRedo: () => void;
@@ -32,11 +33,25 @@ interface ToolbarProps {
   onGrowthYearChange: (year: number) => void;
   isAnimating: boolean;
   onToggleAnimate: () => void;
+  scale: ScaleCalibration | null;
+  scaleMode: boolean;
+  onScaleModeToggle: () => void;
+  onClearScale: () => void;
+  /** Resolved ratio after auto-fit (null when scale not set) */
+  resolvedRatio: number | null;
+  border: BorderPolygon | null;
+  borderMode: boolean;
+  onBorderModeToggle: () => void;
+  onClearBorder: () => void;
+  onExportGrowth: () => void;
+  onExportPrintPdf: () => void;
+  exportingPrint?: boolean;
 }
 
 export default function Toolbar({
   settings,
   onUpdateSettings,
+  onUpdatePaper,
   onImageUpload,
   onUndo,
   onRedo,
@@ -59,9 +74,23 @@ export default function Toolbar({
   onGrowthYearChange,
   isAnimating,
   onToggleAnimate,
+  scale,
+  scaleMode,
+  onScaleModeToggle,
+  onClearScale,
+  resolvedRatio,
+  border,
+  borderMode,
+  onBorderModeToggle,
+  onClearBorder,
+  onExportGrowth,
+  onExportPrintPdf,
+  exportingPrint = false,
 }: ToolbarProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showPaper, setShowPaper] = useState(false);
+  const paper = settings.paper;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,7 +144,7 @@ export default function Toolbar({
       ctx.font = "16px Arial";
       ctx.fillStyle = "#737373";
       ctx.fillText(`${settings.drawingNumber}  |  ${settings.date}  |  NTS  |  ${totalCount} plants`, 20, y + 65);
-      ctx.fillText("George Stone Gardens", 20, y + 95);
+      ctx.fillText("plantingplans.co.uk", 20, y + 95);
 
       // Download
       const link = document.createElement("a");
@@ -132,13 +161,11 @@ export default function Toolbar({
   };
 
   return (
-    <div className="h-12 bg-white border-b border-neutral-200 flex items-center px-3 gap-2 shrink-0">
+    <div className="h-12 bg-white border-b border-neutral-200/80 flex items-center px-3 gap-1.5 shrink-0 shadow-[0_1px_0_0_rgba(0,0,0,0.02)]">
       {/* Logo */}
-      <div className="flex items-center gap-2 mr-3">
-        <div className="w-7 h-7 bg-emerald-600 rounded-md flex items-center justify-center">
-          <span className="text-white text-xs font-bold">GSG</span>
-        </div>
-        <span className="text-sm font-semibold text-neutral-800 hidden sm:block">Planting Plan Tool</span>
+      <div className="flex items-center gap-2 mr-2 pr-1">
+        <svg className="w-5 h-5 text-emerald-700" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c-3.5 0-6 2.5-6 6 0 2.5 1.5 4.5 3 5.5V20a1 1 0 002 0v-6.5c.5-.2 1-.5 1-.5s.5.3 1 .5V20a1 1 0 002 0v-6.5c1.5-1 3-3 3-5.5 0-3.5-2.5-6-6-6z"/></svg>
+        <span className="text-[13px] font-semibold text-neutral-800 tracking-tight hidden sm:block">plantingplans<span className="text-neutral-400">.co.uk</span></span>
       </div>
 
       <div className="w-px h-6 bg-neutral-200" />
@@ -153,13 +180,17 @@ export default function Toolbar({
       />
       <button
         onClick={() => fileRef.current?.click()}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md hover:bg-neutral-100 text-neutral-600"
+        className={`flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-md transition-colors ${
+          backgroundImage
+            ? "text-neutral-600 hover:bg-neutral-100"
+            : "bg-neutral-900 text-white hover:bg-neutral-800"
+        }`}
         title="Upload plan image"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v12m0-12l-4 4m4-4l4 4M4 20h16" />
         </svg>
-        Upload
+        {backgroundImage ? "Replace" : "Upload"}
       </button>
 
       <div className="w-px h-6 bg-neutral-200" />
@@ -188,44 +219,197 @@ export default function Toolbar({
 
       <div className="w-px h-6 bg-neutral-200" />
 
-      {/* Plant size slider */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Default</span>
-        <input
-          type="range"
-          min={8}
-          max={40}
-          value={settings.plantRadius}
-          onChange={(e) => onUpdateSettings({ plantRadius: parseInt(e.target.value) })}
-          className="w-20 h-1 accent-emerald-600"
-        />
-        <span className="text-xs text-neutral-500 font-mono w-5">{settings.plantRadius}</span>
-      </div>
-
-      <div className="w-px h-6 bg-neutral-200" />
-
       {/* Grid toggle */}
       <button
         onClick={() => onUpdateSettings({ showGrid: !settings.showGrid })}
-        className={`p-1.5 rounded text-xs ${settings.showGrid ? "bg-emerald-100 text-emerald-700" : "hover:bg-neutral-100 text-neutral-500"}`}
-        title="Toggle grid"
+        className={`p-1.5 rounded-md transition-colors ${settings.showGrid ? "bg-neutral-900 text-white" : "hover:bg-neutral-100 text-neutral-500"}`}
+        title={settings.showGrid ? "Hide grid" : "Show grid"}
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h16M4 8h16M4 12h16M4 16h16M4 20h16M4 4v16M8 4v16M12 4v16M16 4v16M20 4v16" />
         </svg>
       </button>
 
+      {/* Scale calibration */}
+      <button
+        onClick={onScaleModeToggle}
+        className={`px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 transition-colors ${
+          scaleMode
+            ? "bg-red-50 text-red-700 ring-1 ring-red-200"
+            : scale
+            ? "bg-neutral-100 text-neutral-800 hover:bg-neutral-200/70"
+            : "text-neutral-600 hover:bg-neutral-100"
+        }`}
+        title={scale ? `Scale: ${scale.realMetres}m reference (${Math.round(scale.pixelsPerMetre)} px/m)` : "Set scale — draw a reference line"}
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+        {scale ? `${scale.realMetres}m` : "Scale"}
+      </button>
+      {scale && (
+        <button
+          onClick={onClearScale}
+          className="p-1 rounded hover:bg-red-50 text-neutral-400 hover:text-red-500"
+          title="Remove scale calibration"
+        >
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
+      {/* Paper / print scale */}
+      <div className="relative">
+        <button
+          disabled={!scale}
+          onClick={() => setShowPaper((v) => !v)}
+          className={`px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 transition-colors ${
+            !scale
+              ? "text-neutral-300 cursor-not-allowed"
+              : showPaper
+              ? "bg-neutral-900 text-white"
+              : "bg-neutral-100 text-neutral-800 hover:bg-neutral-200/70"
+          }`}
+          title={scale ? `Paper: ${paper.size} ${paper.orientation}, 1:${resolvedRatio ?? "?"}` : "Set scale first"}
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <rect x="6" y="3" width="12" height="18" rx="1.5" />
+            <path strokeLinecap="round" d="M9 8h6M9 12h6M9 16h4" />
+          </svg>
+          {scale && resolvedRatio
+            ? `${paper.size} · 1:${resolvedRatio}`
+            : "Paper"}
+        </button>
+        {showPaper && scale && (
+          <div className="absolute left-0 top-full mt-1 w-64 bg-white border border-neutral-200 rounded-lg shadow-lg p-3 z-50 space-y-3">
+            <div>
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">Size</label>
+              <div className="flex gap-1">
+                {(["A4", "A3"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => onUpdatePaper({ size: s })}
+                    className={`flex-1 px-2 py-1.5 text-xs rounded border ${
+                      paper.size === s ? "bg-teal-600 text-white border-teal-600" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">Orientation</label>
+              <div className="flex gap-1">
+                {(["portrait", "landscape"] as const).map((o) => (
+                  <button
+                    key={o}
+                    onClick={() => onUpdatePaper({ orientation: o })}
+                    className={`flex-1 px-2 py-1.5 text-xs rounded border capitalize ${
+                      paper.orientation === o ? "bg-teal-600 text-white border-teal-600" : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                    }`}
+                  >
+                    {o}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">
+                Scale ratio {paper.ratio == null && resolvedRatio != null && (
+                  <span className="text-teal-600 normal-case tracking-normal font-medium ml-1">(auto: 1:{resolvedRatio})</span>
+                )}
+              </label>
+              <select
+                value={paper.ratio ?? "auto"}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  onUpdatePaper({ ratio: v === "auto" ? null : parseInt(v) });
+                }}
+                className="w-full px-2 py-1.5 text-sm border border-neutral-200 rounded bg-white"
+              >
+                <option value="auto">Auto-fit</option>
+                {SCALE_RATIOS.map((r) => (
+                  <option key={r} value={r}>1:{r}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">Margin (mm)</label>
+              <input
+                type="number"
+                min={5}
+                max={40}
+                value={paper.marginMm}
+                onChange={(e) => onUpdatePaper({ marginMm: Math.max(0, parseInt(e.target.value) || 0) })}
+                className="w-full px-2 py-1.5 text-sm border border-neutral-200 rounded bg-white"
+              />
+            </div>
+            <div className="text-[10px] text-neutral-400 leading-snug pt-1 border-t border-neutral-100">
+              Print at 100% / "Actual size" to get a true-to-scale plan.
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Border drawing */}
+      <button
+        disabled={!scale}
+        onClick={onBorderModeToggle}
+        className={`px-2 py-1.5 rounded-md text-[11px] font-medium flex items-center gap-1.5 transition-colors ${
+          !scale
+            ? "text-neutral-300 cursor-not-allowed"
+            : borderMode
+            ? "bg-red-50 text-red-700 ring-1 ring-red-200"
+            : border
+            ? "bg-neutral-100 text-neutral-800 hover:bg-neutral-200/70"
+            : "text-neutral-600 hover:bg-neutral-100"
+        }`}
+        title={!scale ? "Set scale first" : border ? "Re-draw bed border" : "Draw bed border to measure area"}
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6l8-3 8 3v12l-8 3-8-3V6z" />
+        </svg>
+        {(() => {
+          if (border && scale) {
+            const pts = border.points;
+            let s = 0;
+            for (let i = 0; i < pts.length; i++) {
+              const j = (i + 1) % pts.length;
+              s += pts[i].x * pts[j].y - pts[j].x * pts[i].y;
+            }
+            const areaPx = Math.abs(s) / 2;
+            const areaM2 = areaPx / (scale.pixelsPerMetre * scale.pixelsPerMetre);
+            return `${areaM2.toFixed(1)} m²`;
+          }
+          return "Border";
+        })()}
+      </button>
+      {border && (
+        <button
+          onClick={onClearBorder}
+          className="p-1 rounded hover:bg-red-50 text-neutral-400 hover:text-red-500"
+          title="Remove border"
+        >
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
       {/* Opacity slider */}
       {backgroundImage && (
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] text-neutral-400 uppercase tracking-wider">Bg</span>
+          <span className="text-[10px] text-neutral-400 font-medium tracking-wide">BG</span>
           <input
             type="range"
             min={0}
             max={100}
             value={settings.backgroundOpacity * 100}
             onChange={(e) => onUpdateSettings({ backgroundOpacity: parseInt(e.target.value) / 100 })}
-            className="w-16 h-1 accent-emerald-600"
+            className="w-16 h-1 accent-neutral-700"
+            title="Background image opacity"
           />
         </div>
       )}
@@ -237,20 +421,20 @@ export default function Toolbar({
         <button
           onClick={() => onViewModeChange("colour")}
           className={`px-2 py-1 text-[10px] rounded font-medium transition-colors ${
-            viewMode === "colour" ? "bg-white text-emerald-700 shadow-sm" : "text-neutral-500"
+            viewMode === "colour" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"
           }`}
-          title="Colour-coded circles"
+          title="Colour-coded plant circles"
         >
-          Colour
+          Plan
         </button>
         <button
           onClick={() => onViewModeChange("scientific")}
           className={`px-2 py-1 text-[10px] rounded font-medium transition-colors ${
-            viewMode === "scientific" ? "bg-white text-blue-700 shadow-sm" : "text-neutral-500"
+            viewMode === "scientific" ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-500 hover:text-neutral-700"
           }`}
-          title="Scientific view with spread"
+          title="Mature spread visualisation with year-by-year growth"
         >
-          Growth
+          Mature
         </button>
       </div>
 
@@ -258,7 +442,7 @@ export default function Toolbar({
       {viewMode === "scientific" && (
         <>
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-blue-500 font-bold w-7">Yr {growthYear}</span>
+            <span className="text-[10px] text-neutral-500 font-medium w-8 tracking-tight">Yr {growthYear}</span>
             <input
               type="range"
               min={1}
@@ -266,12 +450,12 @@ export default function Toolbar({
               step={1}
               value={growthYear}
               onChange={(e) => onGrowthYearChange(parseInt(e.target.value))}
-              className="w-20 h-1 accent-blue-600"
+              className="w-20 h-1 accent-emerald-700"
             />
           </div>
           <button
             onClick={onToggleAnimate}
-            className={`p-1.5 rounded ${isAnimating ? "bg-blue-100 text-blue-600" : "hover:bg-neutral-100 text-neutral-500"}`}
+            className={`p-1.5 rounded-md transition-colors ${isAnimating ? "bg-neutral-900 text-white" : "hover:bg-neutral-100 text-neutral-500"}`}
             title={isAnimating ? "Stop animation" : "Animate growth (Year 1→5)"}
           >
             {isAnimating ? (
@@ -348,7 +532,7 @@ export default function Toolbar({
       <button
         onClick={onSave}
         disabled={saving}
-        className="relative px-2.5 py-1.5 text-xs border border-neutral-200 rounded-md hover:bg-neutral-50 text-neutral-600 font-medium flex items-center gap-1"
+        className="relative px-2.5 py-1.5 text-[11px] font-medium border border-neutral-200 rounded-md hover:bg-neutral-50 hover:border-neutral-300 text-neutral-700 flex items-center gap-1.5 transition-colors"
         title="Save plan (Ctrl+S)"
       >
         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -361,15 +545,35 @@ export default function Toolbar({
       <div className="flex gap-1">
         <button
           onClick={() => exportPNG(true)}
-          className="px-2.5 py-1.5 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 font-medium"
+          className="px-2.5 py-1.5 text-[11px] font-medium bg-white border border-neutral-200 text-neutral-700 rounded-md hover:bg-neutral-50 hover:border-neutral-300 transition-colors"
+          title="PNG of plants on top of your background image"
         >
-          Export PNG
+          Plan PNG
         </button>
         <button
           onClick={() => exportPNG(false)}
-          className="px-2.5 py-1.5 text-xs bg-neutral-800 text-white rounded-md hover:bg-neutral-900 font-medium"
+          className="px-2.5 py-1.5 text-[11px] font-medium bg-white border border-neutral-200 text-neutral-700 rounded-md hover:bg-neutral-50 hover:border-neutral-300 transition-colors"
+          title="PNG of plants only — no background"
         >
-          Clean PNG
+          Plants PNG
+        </button>
+        <button
+          onClick={onExportGrowth}
+          className="px-2.5 py-1.5 text-[11px] font-medium bg-white border border-neutral-200 text-neutral-700 rounded-md hover:bg-neutral-50 hover:border-neutral-300 transition-colors"
+          title="Export growth timeline showing Year 1, 2, 3 & 5"
+        >
+          Growth PDF
+        </button>
+        <button
+          disabled={!scale || !resolvedRatio || exportingPrint}
+          onClick={onExportPrintPdf}
+          className="px-3 py-1.5 text-[11px] font-medium bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition-colors disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed flex items-center gap-1.5"
+          title={scale ? `Print-ready PDF at ${paper.size} ${paper.orientation}, 1:${resolvedRatio}` : "Set scale first"}
+        >
+          {exportingPrint && (
+            <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={3} strokeOpacity={0.3} /><path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth={3} strokeLinecap="round" /></svg>
+          )}
+          {exportingPrint ? "Exporting…" : "Print PDF"}
         </button>
       </div>
 
@@ -377,19 +581,19 @@ export default function Toolbar({
 
       {/* Auth */}
       {user ? (
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-            <span className="text-[10px] font-bold text-emerald-700">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-neutral-100 ring-1 ring-neutral-200 flex items-center justify-center">
+            <span className="text-[10px] font-semibold text-neutral-700">
               {user.email?.[0]?.toUpperCase() || "?"}
             </span>
           </div>
-          <button onClick={onSignOut} className="text-[10px] text-neutral-400 hover:text-neutral-600">
+          <button onClick={onSignOut} className="text-[10px] text-neutral-400 hover:text-neutral-600 transition-colors">
             Sign out
           </button>
         </div>
       ) : (
         <button onClick={onSignIn}
-          className="flex items-center gap-1 px-2 py-1 text-[10px] border border-neutral-200 rounded hover:bg-neutral-50 text-neutral-500">
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium border border-neutral-200 rounded-md hover:bg-neutral-50 hover:border-neutral-300 text-neutral-700 transition-colors">
           <svg className="w-3 h-3" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>

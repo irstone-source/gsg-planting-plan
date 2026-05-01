@@ -103,7 +103,7 @@ export default function PlantSchedule({ schedule, totalCount, settings, plants }
         <div className="flex gap-1">
           <button
             onClick={() => downloadScheduleReport(schedule, totalCount, settings, plants)}
-            className="flex-1 px-2 py-1.5 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 font-medium"
+            className="flex-1 px-2 py-1.5 text-xs bg-emerald-700 text-white rounded hover:bg-emerald-800 font-medium"
           >
             Full Schedule
           </button>

@@ -7,5 +7,74 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #2526 | 7:24 AM | 🟣 | Integrated cloud save/load with Google authentication and My Plans panel | ~669 |
+| #2564 | 7:07 PM | 🟣 | Implemented AI illustration generator with viewing direction and style presets | ~608 |
+| #2563 | 7:06 PM | 🟣 | Added Illustrate panel to right sidebar with visualization controls | ~434 |
+| #2562 | " | ✅ | Added illustration tab and arrow mode state to main page | ~296 |
+| #2561 | 7:05 PM | 🟣 | Implemented viewing arrow rendering with two-click placement | ~457 |
+| #2560 | 7:03 PM | 🟣 | Added viewing arrow annotation support to canvas interface | ~420 |
+| #2559 | " | 🟣 | Extended PlanCanvas interface with viewing arrow interaction props | ~420 |
+| #2558 | " | 🟣 | Added AI-powered botanical illustration generator with four professional styles | ~668 |
+| #2557 | 7:02 PM | 🟣 | Added viewing arrow state management to plan canvas | ~346 |
+| #2556 | " | 🟣 | Added viewing arrow state to plan persistence | ~319 |
+| #2555 | " | 🟣 | Added viewing arrow state management for plan orientation | ~342 |
+| #2553 | 7:00 PM | 🟣 | Added viewing arrow state to plan persistence | ~362 |
+| #2552 | 6:58 PM | 🔴 | Viewing Arrow State Persistence to localStorage | ~277 |
+| #2551 | 6:56 PM | 🟣 | Added viewing arrow to plan state for orientation indication | ~308 |
+| #2550 | 6:54 PM | 🟣 | Added ViewingArrow type for directional annotations | ~292 |
+| #2542 | 9:47 AM | 🔴 | Fixed white-on-white text in tool input fields by forcing light mode | ~390 |
+| #2541 | 9:46 AM | 🔴 | Fixed light mode theming for planting tool in dark-themed app | ~410 |
+| #2540 | 9:41 AM | ✅ | Created light-mode layout wrapper for planting tool route | ~309 |
+| #2539 | 9:40 AM | 🔴 | Force Light Theme to Prevent Dark Mode Override | ~260 |
+| #2537 | 8:02 AM | 🟣 | Added professional planting schedule and seasonal care guide exports | ~624 |
+| #2536 | " | ✅ | Extended PlantSchedule props with settings and plants data | ~334 |
+| #2535 | 8:01 AM | ✅ | Added settings and plants props to PlantSchedule component | ~297 |
+
+### Mar 26, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #2589 | 12:12 PM | 🟣 | Growth Timeline View with Year-by-Year Spread Animation | ~525 |
+| #2588 | " | 🟣 | Connected growth year visualization and view mode to canvas rendering | ~428 |
+| #2587 | " | 🟣 | Added plant growth animation and view mode controls to toolbar | ~421 |
+| #2586 | 12:11 PM | 🟣 | Implemented growth timeline animation controller with year progression | ~436 |
+| #2585 | " | 🟣 | Implemented scientific view mode with multi-year growth visualization | ~639 |
+| #2584 | 12:10 PM | 🟣 | Added view mode and growth year visualization to canvas | ~401 |
+| #2583 | " | 🟣 | Added growth simulation infrastructure to planting plan canvas | ~520 |
+| #2582 | " | 🟣 | Added scientific growth visualization with time-based animation | ~471 |
+| #2581 | 12:08 PM | 🟣 | Growth Visualization and Scientific View Mode Controls | ~392 |
+| #2579 | 8:19 AM | ⚖️ | Removed Illustrate tab from tool UI pending separate implementation | ~435 |
+| #2578 | " | 🔄 | Removed illustration panel from tool interface | ~331 |
+| #2577 | " | ✅ | Removed AI illustration tab from planting tool interface | ~391 |
+| #2575 | 8:16 AM | 🟣 | Bulk Plant Import Panel with Trefle Enrichment and AI Image Generation | ~490 |
+| #2574 | " | 🟣 | Added Bulk tab to right panel for plant import interface | ~320 |
+| #2573 | " | 🟣 | Added bulk import tab to right panel navigation | ~342 |
+| #2572 | 8:15 AM | 🟣 | Implemented bulk plant import with API enrichment and AI image generation | ~651 |
+| #2571 | 8:14 AM | 🔵 | Documented bulk-generate tool architecture for integration planning | ~851 |
+| #2568 | 8:08 AM | 🟣 | Dual AI Provider Selection with Gemini and DALL-E 3 | ~418 |
+| #2567 | 8:06 AM | 🟣 | Added multi-provider support with fallback tracking to illustration generator | ~398 |
+| #2566 | 8:05 AM | 🟣 | Added AI provider selection for illustration generation | ~363 |
+
+### Apr 10, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #4073 | 1:52 PM | 🟣 | Scale calibration system for accurate plant sizing in planting plans | ~523 |
+
+### Apr 30, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #5800 | 6:58 PM | 🟣 | Printable area calculation for PDF export with title block reserve | ~442 |
+| #5748 | 3:17 PM | 🟣 | Paper settings UI popover in toolbar | ~558 |
+| #5746 | 3:16 PM | 🟣 | Drawing bounds calculation and page rectangle overlay logic | ~560 |
+| #5744 | 3:15 PM | 🟣 | Paper size calculation utilities for print scale feature | ~540 |
+| #5717 | 2:43 PM | ⚖️ | Paper size and print scale feature architecture plan | ~635 |
+| #5715 | 2:37 PM | 🔵 | Export pipeline and scale system architecture investigation | ~538 |
+| #5695 | 1:15 PM | 🔵 | Existing scale calibration system in planting tool | ~375 |
+
+### May 1, 2026
+
+| ID | Time | T | Title | Read |
+|----|------|---|-------|------|
+| #5919 | 12:40 AM | 🟣 | Border polygon interface added to plan state for outline tracing | ~391 |
 </claude-mem-context>
