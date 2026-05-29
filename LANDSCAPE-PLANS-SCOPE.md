@@ -124,7 +124,7 @@ The new build is concentrated in: **the agentic product-pipeline factory (§9), 
 
 The crawl-first pipeline (§3.2) removes the old Phase 0 supplier-sign-up blocker. We can **build the catalogue unilaterally** and earn the right to charge suppliers *after* we have an audience.
 
-**Phase 1 — Crawl + 2D configurator, single category.** Ingest one strong category (e.g. paving + raised beds) from retail sites, dimensions-driven footprints, simulated top-down tiles, snap, publish-by-default, and a referral-out shopping list. Proves the whole loop with zero supplier dependency.
+**Phase 1 — Crawl + 2D configurator, hero category.** Ingest from retail sites, dimensions-driven footprints, simulated top-down tiles, snap, publish-by-default, and a referral-out shopping list. Proves the whole loop with zero supplier dependency. **Seed roster + ingest order:** see `LANDSCAPE-SOURCING-SEED.md`. Recommended sequence — (1) affiliate-ready SKUs (Crocus, Pagazzi) to prove the crawl→render→referral loop, then (2) **outdoor kitchens (Grillo/Cubic) as the hero category** since they're inherently modular and best showcase snap-together.
 
 **Phase 2 — Breadth + community flywheel.** More categories, more crawled suppliers, ranking/self-sort, remix, the UGC layout library. This is where the content compounds.
 
