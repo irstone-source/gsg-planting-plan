@@ -1,7 +1,7 @@
 # Landscape Plans — Product & Business Scope
 
 **Status:** Scoping / vision
-**Date:** 2026-05-29
+**Date:** 2026-05-29 (rev. with crawl-first pipeline, agentic operating model, imagery canvas & Google UCP/AP2)
 **Owner:** Ian (Cambray Design)
 **Branch:** `claude/landscape-plans-scope-YO6yV`
 
@@ -116,7 +116,7 @@ We are **not** starting from zero. Reuse:
 - **Examples hub + cloud save/load + Google auth** → the community-layout library and publish-by-default loop.
 - **Scale calibration, bed tracing, paper-size export, growth timeline** → canvas + plan-output tooling.
 
-The new build is concentrated in: **the crawl/ingest pipeline, the dimensions-driven footprint + snap layer, the top-down render, and the multi-supplier referral basket.** (3D meshes + snap metadata are a v2 fidelity upgrade, not a launch requirement.)
+The new build is concentrated in: **the agentic product-pipeline factory (§9), the imagery→scale→grid canvas (§10), the dimensions-driven footprint + snap layer, the top-down render, and the pluggable multi-supplier basket (§12).** (3D meshes + snap metadata are a v2 fidelity upgrade, not a launch requirement.)
 
 ---
 
@@ -146,6 +146,100 @@ The crawl-first pipeline (§3.2) removes the old Phase 0 supplier-sign-up blocke
 
 ---
 
-## 9. The one-paragraph pitch
+## 9. The operating model: a continuous product-pipeline "factory"
+
+The catalogue isn't a one-off build — it's a **living dataset we continuously amass and keep clean.** That calls for an always-on, agentic process with a heartbeat, defined roles, quality gates, and a daily report. The job is simple to state and hard to do well: *strategically grow the library of installable products, driven by measured demand, market insight, and supplier deals — while keeping the data trustworthy.*
+
+### 9.1 Why agentic + always-on
+- Sourcing is unbounded and repetitive (thousands of SKUs across hundreds of retailers) — ideal for parallel agents.
+- Priorities shift with demand and seasonality — needs a strategist in the loop, not a static crawl list.
+- Data rots (prices, stock, URLs) — needs continuous re-validation, not a single import.
+
+### 9.2 The agent roster
+
+| Agent | Role | Output |
+|-------|------|--------|
+| **Sourcing agents** (parallel fan-out) | Discover products on retail sites; **prioritise sources with an affiliate programme or product feed**. Each agent owns a category, supplier, or region brief. | Candidate product records (raw) |
+| **Enrichment / render agent** | Parse specs → dimensions/footprint; normalise; generate the simulated top-down tile from product photos. | Enriched records + render assets |
+| **Quality agent** (gatekeeper) | Validate dimensions, dedupe, score confidence, check image/render quality, enforce schema. Nothing goes **live** without passing. | Pass/fail + confidence score + review-queue items |
+| **Ecommerce / Product-Manager agent** (orchestrator) | The strategist. Reads demand signals + market intel + supplier pipeline → writes the sourcing briefs, sets priorities, owns pipeline KPIs. | Prioritised brief queue + daily report |
+| **Supplier / BD agent** | Track potential suppliers to sign up, affiliate-network enrolment status, deals worth pursuing. | Supplier CRM pipeline |
+| **Design agents** (see §11) | Generate suggested layouts/configurations; learn from published layouts + buy-through. | In-product suggestions |
+
+Human-in-the-loop stays the editor-in-chief: approves edge cases in the review queue, signs off supplier deals, and can override priorities. Agents draft; humans ratify what's ambiguous.
+
+### 9.3 The heartbeat (daily loop) + daily report
+A scheduled run (the "heartbeat" — e.g. a daily Claude Code on the web session or a cron/GitHub-Action-triggered job) drives one cycle:
+
+1. **PM agent** reviews yesterday's demand signals + KPIs → updates the brief queue.
+2. **Sourcing agents** fan out against the top briefs.
+3. **Enrichment + render** process candidates.
+4. **Quality agent** gates them; clean records go live, ambiguous ones to the review queue.
+5. **Supplier/BD agent** updates the pipeline.
+6. **Daily report** posted (Slack/email/issue): *added today, live-catalogue size, quality pass-rate, top unmet-demand gaps, stale records re-checked, supplier-pipeline movement, and the next briefs.*
+
+> The report-in-every-day cadence is the forcing function that turns "a good idea" into something that actually compounds.
+
+### 9.4 The dataset we're amassing (data model sketch)
+- **`products`** — SKU/source URL, supplier, category, **footprint (W×D from spec)**, price, stock/lead time, image set, **render tile**, affiliate/referral link, **provenance + confidence score**, **lifecycle status** (`discovered → enriched → quality-passed → live → stale → retired`), `last_checked`.
+- **`demand_signals`** — searches with no result, placed-but-unpriced items, abandoned categories, explicit "I want X" requests, buy-through per SKU, popular published layouts. *This is the feedstock for the PM agent.*
+- **`sourcing_briefs`** — prioritised work queue for sourcing agents.
+- **`suppliers`** — BD pipeline + affiliate-enrolment state.
+
+### 9.5 Quality is a first-class product (dataset integrity)
+"Continually amassing a huge dataset and making sure there's quality in it." Concretely:
+- **Confidence score** per record; below threshold → review queue, never silently live.
+- **Dimensions are sacred** — they drive footprint, snap, and scale, so they get the strictest validation (sanity ranges, cross-checks, unit normalisation).
+- **Freshness SLA** — re-crawl cadence per record; surface "last checked"; auto-retire dead URLs.
+- **Dedupe** across retailers selling the same product.
+
+### 9.6 Demand-driven sourcing (the strategic part)
+The PM agent grows the library where it pays, prioritising by:
+- **Measured demand** — what users place, search for, and *can't* find (the unmet-demand gaps are gold).
+- **Market intelligence / insight** — seasonality, trends, high-margin or high-attach categories.
+- **Supplier deals** — signed suppliers and affiliate availability get a sourcing boost.
+
+---
+
+## 10. The canvas: imagery → scale → grid → plot
+
+We don't reinvent garden design; we give people a clean, to-scale surface and let them plot proven modules onto it. Modelled on the OpenSolar approach (and reusing our existing **scale-calibration** and **bed-tracing** tooling):
+
+1. **Acquire imagery** for the user's address — Google Maps / **Google Solar API** ground imagery, or higher-res aerial via an imagery marketplace (Nearmap-style). Solar API tiles are geo-referenced, so scale can often be **auto-derived** from metadata.
+2. **Calibrate scale** — where auto-scale isn't available, the user draws a line between two points of known real-world length (e.g. a wall, a standard slab) and enters the distance — exactly the OpenSolar pattern, and exactly what our scale-calibration code already does.
+3. **Overlay an alignable grid** — user rotates/aligns the grid to their plot boundary.
+4. **Plot to scale** — drop real-dimensioned modules; they snap to the grid and to each other (§3). Most of this is deliberately simple — assembly, not CAD.
+
+The output is the same buyable, shareable, costed layout — now anchored to the user's *actual* garden footprint.
+
+---
+
+## 11. Design agents (AI on top, not instead of)
+
+We are explicitly **not** building an auto-designer. The canvas stays a human assembly tool. AI sits *on top* as suggestion and acceleration:
+
+- **Suggest configurations** — "for this aspect/size/budget, here's a starting layout" (seeded by published layouts + designer styles + buy-through data).
+- **Complete & critique** — "you've placed decking; most people add a pergola here / your path is below standard width."
+- **Auto-cost & optimise** — swap modules to hit a budget, or maximise buy-through-proven combos.
+- **Learn from the flywheel** — the published-layout corpus (§4) is training/grounding data; popular, high-buy-through designs inform suggestions. The library and the design agents improve each other over time.
+
+This is where the catalogue, the community flywheel, and the agent fabric converge into a moat.
+
+---
+
+## 12. Payments & checkout: affiliate now, Google UCP / AP2 next
+
+Sequence the rails to match what's actually available in the UK:
+
+- **Now (UK) — affiliate referral-out.** Per-SKU buy links via affiliate networks (Awin etc.). Uncontroversial, works today, no checkout to build. v1 basket = a referral hand-off, not a live cart.
+- **Next — Google Universal Cart / Universal Commerce Protocol (UCP) / Agent Payments Protocol (AP2).** Google's 2026 stack is almost purpose-built for our cross-supplier basket: a **cross-merchant cart built on Google Wallet**, Google Pay checkout or transfer-to-merchant, and an open protocol (**REST + MCP binding, AP2/A2A-compatible**) — the *same* agent fabric we're building for sourcing and design. AP2's signed **Intent → Cart → Payment** mandates (with spend guardrails) are the natural rail for **design agents eventually purchasing on a user's behalf**.
+- **The catch: geography & timing.** Universal Cart / UCP checkout launches **US-first (summer 2026), then Canada/Australia, with the UK *later*.** UCP is also single-merchant today with **multi-item/multi-merchant carts on the roadmap** — i.e. our exact need is "coming," not shipped.
+- **So: design for it, don't depend on it.** Build a **pluggable checkout abstraction** behind the basket. Ship affiliate referral in the UK now; adopt UCP/Universal Cart the moment it lands in the UK and supports multi-merchant. Because UCP speaks MCP/A2A/AP2, our agents integrate without re-platforming.
+
+*Sources:* [Universal Cart (Google blog)](https://blog.google/products-and-platforms/products/shopping/google-shopping-cart/) · [UCP for developers](https://developers.google.com/merchant/ucp) · [AP2 announcement (Google Cloud)](https://cloud.google.com/blog/products/ai-machine-learning/announcing-agents-to-payments-ap2-protocol) · [AP2 docs](https://ap2-protocol.org/) · [OpenSolar manual scaling](https://support.opensolar.com/hc/en-us/articles/13251322728975-How-to-design-in-Manual-mode) · [Google Solar/Nearmap imagery on OpenSolar](https://help.nearmap.com/kb/articles/87-nearmap-on-opensolar)
+
+---
+
+## 13. The one-paragraph pitch
 
 PlantingPlans already nails the planting. **Landscape Plans** opens it up to the whole garden. We **bootstrap the catalogue by crawling the ecommerce sites that already sell the kit** — no manufacturer cooperation needed to start — and turn each product into a real-dimensioned, snap-together module with a simulated top-down view from its photos. Anyone can plug together a real, costed, buyable garden with no design skills; the output is a shopping list that refers traffic out to the retailers (who want it). Free users publish their layouts, so the template library — and the SEO, and the shoppable content — compounds itself. Once there's an audience and demand data, suppliers pay a small fee to be listed, featured, and to embed the configurator on their own sites. Two-sided marketplace, self-curating catalogue, and an existing product to build it on — with the hardest dependency engineered away.
