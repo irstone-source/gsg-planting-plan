@@ -38,17 +38,32 @@ Existing tools split into two camps, and both have a gap we exploit:
 
 ### 3.1 Core loop
 1. **Set the canvas** — boundary + dimensions (reuse existing bed-tracing / scale-calibration tooling).
-2. **Drop modules** — from a catalogue of manufacturer 3D products, grouped by function (ground, structure, planting, features, lighting, furniture).
-3. **Plug & snap** — modules constrain each other; the layout self-sorts.
-4. **See it** — 2D plan + 3D walkthrough.
+2. **Drop modules** — from a catalogue of real products, grouped by function (ground, structure, planting, features, lighting, furniture).
+3. **Plug & snap** — modules constrain each other by their real dimensions; the layout self-sorts.
+4. **See it** — top-down plan first (simulated render from product photos); 3D walkthrough later.
 5. **Cost it** — live basket: per-supplier line items, totals, lead times.
-6. **Buy / quote / share** — checkout, request quote, or save & publish.
+6. **Buy / quote / share** — referral-out to retailer, request quote, or save & publish.
 
-### 3.2 The 3D asset pipeline (the make-or-break dependency)
-- **Source of truth:** manufacturer-supplied 3D files (glTF/GLB target; accept STEP/OBJ/SKP and normalise).
-- **Normalisation:** consistent scale, origin, materials, LODs, and a **snap/connection metadata** layer (anchor points, valid neighbours, footprint). This metadata is what makes modules "plug together" — it's our IP, not the raw mesh.
-- **Catalogue record per product:** SKU, dimensions, price, stock/lead time, supplier, install notes, the GLB, and the snap metadata.
-- **Fallback** for suppliers without 3D: parametric primitives + photo texture, or a "request 3D" queue. Don't let a missing asset block listing.
+### 3.2 The asset pipeline — crawl first, 3D later
+
+We originally treated manufacturer-supplied 3D files as the keystone dependency. **We can sidestep that entirely for v1.** The cleanest way to remove the first block is to **bootstrap the catalogue ourselves by crawling the ecommerce sites that already sell the kit.** We don't need anyone's permission or cooperation to start — and the only thing we send back to retailers is referral traffic, which they want.
+
+**v1 — Crawl & ingest (no supplier involvement):**
+- **Crawl** garden-product ecommerce/PDP pages: title, **dimensions**, price, category, description, and product images.
+- **Catalogue record per product:** SKU/URL, footprint (W×D from the spec), price, supplier, category, image set, affiliate/referral link. Dimensions are the load-bearing field — they drive footprint, snap, and self-sort.
+- **Place by spec, not by mesh.** The user drops a real-dimensioned **footprint** onto the plan. No 3D model required to start.
+- **Simulated top-down render.** Generate a plausible plan-view tile for each product from its photos (crop/normalise the most top-down-ish image, or AI-derive a top-down thumbnail), scaled to its real footprint. Good enough to read a layout.
+- **Feed of what they're installing.** Every layout produces a shopping list with the product image, name, dimensions, price, and a buy link per item — "the list of what they're installing." This *is* the deliverable and the referral surface.
+
+**v2+ — Upgrade fidelity where it pays off:**
+- Replace simulated tiles with real **glTF/GLB** for high-value/high-volume modules (supplier-supplied or commissioned), plus the **snap/connection metadata** layer (anchor points, valid neighbours) — that authored metadata, not the raw mesh, is our IP.
+- This becomes a *carrot* for suppliers later ("pay to be listed and we'll model your range properly / feature you"), not a launch blocker.
+
+### 3.2.1 Crawl risks to manage (not blockers)
+- **ToS / robots / rate-limits** — crawl politely; prefer feeds/affiliate-network product data (e.g. Awin/affiliate APIs) where available, which is sanctioned and cleaner than scraping.
+- **Image rights** — using product photos to *promote a sale of that product* is generally tolerated and in the retailer's interest, but AI-derived top-down tiles are safer ground; keep originals attributable and honour takedowns.
+- **Data freshness** — prices/stock drift; show "last checked", re-crawl on a schedule, and treat the basket as a referral hand-off, not a live cart, in v1.
+- **Dimension quality** — specs are inconsistent/missing; needs parsing + a manual/AI clean-up queue and sensible fallbacks.
 
 ### 3.3 What we deliberately *don't* build (v1)
 - Free-form CAD drawing, terrain/levels engineering, drainage/structural calc, planning-permission logic. Park these as "for the professional" upsells later.
@@ -101,35 +116,36 @@ We are **not** starting from zero. Reuse:
 - **Examples hub + cloud save/load + Google auth** → the community-layout library and publish-by-default loop.
 - **Scale calibration, bed tracing, paper-size export, growth timeline** → canvas + plan-output tooling.
 
-The new build is concentrated in: **the 3D asset pipeline, the snap/connection metadata layer, the 3D viewer, and the multi-supplier basket.**
+The new build is concentrated in: **the crawl/ingest pipeline, the dimensions-driven footprint + snap layer, the top-down render, and the multi-supplier referral basket.** (3D meshes + snap metadata are a v2 fidelity upgrade, not a launch requirement.)
 
 ---
 
 ## 7. Phasing
 
-**Phase 0 — Validate the supply side (no code).** Can we actually get 3D files and a "yes" on a listing fee? Sign 2–3 anchor manufacturers per category. *If this fails, nothing else matters — do it first.*
+The crawl-first pipeline (§3.2) removes the old Phase 0 supplier-sign-up blocker. We can **build the catalogue unilaterally** and earn the right to charge suppliers *after* we have an audience.
 
-**Phase 1 — 2D configurator, single category.** Snap-together modules in plan view, one strong category (e.g. paving + raised beds), live basket, publish-by-default. Proves the loop cheaply.
+**Phase 1 — Crawl + 2D configurator, single category.** Ingest one strong category (e.g. paving + raised beds) from retail sites, dimensions-driven footprints, simulated top-down tiles, snap, publish-by-default, and a referral-out shopping list. Proves the whole loop with zero supplier dependency.
 
-**Phase 2 — 3D viewer + multi-category + multi-supplier basket.** GLB pipeline, walkthrough, cross-supplier checkout/quote.
+**Phase 2 — Breadth + community flywheel.** More categories, more crawled suppliers, ranking/self-sort, remix, the UGC layout library. This is where the content compounds.
 
-**Phase 3 — Marketplace flywheel.** Ranking/self-sort, remix, supplier analytics dashboard, white-label embeddable widget for supplier sites.
+**Phase 3 — Monetise the supply side.** Now that there's an audience and demand data, sell listing fees / featured placement, give suppliers an analytics dashboard, and offer the white-label embeddable widget for their own sites.
 
-**Phase 4 — Pro layer.** Installer quoting, larger projects, the "design" upsells we deferred.
+**Phase 4 — 3D fidelity + pro layer.** GLB models + snap metadata for high-value modules, 3D walkthrough, installer quoting, larger projects, and the "design" upsells we deferred.
 
 ---
 
 ## 8. Open questions / risks (to resolve before committing build)
 
-1. **Asset supply is the keystone.** Will manufacturers actually hand over usable 3D files? What's the fallback coverage if half won't? → Phase 0.
-2. **Snap metadata cost.** Authoring connection metadata per SKU is real work — who does it, us or the supplier, and how do we keep it cheap at catalogue scale?
-3. **Pricing accuracy & checkout model.** Do we transact, or hand off to supplier carts? Live pricing/stock integration is non-trivial across many suppliers.
-4. **Publish-by-default consent & moderation.** Clear opt-in, takedown, and quality-control for a public UGC layout library.
-5. **Which revenue line leads?** Listing fee is easiest to sell pre-volume; commission is the bigger prize later. Sequence deliberately.
-6. **Scope discipline.** The pull toward "real garden designer" is strong and is the graveyard of this category. Hold the line on *configurator, not CAD* for v1.
+1. **Crawl legality & sourcing.** Scrape vs. sanctioned affiliate-network product feeds (Awin etc.) — prefer feeds where they exist. Respect ToS/robots; honour takedowns. *(De-risked vs. the old "will manufacturers give us 3D files" keystone — now a managed risk, not a blocker.)*
+2. **Dimension & spec quality at scale.** Specs are inconsistent/missing across sites; needs robust parsing + an AI/manual clean-up queue. This is the new long-pole, since dimensions drive everything.
+3. **Top-down render quality.** How convincing does the simulated tile need to be before the plan reads well? Where's the floor before it feels fake?
+4. **Pricing/stock freshness & checkout model.** v1 is a referral hand-off, not a live cart — show "last checked", re-crawl on schedule. Decide if/when we ever transact.
+5. **Publish-by-default consent & moderation.** Clear opt-in, takedown, and quality-control for a public UGC layout library.
+6. **Which revenue line leads, and when.** Referral commission is uncontroversial and immediate; listing fees come after audience. Sequence deliberately.
+7. **Scope discipline.** The pull toward "real garden designer" is strong and is the graveyard of this category. Hold the line on *configurator, not CAD* for v1.
 
 ---
 
 ## 9. The one-paragraph pitch
 
-PlantingPlans already nails the planting. **Landscape Plans** opens it up to the whole garden: partner with manufacturers, ingest their products as snap-together 3D modules, and let anyone plug together a real, costed, buyable garden — no design skills needed. Free users publish their layouts, so the template library (and the SEO, and the shoppable content) compounds itself. Suppliers pay a small fee to be listed, promote the configurator on their own sites, and get their products in front of high-intent buyers in context. Two-sided marketplace, self-curating catalogue, and an existing product to build it on.
+PlantingPlans already nails the planting. **Landscape Plans** opens it up to the whole garden. We **bootstrap the catalogue by crawling the ecommerce sites that already sell the kit** — no manufacturer cooperation needed to start — and turn each product into a real-dimensioned, snap-together module with a simulated top-down view from its photos. Anyone can plug together a real, costed, buyable garden with no design skills; the output is a shopping list that refers traffic out to the retailers (who want it). Free users publish their layouts, so the template library — and the SEO, and the shoppable content — compounds itself. Once there's an audience and demand data, suppliers pay a small fee to be listed, featured, and to embed the configurator on their own sites. Two-sided marketplace, self-curating catalogue, and an existing product to build it on — with the hardest dependency engineered away.
